@@ -39,15 +39,15 @@ app.get('/chatBot',  function(req, res) {
         },
         json: true
     };
-    var response = {};
-    response['userId'] = getAnonymizedUserId();
-    response['connectorToken'] = parsedBody.token;
-    response['optionalAttributes'] = {age: 33};
-    if (req.params.lat && req.params.long)  {
-        response['location'] = {lat: req.params.lat, long: req.params.long};
-    }
     rp(options)
         .then(function (parsedBody) {
+            var response = {};
+            response['userId'] = getAnonymizedUserId();
+            response['connectorToken'] = parsedBody.token;
+            response['optionalAttributes'] = {age: 33};
+            if (req.params.lat && req.params.long)  {
+                response['location'] = {lat: req.params.lat, long: req.params.long};
+            }
             const jwtToken = jwt.sign(response, process.env.APP_SECRET);
             res.send(jwtToken);
         })
