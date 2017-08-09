@@ -1,4 +1,4 @@
-function requestChatBot() {
+function requestChatBot(location) {
     // remove current chatbot if exists
     const botContainer = document.getElementById('botContainer');
     if (botContainer.childNodes.length > 0) {
@@ -8,8 +8,34 @@ function requestChatBot() {
 
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    oReq.open("GET", "/chatBot");
+    var path = "/chatBot";
+    if (location) {
+        path += "?lat=" + location.lat + "&long=" + location.long;
+    }
+    oReq.open("GET", path);
     oReq.send();
+}
+
+function chatRequested() {
+    var shareLocation = document.getElementById("shareLocation").checked;
+    if (shareLocation) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }
+}
+
+function getUserLocation(callback) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var latitude  = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var location = {
+            lat: latitude,
+            long: longitude
+        }
+        requestChatBot(location)
+    });
 }
 
 function initBotConversation() {

@@ -15,9 +15,11 @@
     <h1>Microsoft Health Bot Launcher</h1>
     <br>
     <label for="userName" >User Name:</label>
-    <input id="userName">
+    <input id="userName"><br>
+    <input id="shareLocation" type="checkbox">
+    <label for="shareLocation" >Share my location</label>
     <br><br>
-    <button onclick="requestChatBot()">Start Chat</button>
+    <button onclick="chatRequested()">Start Chat</button>
 </div>
 
 <div id="botContainer"></div>

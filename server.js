@@ -12,8 +12,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // begin listening for requests.
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Express server listening on port ${port}`);
+app.listen(port, function() {
+    console.log("Express server listening on port " + port);
 });
 
 function isUserAuthenticated(){
@@ -26,7 +26,7 @@ function getAnonymizedUserId() {
     return "anonymizedUserId";
 }
 
-app.get('/chatBot',  (req, res) => {
+app.get('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
         return
@@ -39,15 +39,16 @@ app.get('/chatBot',  (req, res) => {
         },
         json: true
     };
+    var response = {};
+    response['userId'] = getAnonymizedUserId();
+    response['connectorToken'] = parsedBody.token;
+    response['optionalAttributes'] = {age: 33};
+    if (req.params.lat && req.params.long)  {
+        response['location'] = {lat: req.params.lat, long: req.params.long};
+    }
     rp(options)
         .then(function (parsedBody) {
-            const jwtToken = jwt.sign({
-                userId: getAnonymizedUserId(),
-                connectorToken: parsedBody.token,
-                optionalAttributes: {
-                    age: 33
-                }
-            }, process.env.APP_SECRET);
+            const jwtToken = jwt.sign(response, process.env.APP_SECRET);
             res.send(jwtToken);
         })
         .catch(function (err) {
