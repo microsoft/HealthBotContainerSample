@@ -27,15 +27,20 @@ function chatRequested() {
 }
 
 function getUserLocation(callback) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        var latitude  = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        var location = {
-            lat: latitude,
-            long: longitude
-        }
-        requestChatBot(location)
-    });
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            }
+            callback(location);
+        },
+        function(error) {
+            // user declined to share location
+            callback();
+        });
 }
 
 function initBotConversation() {
