@@ -45,8 +45,8 @@ app.get('/chatBot',  function(req, res) {
             response['userId'] = getAnonymizedUserId();
             response['connectorToken'] = parsedBody.token;
             response['optionalAttributes'] = {age: 33};
-            if (req.params.lat && req.params.long)  {
-                response['location'] = {lat: req.params.lat, long: req.params.long};
+            if (req.query.lat && req.query.long)  {
+                response['location'] = {lat: req.query.lat, long: req.query.long};
             }
             const jwtToken = jwt.sign(response, process.env.APP_SECRET);
             res.send(jwtToken);
