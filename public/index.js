@@ -39,6 +39,7 @@ function getUserLocation(callback) {
         },
         function(error) {
             // user declined to share location
+            console.log("location error:" + error.message);
             callback();
         });
 }
