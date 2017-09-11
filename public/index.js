@@ -44,6 +44,12 @@ function getUserLocation(callback) {
         });
 }
 
+function sendUserLocation(botConnection, user) {
+    getUserLocation(function (location) {
+        botConnection.postActivity({type: "message", text: JSON.stringify(location), from: user}).subscribe(function (id) {console.log("success")});
+    });
+}
+
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -63,6 +69,10 @@ function initBotConversation() {
         webSocket: true
     });
     botConnection.postActivity({type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"}).subscribe(function (id) {startChat(user, botConnection)});
+    botConnection.activity$
+        .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
+        .subscribe(function (activity) {sendUserLocation(botConnection, user)});
+
 }
 
 function startChat(user, botConnection) {
