@@ -11,7 +11,8 @@ app.use(cookieParser());
 // Indicate which directory static resources
 // (e.g. stylesheets) should be served from.
 app.use(express.static(path.join(__dirname, "public")));
-
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 // begin listening for requests.
 const port = process.env.PORT || 3000;
 app.listen(port, function() {
@@ -23,7 +24,11 @@ function isUserAuthenticated(){
     return true;
 }
 
-
+app.get('/', function(req, res) {
+    // this is done in order to prevent the brwoser from caching the css and js files until hard reload.
+    // we used a fixed 1 hour caching window, so within a maximum of an hour, the caching will be expired and hard reloaded.
+    res.render('index', {"ts" : Math.floor((new Date().getTime() / (1000 * 60 * 60)))})
+});
 app.get('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
