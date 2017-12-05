@@ -8,20 +8,10 @@
     <link href="stylesheets/style.css" rel="stylesheet" />
 </head>
 
-<body>
+<body onload="requestChatBot()">
 <script src="https://hatenantstorageprod.blob.core.windows.net/public-websites/webchat/botchat.js"></script>
 <script src="index.js"></script>
-<div class="content">
-    <h1>Microsoft Health Bot Launcher</h1>
-    <br>
-    <label for="userName" >User Name:</label>
-    <input id="userName"><br>
-    <input id="shareLocation" type="checkbox">
-    <label for="shareLocation" >Share my location</label>
-    <br><br>
-    <button onclick="chatRequested()">Start Chat</button>
-</div>
 
-<div id="botContainer"></div>
+<div id="botContainer" style="width:100%"></div>
 </body>
 </html>

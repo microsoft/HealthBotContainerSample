@@ -16,16 +16,6 @@ function requestChatBot(location) {
     oReq.send();
 }
 
-function chatRequested() {
-    var shareLocation = document.getElementById("shareLocation").checked;
-    if (shareLocation) {
-        getUserLocation(requestChatBot);
-    }
-    else {
-        requestChatBot();
-    }
-}
-
 function getUserLocation(callback) {
     navigator.geolocation.getCurrentPosition(
         function(position) {
@@ -50,6 +40,12 @@ function sendUserLocation(botConnection, user) {
     });
 }
 
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+}
+
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -59,8 +55,8 @@ function initBotConversation() {
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
     const user = {
-        id: tokenPayload.userId,
-        name: document.getElementById("userName").value ? document.getElementById("userName").value : "you"
+        id: getCookie("userid"),
+        name: "you"
     };
     const botConnection = new BotChat.DirectLine({
         //secret: botSecret,
