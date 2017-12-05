@@ -23,21 +23,12 @@ function isUserAuthenticated(){
     return true;
 }
 
-function getAnonymizedUserId() {
-    // return here the anonymized user id based in the original user id
-    return crypto.randomBytes(4).toString('hex');
-}
 
 app.get('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
         return
     }
-
-    if (req.cookies.userid === undefined) {
-        res.cookie("userid", getAnonymizedUserId());
-    }
-
     const options = {
         method: 'POST',
         uri: 'https://directline.botframework.com/v3/directline/tokens/generate',
@@ -48,7 +39,15 @@ app.get('/chatBot',  function(req, res) {
     };
     rp(options)
         .then(function (parsedBody) {
+            var userid = req.query.userId || req.cookies.userid;
+            if (!userid) {
+                userid = crypto.randomBytes(4).toString('hex');
+                res.cookie("userid", userid);
+            }
+
             var response = {};
+            response['userId'] = userid;
+            response['userName'] = req.query.userName;
             response['connectorToken'] = parsedBody.token;
             response['optionalAttributes'] = {age: 33};
             if (req.query.lat && req.query.long)  {

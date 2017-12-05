@@ -14,3 +14,5 @@ A simple web page to hand off users to the Microsoft Health bot
 `APP_SECRET`
 
 `WEBCHAT_SECRET`
+
+to start the application, run `npm start`

@@ -1,19 +1,28 @@
-function requestChatBot(location) {
-    // remove current chatbot if exists
-    const botContainer = document.getElementById('botContainer');
-    if (botContainer.childNodes.length > 0) {
-        botContainer.removeChild(botContainer.childNodes[0]);
-    }
-    botContainer.classList.remove("wc-display");
-
+function requestChatBot(loc) {
+    const params = BotChat.queryParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
-    if (location) {
-        path += "?lat=" + location.lat + "&long=" + location.long;
+    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    }
+    if (params['userId']) {
+        path += "&userId=" + params['userId'];
     }
     oReq.open("GET", path);
     oReq.send();
+}
+
+function chatRequested() {
+    const params = BotChat.queryParams(location.search);
+    var shareLocation = params["shareLocation"];
+    if (shareLocation) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }
 }
 
 function getUserLocation(callback) {
@@ -40,12 +49,6 @@ function sendUserLocation(botConnection, user) {
     });
 }
 
-function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
-}
-
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -55,8 +58,8 @@ function initBotConversation() {
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
     const user = {
-        id: getCookie("userid"),
-        name: "you"
+        id: tokenPayload.userId,
+        name: tokenPayload.userName
     };
     const botConnection = new BotChat.DirectLine({
         //secret: botSecret,
