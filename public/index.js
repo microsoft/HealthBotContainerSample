@@ -1,23 +1,22 @@
-function requestChatBot(location) {
-    // remove current chatbot if exists
-    const botContainer = document.getElementById('botContainer');
-    if (botContainer.childNodes.length > 0) {
-        botContainer.removeChild(botContainer.childNodes[0]);
-    }
-    botContainer.classList.remove("wc-display");
-
+function requestChatBot(loc) {
+    const params = BotChat.queryParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
-    if (location) {
-        path += "?lat=" + location.lat + "&long=" + location.long;
+    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    }
+    if (params['userId']) {
+        path += "&userId=" + params['userId'];
     }
     oReq.open("GET", path);
     oReq.send();
 }
 
 function chatRequested() {
-    var shareLocation = document.getElementById("shareLocation").checked;
+    const params = BotChat.queryParams(location.search);
+    var shareLocation = params["shareLocation"];
     if (shareLocation) {
         getUserLocation(requestChatBot);
     }
@@ -60,7 +59,7 @@ function initBotConversation() {
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
     const user = {
         id: tokenPayload.userId,
-        name: document.getElementById("userName").value ? document.getElementById("userName").value : "you"
+        name: tokenPayload.userName
     };
     const botConnection = new BotChat.DirectLine({
         //secret: botSecret,

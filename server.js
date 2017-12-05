@@ -1,11 +1,13 @@
+const crypto = require('crypto');
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const rp = require("request-promise");
+const cookieParser = require('cookie-parser');
 
 // Initialize the web app instance,
 const app = express();
-
+app.use(cookieParser());
 // Indicate which directory static resources
 // (e.g. stylesheets) should be served from.
 app.use(express.static(path.join(__dirname, "public")));
@@ -21,10 +23,6 @@ function isUserAuthenticated(){
     return true;
 }
 
-function getAnonymizedUserId() {
-    // return here the anonymized user id based in the original user id
-    return "anonymizedUserId";
-}
 
 app.get('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
@@ -41,8 +39,15 @@ app.get('/chatBot',  function(req, res) {
     };
     rp(options)
         .then(function (parsedBody) {
+            var userid = req.query.userId || req.cookies.userid;
+            if (!userid) {
+                userid = crypto.randomBytes(4).toString('hex');
+                res.cookie("userid", userid);
+            }
+
             var response = {};
-            response['userId'] = getAnonymizedUserId();
+            response['userId'] = userid;
+            response['userName'] = req.query.userName;
             response['connectorToken'] = parsedBody.token;
             response['optionalAttributes'] = {age: 33};
             if (req.query.lat && req.query.long)  {
