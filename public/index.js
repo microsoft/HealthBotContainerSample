@@ -67,11 +67,11 @@ function initBotConversation() {
         //domain: "",
         webSocket: true
     });
-    botConnection.postActivity({type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"}).subscribe(function (id) {startChat(user, botConnection)});
+    startChat(user, botConnection);
+    botConnection.postActivity({type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"}).subscribe(function (id) {});
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
         .subscribe(function (activity) {sendUserLocation(botConnection, user)});
-
 }
 
 function startChat(user, botConnection) {
