@@ -63,7 +63,7 @@ function initBotConversation() {
     };
     let domain = undefined;
     if (tokenPayload.directLineURI) {
-        domain =  "https://" +  tokenPayload.directLineURI + "v3/directline";
+        domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
     const botConnection = new BotChat.DirectLine({
         token: tokenPayload.connectorToken,
