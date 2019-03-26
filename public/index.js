@@ -61,10 +61,13 @@ function initBotConversation() {
         id: tokenPayload.userId,
         name: tokenPayload.userName
     };
+    let domain = undefined;
+    if (tokenPayload.directLineURI) {
+        domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
+    }
     const botConnection = new BotChat.DirectLine({
-        //secret: botSecret,
         token: tokenPayload.connectorToken,
-        //domain: "",
+        domain,
         webSocket: true
     });
     startChat(user, botConnection);
