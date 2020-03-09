@@ -3,7 +3,9 @@
 **Note:** In order to use this Web Chat with the Health Bot service, you will need to obtain your Web Chat secret by going to ["Integration/Secrets"](./secrets.png) on the navigation panel.
 Please refer to [Microsoft Health Bot](https://www.microsoft.com/en-us/research/project/health-bot/) for a private preview and details.
 
-A simple web page to hand off users to the Microsoft Health bot
+A simple web page to hand off users to the Microsoft Health bot.
+
+>**IMPORTANT NOTE:** You can pick between *Azure App Service* **[A]** or *Azure Kubernetes Service* **[B]** to deploy the Web Chat Client Application.  Instructions for both options are provided below.
 
 ## A. Deploy the Web Chat Client Application on *Azure App Service*
 
