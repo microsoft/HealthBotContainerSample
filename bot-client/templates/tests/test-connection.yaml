@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "bot-client.fullname" . }}-test-connection"
+  labels:
+    {{- include "bot-client.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "bot-client.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
