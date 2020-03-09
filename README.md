@@ -5,7 +5,7 @@ Please refer to [Microsoft Health Bot](https://www.microsoft.com/en-us/research/
 
 A simple web page to hand off users to the Microsoft Health bot
 
-## A. Deploy the Web Chat Client Application on *Azure App. Service*
+## A. Deploy the Web Chat Client Application on *Azure App Service*
 
 1. Deploy the website
 
@@ -17,6 +17,7 @@ A simple web page to hand off users to the Microsoft Health bot
 2. Set the following environment variables:
 
    `APP_SECRET`
+
    `WEBCHAT_SECRET`
 
 ## B. Deploy the Web Chat Client Application on *Azure Kubernetes Service*
@@ -25,15 +26,27 @@ A simple web page to hand off users to the Microsoft Health bot
 
    Refer to the documentation [here](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough-rm-template).
 
-2. Create Web Chat application container image
+2. Install prerequisite CLI tools on your local machine
 
-   Clone this GitHub repo. to a local directory on your machine. This machine/vm should have the following CLI tools installed on it.
+   You should have the following CLI tools installed on your local machine or a VM.
 
-   - [Docker container engine](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+   - [Docker Engine](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
    - [Git SCM](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
    - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-   - [Kubernetes CLI](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+   - Install Kubernetes CLI using Azure CLI. Refer to the instructions [here](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough).
    - [Helm CLI](https://helm.sh/docs/intro/install/) 
+
+3. Clone this GitHub repository
+
+   Clone this GitHub repository to a local directory on your machine.
+
+   ```bash
+   # Clone this repo. into a local directory on your machine/vm.
+   $ git clone https://github.com/microsoft/HealthBotContainerSample.git
+   #
+   ```
+
+4. Build Web Chat application container image
 
    Use the provided `dockerfile` to build the Web Chat client application container image.  See code snippet below.
 
@@ -45,11 +58,11 @@ A simple web page to hand off users to the Microsoft Health bot
    #
    ```
 
-3. Provision an *Azure Container Registry* (ACR)
+5. Provision an *Azure Container Registry* (ACR)
 
    Refer to the documentation [here](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal).
 
-4. Push the Web Chat application container image to the Container Registry
+6. Push the Web Chat application container image to the Container Registry
 
    Refer to the command snippet below to push the container image into the ACR.  Remember to substitute to correct value for the ACR instance (name) in all the commands.
 
@@ -68,7 +81,7 @@ A simple web page to hand off users to the Microsoft Health bot
    #
    ```
 
-5. Update the *Helm* Chart values file
+7. Update the *Helm* Chart values file
 
    Edit the *Helm* chart values file `./bot-client/values.yaml` with correct values. Refer to the table below.
 
@@ -83,23 +96,48 @@ A simple web page to hand off users to the Microsoft Health bot
    instrumentationKey | Azure Application Insights instrumentation key
    directLineApiEndpointUri | Direct Line Channel URI for Bot Service.  Refer to the last section for details.  Can be left empty.
 
-5. Deploy Web Chat Client Application
+8. Deploy Web Chat Client Application
 
    Use *Helm* to deploy the application on AKS. Refer to the command snippet below.
 
    ```bash
    # If you are using helm v2, update the 'apiVersion' value in 'bot-client/Chart.yaml' to v1.
    #
-   # First, switch to the GitHub repo. root directory 'HealthBotContainerSample'
+   # First, switch to the GitHub repo. directory 'HealthBotContainerSample'
+   # which you cloned in Step 3 above.
    #
    # Deploy the Web Chat client application.
    $ helm install bot-client ./bot-client/ --namespace healthbot 
+   #
+   # Verify the Web Chat application got deployed on AKS
+   $ helm ls
+   #
+   # Verify the application pods are running
+   $ kubectl get pods -n healthbot
    #
    # Get the Azure Load Balancer public IP address for the Web Chat Client App
    # Note down the public IP address under 'EXTERNAL-IP' column.
    $ kubectl get svc -n healthbot
    #
    # Lastly, use a web browser to access the Web Chat Client Application
+   #
+   ```
+
+9. (Optional) Auto scale the Web Chat Client Application on AKS
+
+   Refer to the command snippet below.
+
+   ```bash
+   # First find out the application 'deployment' name.
+   $ kubectl get deploy -n healthbot
+   #
+   # Auto scale the Web Chat application pods
+   # Specify 'cpu' threshold, 'min' and 'max' instances
+   #
+   $ kubectl autoscale deployment bot-client --cpu-percent=65 --min=1 --max=10 -n healthbot
+   #
+   # Check if 'hpa' resource for the application got created
+   $ kubectl get hpa -n healthbot
    #
    ```
 
