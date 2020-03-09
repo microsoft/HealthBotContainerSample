@@ -3,7 +3,9 @@ function requestChatBot(loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
-    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=" + Math.random().toString(36).slice(2));
+    // path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    console.log('Path:' + path);
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
