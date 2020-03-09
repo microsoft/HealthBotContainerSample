@@ -7,12 +7,17 @@
   "repository": "https://github.com/Microsoft/HealthBotContainerSample.git",
   "dependencies": {
     "cookie-parser": "^1.4.3",
-    "express": "^4.15.3",
+    "express": "^4.16.3",
     "jsonwebtoken": "^7.4.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1"
   },
   "scripts": {
-    "prestart": "npm install"
+    "prestart": "npm install",
+    "start": "node server.js",
+    "devstart": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3"
   }
 }

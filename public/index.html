@@ -1,15 +1,121 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <title>Health Bot</title>
+<!-- saved from url=(0064)https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/ -->
+<html lang="en" class="h-100"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A simple node web app which embedds the Microsoft Healthcare Chat Bot">
+    <meta name="author" content="Bootstrap authors, contributors and Microsoft">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>Microsoft Healthcare Chat Bot</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/">
+
+    <!-- Bootstrap core CSS -->
+<link href="./stylesheets/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- Favicons -->
+<link rel="apple-touch-icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="manifest" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/manifest.json">
+<link rel="mask-icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
+<link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon.ico">
+<meta name="msapplication-config" content="/docs/4.4/assets/img/favicons/browserconfig.xml">
+<meta name="theme-color" content="#563d7c">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="./stylesheets/sticky-footer-navbar.css" rel="stylesheet">
+    <link href="./stylesheets/jumbotron.css" rel="stylesheet">
+
+    <!-- Healthcare Bot stylesheets and scripts -->
     <link href="https://hatenantstorageprod.blob.core.windows.net/public-websites/webchat/botchat.css?v=5" rel="stylesheet" />
     <link href="stylesheets/style.css?v=5" rel="stylesheet" />
     <script src="https://hatenantstorageprod.blob.core.windows.net/public-websites/webchat/botchat.js?v=5"></script>
     <script src="index.js?v=5"></script>
-</head>
-<body>
-<div id="botContainer" style="width:100%"></div>
-<script>chatRequested();</script>
-</body>
-</html>
+  </head>
+  <body class="d-flex flex-column h-100">
+    <header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">HealthTest Provider</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">Link</a>
+        </li>
+      </ul>
+      <form class="form-inline mt-2 mt-md-0">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+</header>
+
+<!-- Begin page content -->
+<main role="main" class="flex-shrink-0">
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="display-3">Coronavirus (COVID-19) Advisory</h1>
+      <p>This is an emerging, rapidly evolving situation and we will provide updated information as it becomes available.  In the meantime, feel free to use our <b>Chat Bot</b> to ascertain if you or a family member may be at risk.</p>
+      <p><a class="btn btn-primary btn-lg" href="#" onclick="chatRequested()" role="button">Access Health Bot »</a></p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-4">
+        <h2>Background</h2>
+        <p>CDC is responding to an outbreak of respiratory disease caused by a novel (new) coronavirus that was first detected in China and which has now been detected in almost 90 locations internationally, including in the United States.</p>
+        <p><a class="btn btn-secondary" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/#" role="button">View details »</a></p>
+      </div>
+      <div class="col-md-4">
+        <h2>Source and Spread of the Virus</h2>
+        <p>Coronaviruses are a large family of viruses that are common in people and many different species of animals, including camels, cattle, cats and bats.</p>
+        <p><a class="btn btn-secondary" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/#" role="button">View details »</a></p>
+      </div>
+      <div class="col-md-4">
+        <h2>Situation in U.S.</h2>
+        <p>In addition to CDC, many public health laboratories are now testing for the virus that causes COVID-19.</p>
+        <p><a class="btn btn-secondary" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/#" role="button">View details »</a></p>
+      </div>
+    </div>
+  </div> <!-- /container -->
+
+  <div class="container" id="botContainer" style="height:50%; width:25%"></div>
+</main>
+
+<footer class="footer mt-auto py-3">
+  <div class="container">
+    <span class="text-muted">This is a test web site. Copyright Microsoft 2019-2020. All rights reserved.</span>
+  </div>
+</footer>
+<script src="./js-libs/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+      <script>window.jQuery || document.write('<script src="/docs/4.4/assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="./js-libs/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+
+</body></html>
