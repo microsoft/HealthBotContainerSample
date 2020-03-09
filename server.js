@@ -60,3 +60,8 @@ app.get('/chatBot',  function(req, res) {
             console.log("failed");
         });
 });
+
+app.get('/healthz', function(req, res) {
+  res.status(200).send();
+  return;
+});
