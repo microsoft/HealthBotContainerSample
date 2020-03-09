@@ -39,6 +39,15 @@
           font-size: 3.5rem;
         }
       }
+      .fixed-bottom {
+        position: fixed;
+        margin: auto;
+        width: 60%;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1030;
+      }
     </style>
     <!-- Custom styles for this template -->
     <link href="./stylesheets/sticky-footer-navbar.css" rel="stylesheet">
@@ -54,14 +63,14 @@
     <header>
   <!-- Fixed navbar -->
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">HealthTest Provider</a>
+    <a class="navbar-brand" href="/">HealthTest Provider</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">Link</a>
@@ -92,25 +101,25 @@
       <div class="col-md-4">
         <h2>Background</h2>
         <p>CDC is responding to an outbreak of respiratory disease caused by a novel (new) coronavirus that was first detected in China and which has now been detected in almost 90 locations internationally, including in the United States.</p>
-        <p><a class="btn btn-secondary" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/#" role="button">View details »</a></p>
+        <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
       </div>
       <div class="col-md-4">
         <h2>Source and Spread of the Virus</h2>
         <p>Coronaviruses are a large family of viruses that are common in people and many different species of animals, including camels, cattle, cats and bats.</p>
-        <p><a class="btn btn-secondary" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/#" role="button">View details »</a></p>
+        <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
       </div>
       <div class="col-md-4">
         <h2>Situation in U.S.</h2>
         <p>In addition to CDC, many public health laboratories are now testing for the virus that causes COVID-19.</p>
-        <p><a class="btn btn-secondary" href="https://getbootstrap.com/docs/4.4/examples/jumbotron/#" role="button">View details »</a></p>
+        <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
       </div>
     </div>
   </div> <!-- /container -->
+  <div class="container" id="botContainer"></div>
 
-  <div class="container" id="botContainer" style="height:50%; width:25%"></div>
 </main>
 
-<footer class="footer mt-auto py-3">
+<footer class="fixed-bottom">
   <div class="container">
     <span class="text-muted">This is a test web site. Copyright Microsoft 2019-2020. All rights reserved.</span>
   </div>
