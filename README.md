@@ -5,7 +5,7 @@ Please refer to [Microsoft Health Bot](https://www.microsoft.com/en-us/research/
 
 A simple web page to hand off users to the Microsoft Health bot.
 
->**IMPORTANT NOTE:** You can pick between *Azure App Service* **[A]** or *Azure Kubernetes Service* **[B]** to deploy the Web Chat Client Application.  Instructions for both options are provided below.
+>**IMPORTANT NOTE:** The Web Chat Client Application can be deployed on **[A]** *Azure App Service* or on **[B]** *Azure Kubernetes Service*.  Instructions for both options are provided below.
 
 ## A. Deploy the Web Chat Client Application on *Azure App Service*
 
