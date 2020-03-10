@@ -95,8 +95,8 @@ A simple web page to hand off users to the Microsoft Health bot.
    image.tag | Tag name for the application container image.  Eg., latest
    healthBot.webchatSecret | Healthcare Bot Web secret.  Eg., value of `webchat_secret` from the [Health Bot Service Portal](https://us.healthbot.microsoft.com)
    healthBot.appSecret | Healthcare Bot App secret.  Eg., value of `app_secret` from the [Health Bot Service Portal](https://us.healthbot.microsoft.com)
-   instrumentationKey | Azure Application Insights instrumentation key
-   directLineApiEndpointUri | Direct Line Channel URI for Bot Service.  Refer to the last section for details.  Can be left empty.
+   healthBot.instrumentationKey | Azure Application Insights instrumentation key
+   healthBot.directLineApiEndpointUri | Direct Line Channel URI for Bot Service.  Refer to the last section for details.  Can be left empty.
    healthBot.scenarioId | Healthcare bot scenario ID
 
 8. Deploy Web Chat Client Application
