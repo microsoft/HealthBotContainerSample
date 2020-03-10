@@ -90,7 +90,7 @@ A simple web page to hand off users to the Microsoft Health bot.
    Parameter Name | Description
    -------------- | -----------
    replicaCount | No. of instances of the Web Chat Client Application needed.
-   image.registry | FQDN of the ACR instance.  Eg., <acr-name>.azurecr.io
+   image.registry | FQDN of the ACR instance.  Eg., acr-name.azurecr.io
    image.repository | Web Chat application repository name. Eg., health-bot-client
    image.tag | Tag name for the application container image.  Eg., latest
    healthBot.webchatSecret | Healthcare Bot Web secret.  Eg., value of `webchat_secret` from the [Health Bot Service Portal](https://us.healthbot.microsoft.com)
