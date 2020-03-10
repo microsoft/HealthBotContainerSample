@@ -10,7 +10,7 @@ html, body {
 }
 
 #botContainer {
-  float: right;
+  /* float: right; */
   height: 99%;
   width: 460px;
   position: relative;

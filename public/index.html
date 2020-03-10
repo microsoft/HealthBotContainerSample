@@ -39,15 +39,6 @@
           font-size: 3.5rem;
         }
       }
-      .fixed-bottom {
-        position: fixed;
-        margin: auto;
-        width: 60%;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1030;
-      }
     </style>
     <!-- Custom styles for this template -->
     <link href="./stylesheets/sticky-footer-navbar.css" rel="stylesheet">
@@ -73,7 +64,7 @@
           <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">Link</a>
+          <a class="nav-link" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer-navbar/#">About</a>
         </li>
       </ul>
       <form class="form-inline mt-2 mt-md-0">
@@ -96,30 +87,38 @@
   </div>
 
   <div class="container">
-    <!-- Example row of columns -->
     <div class="row">
-      <div class="col-md-4">
-        <h2>Background</h2>
-        <p>CDC is responding to an outbreak of respiratory disease caused by a novel (new) coronavirus that was first detected in China and which has now been detected in almost 90 locations internationally, including in the United States.</p>
-        <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md">
+            <h2>Background</h2>
+            <p>CDC is responding to an outbreak of respiratory disease caused by a novel (new) coronavirus that was first detected in China and which has now been detected in almost 90 locations internationally, including in the United States.</p>
+            <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md">
+            <h2>Source and Spread of the Virus</h2>
+            <p>Coronaviruses are a large family of viruses that are common in people and many different species of animals, including camels, cattle, cats and bats.</p>
+            <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md">
+            <h2>Situation in U.S.</h2>
+            <p>In addition to CDC, many public health laboratories are now testing for the virus that causes COVID-19.</p>
+            <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
+          </div>
+        </div>
       </div>
       <div class="col-md-4">
-        <h2>Source and Spread of the Virus</h2>
-        <p>Coronaviruses are a large family of viruses that are common in people and many different species of animals, including camels, cattle, cats and bats.</p>
-        <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
-      </div>
-      <div class="col-md-4">
-        <h2>Situation in U.S.</h2>
-        <p>In addition to CDC, many public health laboratories are now testing for the virus that causes COVID-19.</p>
-        <p><a class="btn btn-secondary" href="/" role="button">View details »</a></p>
+        <div class="container" id="botContainer"></div>
       </div>
     </div>
   </div> <!-- /container -->
-  <div class="container" id="botContainer" style="height:70%"></div>
-
 </main>
 
-<footer class="fixed-bottom">
+<footer class="footer mt-auto py-3">
   <div class="container">
     <span class="text-muted">This is a test web site. Copyright Microsoft 2019-2020. All rights reserved.</span>
   </div>
