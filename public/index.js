@@ -67,6 +67,7 @@ function initBotConversation() {
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
+    let attrs = tokenPayload.optionalAttributes;
     const botConnection = new BotChat.DirectLine({
         token: tokenPayload.connectorToken,
         domain,
@@ -74,6 +75,10 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
     botConnection.postActivity({type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"}).subscribe(function (id) {});
+    if (attrs.scenarioId) {
+      console.log("ScenarioId : " + attrs.scenarioId);
+      botConnection.postActivity({type: "event", value: {trigger: String(attrs.scenarioId)},from:user,name:"BeginDebugScenario"}).subscribe(function (id){});
+    }
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
         .subscribe(function (activity) {sendUserLocation(botConnection, user)});

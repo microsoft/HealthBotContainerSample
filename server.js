@@ -47,11 +47,15 @@ app.get('/chatBot',  function(req, res) {
             response['userId'] = userid;
             response['userName'] = req.query.userName;
             response['connectorToken'] = parsedBody.token;
-            response['optionalAttributes'] = {age: 33};
             if (req.query.lat && req.query.long)  {
                 response['location'] = {lat: req.query.lat, long: req.query.long};
             }
             response['directLineURI'] = process.env.DIRECTLINE_ENDPOINT_URI;
+            var scnId = process.env.SCENARIO_ID;
+            if ( scnId ) {
+              response['optionalAttributes'] = {scenarioId: scnId};
+              console.log("Scenario ID:" + scnId);
+            }
             const jwtToken = jwt.sign(response, process.env.APP_SECRET);
             res.send(jwtToken);
         })

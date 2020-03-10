@@ -19,6 +19,7 @@ healthBot:
   appSecret:
   instrumentationKey:
   directLineApiEndpointUri: "directLine.botframework.com"
+  scenarioId:
 
 serviceAccount:
   # Specifies whether a service account should be created
