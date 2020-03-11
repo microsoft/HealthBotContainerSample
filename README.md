@@ -64,9 +64,9 @@ A simple web page to hand off users to the Microsoft Health bot.
 
    Refer to the documentation [here](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal).
 
-6. Push the Web Chat application container image to the Container Registry
+6. Push the Web Chat application container image into the Container Registry
 
-   Refer to the command snippet below to push the container image into the ACR.  Remember to substitute to correct value for the ACR instance (name) in all the commands.
+   Refer to the command snippet below to push the container image into the ACR.  Remember to substitute the correct value for the ACR instance (name) in all the commands.
 
    ```bash
    # Login to the ACR with your credentials
@@ -85,7 +85,7 @@ A simple web page to hand off users to the Microsoft Health bot.
 
 7. Update the *Helm* Chart values file
 
-   Edit the *Helm* chart values file `./bot-client/values.yaml` with correct values. Refer to the table below.
+   Edit the *Helm* chart values file `./bot-client/values.yaml` and specify correct values for application and Kubernetes deployment parameters. Refer to the table below.
 
    Parameter Name | Description
    -------------- | -----------
@@ -93,8 +93,8 @@ A simple web page to hand off users to the Microsoft Health bot.
    image.registry | FQDN of the ACR instance.  Eg., acr-name.azurecr.io
    image.repository | Web Chat application repository name. Eg., health-bot-client
    image.tag | Tag name for the application container image.  Eg., latest
-   healthBot.webchatSecret | Healthcare Bot Web secret.  Eg., value of `webchat_secret` from the [Health Bot Service Portal](https://us.healthbot.microsoft.com)
-   healthBot.appSecret | Healthcare Bot App secret.  Eg., value of `app_secret` from the [Health Bot Service Portal](https://us.healthbot.microsoft.com)
+   healthBot.webchatSecret | Healthcare Bot Web secret.  Eg., value of `webchat_secret` from the Health Bot Service Portal.
+   healthBot.appSecret | Healthcare Bot App secret.  Eg., value of `app_secret` from the Health Bot Service Portal.
    healthBot.instrumentationKey | Azure Application Insights instrumentation key
    healthBot.directLineApiEndpointUri | Direct Line Channel URI for Bot Service.  Refer to the last section for details.  Can be left empty.
    healthBot.scenarioId | Healthcare bot scenario ID
