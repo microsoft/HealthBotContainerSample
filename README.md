@@ -101,7 +101,7 @@ A simple web page to hand off users to the Microsoft Health bot.
 
 8. Deploy Web Chat Client Application
 
-   Use *Helm* to deploy the application on AKS. Refer to the command snippet below.
+   Use *Helm* to deploy the application on AKS. The application will be deployed in the **healthbot** namespace.  Refer to the command snippet below.
 
    ```bash
    # If you are using helm v2, update the 'apiVersion' value in 'bot-client/Chart.yaml' to v1.
@@ -109,7 +109,7 @@ A simple web page to hand off users to the Microsoft Health bot.
    # First, switch to the GitHub repo. directory 'HealthBotContainerSample'
    # which you cloned in Step 3 above.
    #
-   # Deploy the Web Chat client application.
+   # Deploy the Web Chat client application in the 'healthbot' k8s namespace.
    $ helm install bot-client ./bot-client/ --namespace healthbot 
    #
    # Verify the Web Chat application got deployed on AKS
