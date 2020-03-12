@@ -71,7 +71,30 @@ function initBotConversation() {
         webSocket: true
     });
     startChat(user, botConnection);
-    botConnection.postActivity({type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"}).subscribe(function (id) {});
+
+    // Use the following acitivty to enable an authenticated end user experience.
+    /*
+    botConnection.postActivity(
+        {type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"
+    }).subscribe(function (id) {});
+    */
+
+    // Use the following activity to proactively invoke a bot scenario. 
+    /*
+    botConnection.postActivity({
+        type: "invoke",
+        value: {
+            trigger: "{scenario}",
+            args: {
+                myVar1: "{custom_arg_1}",
+                myVar2: "{custom_arg_2}"
+            }
+        },
+        from: user,
+        name: "TriggerScenario"
+    }).subscribe(function(id) {});
+    */
+
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
         .subscribe(function (activity) {sendUserLocation(botConnection, user)});
