@@ -82,6 +82,43 @@ function initBotConversation() {
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
         .subscribe(function (activity) {sendUserLocation(botConnection, user)});
+
+    // disable the upload label and button's
+    let x = document.getElementsByClassName("wc-console has-upload-button");
+    if (x !== null && x.length > 0) { x[0].style.display = "none"; }
+    
+    /** Alternate way to disable the upload attachment label and control
+    // Upload label
+    var uploadLabel = document.querySelector(".wc-upload");
+    if (uploadLabel) {
+      console.log("Found Label");
+      uploadLabel.remove();
+    }
+    else console.log("label not found");
+
+    // Upload button
+    var uploadButton = document.getElementById("wc-upload-input");
+    if (uploadButton) {
+      console.log("Found it");
+      uploadButton.remove();
+    }
+    else console.log('button not found!');
+
+    // Disable the input field
+    var shellInput = document.querySelector(".wc-shellinput");
+    shellInput.disabled = true; */
+
+    // Add the 'x' close button in the header to allow user to exit the chat window
+    var chatHdr = document.querySelector(".wc-header");
+    var closeButton = document.createElement("button");
+    closeButton.style.float = "right";
+    closeButton.innerText = "X";
+    closeButton.onclick = function() {
+      // botConnection.postActivity({type: "message", text: "Start Over", from: user}).subscribe(function (id) { console.log("Reinit Conv.") });
+
+      window.parent.deleteChatWindow();
+    };
+    chatHdr.childNodes[0].append(closeButton);
 }
 
 function startChat(user, botConnection) {

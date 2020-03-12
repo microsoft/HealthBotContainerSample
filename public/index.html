@@ -23,7 +23,6 @@
 <meta name="msapplication-config" content="/docs/4.4/assets/img/favicons/browserconfig.xml">
 <meta name="theme-color" content="#563d7c">
 
-
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -44,11 +43,26 @@
     <link href="./stylesheets/sticky-footer-navbar.css" rel="stylesheet">
     <link href="./stylesheets/jumbotron.css" rel="stylesheet">
 
-    <!-- Healthcare Bot stylesheets and scripts -->
-    <link href="https://hatenantstorageprod.blob.core.windows.net/public-websites/webchat/botchat.css?v=5" rel="stylesheet" />
-    <link href="stylesheets/style.css?v=5" rel="stylesheet" />
-    <script src="https://hatenantstorageprod.blob.core.windows.net/public-websites/webchat/botchat.js?v=5"></script>
-    <script src="index.js?v=5"></script>
+    <script>
+      function deleteChatWindow() {
+        var chFrame = document.getElementById('chFrame');
+        chFrame.contentWindow.document.open();
+        chFrame.contentWindow.document.write("");
+        chFrame.contentWindow.document.close();
+
+        chFrame.src = "./cb_index.html";
+        var chatButton = document.getElementById('startChatBtn');
+	chatButton.disabled = false;
+      }
+      function initiateChat() {
+        var chFrame = document.getElementById('chFrame');
+
+        var chatButton = document.getElementById('startChatBtn');
+	chatButton.disabled = true;
+
+        chFrame.contentWindow.chatRequested();
+      }
+    </script>
   </head>
   <body class="d-flex flex-column h-100">
     <header>
@@ -82,7 +96,7 @@
     <div class="container">
       <h1 class="display-3">Coronavirus (COVID-19) Advisory</h1>
       <p>This is an emerging, rapidly evolving situation and we will provide updated information as it becomes available.  In the meantime, feel free to use our <b>Chat Bot</b> to ascertain if you or a family member may be at risk.</p>
-      <p><a class="btn btn-primary btn-lg" href="#" onclick="chatRequested()" role="button">Access Health Bot »</a></p>
+      <p><button type="button" class="btn btn-primary btn-lg" id="startChatBtn" onclick="initiateChat()">Access Health Bot »</a></p>
     </div>
   </div>
 
@@ -112,7 +126,8 @@
         </div>
       </div>
       <div class="col-md-4">
-        <div class="container" id="botContainer"></div>
+        <!-- <div class="container" id="botContainer"></div> -->
+        <iframe id="chFrame" src="./cb_index.html" style="border:0px; width=100%; height:100%;"></iframe>
       </div>
     </div>
   </div> <!-- /container -->
