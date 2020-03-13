@@ -143,6 +143,12 @@ A simple web page to hand off users to the Microsoft Health bot.
    $ kubectl get hpa -n healthbot
    #
    ```
+   
+10. View a live Web Chat client application deployed and running on AKS
+
+    Access the URL below to experience a live Web Chat client connected to the Microsoft Healthcare Bot Service.
+
+    - http://covid19-test.westus2.cloudapp.azure.com
 
 ## Set the Bot service direct line channel endpoint (optional)
 
