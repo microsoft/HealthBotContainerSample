@@ -28,3 +28,7 @@ html, body {
   white-space: unset!important;
   margin: -5px 6px 10px 6px !important;
 }
+
+.ac-input div input[type="checkbox"]:checked + div{
+  color: #0177ca!important
+}
