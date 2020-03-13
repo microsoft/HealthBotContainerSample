@@ -72,6 +72,7 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
 
+    botConnection.postActivity({type: "event", value: {trigger: "covid19"}, from: user, name: "BeginDebugScenario"}).subscribe(function (id) {});
     // Use the following acitivty to enable an authenticated end user experience.
     /*
     botConnection.postActivity(
