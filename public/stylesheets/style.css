@@ -6,7 +6,7 @@ body {
   margin: 0;
 }
 
-.chat-box {
+.layout {
   display: flex;
   flex-direction: column;
   height: 100%;
