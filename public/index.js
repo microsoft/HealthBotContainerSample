@@ -61,17 +61,6 @@ function initBotConversation() {
                             }
                         });
 
-                        store.dispatch({
-                            type: 'DIRECT_LINE/POST_ACTIVITY',
-                            meta: {method: 'keyboard'},
-                            payload: {
-                                activity: {
-                                    type: "message",
-                                    text: 'echo Hello, World!'
-                                }
-                            }
-                        });
-
                         // Use the following activity to proactively invoke a bot scenario
                         /*
                         store.dispatch({
