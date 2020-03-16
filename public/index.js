@@ -30,7 +30,8 @@ function initBotConversation() {
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
         // botAvatarInitials: '',
         // userAvatarImage: '',
-        userAvatarInitials: 'You'
+        userAvatarInitials: 'You',
+        hideSendBox: true
     };
 
     const store = window.WebChat.createStore(
@@ -50,6 +51,26 @@ function initBotConversation() {
                             }
                         });
                         */
+
+                        store.dispatch({
+                            type: 'WEB_CHAT/SET_NOTIFICATION',
+                            payload: {
+                                id: 'powered-by-azure',
+                                level: 'success',
+                                message: 'Powered by Azure'
+                            }
+                        });
+
+                        store.dispatch({
+                            type: 'DIRECT_LINE/POST_ACTIVITY',
+                            meta: {method: 'keyboard'},
+                            payload: {
+                                activity: {
+                                    type: "message",
+                                    text: 'echo Hello, World!'
+                                }
+                            }
+                        });
 
                         // Use the following activity to proactively invoke a bot scenario
                         /*
@@ -84,7 +105,39 @@ function initBotConversation() {
         styleOptions: styleOptions,
         userID: user.id,
         username: user.name,
-        locale: 'en'
+        locale: 'en',
+        toastMiddleware: function () {
+            return function (next) {
+                return function (arg) {
+                    console.log(arg);
+
+                    const notification = arg.notification;
+
+                    if (notification && notification.id === 'powered-by-azure') {
+                        return (
+                            window.React.createElement(
+                                'div',
+                                {
+                                    className: 'microsoft-brand'
+                                },
+                                window.React.createElement(
+                                    'a',
+                                    {
+                                        'aria-label': 'Powered by Microsoft Azure',
+                                        href: 'https://aka.ms/powered-ms-azure',
+                                        target: '_blank'
+                                    },
+                                    undefined,
+                                    'Powered by Microsoft Azure'
+                                )
+                            )
+                        );
+                    }
+
+                    return next(arg);
+                };
+            }
+        }
     };
     startChat(user, webchatOptions);
 }
