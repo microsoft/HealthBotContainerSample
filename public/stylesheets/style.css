@@ -21,6 +21,7 @@ body {
 .azureBottomBar {
   background-color: White;
   border-top: solid 1px #E6E6E6;
+  display: flex;
   font-size: 13px;
   padding: 12px;
   justify-content: center;
