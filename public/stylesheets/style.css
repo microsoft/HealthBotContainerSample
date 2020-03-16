@@ -1,11 +1,45 @@
 html, body {
   height: 100%;
 }
+
 body {
   margin: 0;
 }
 
-#webchat {
+.chat-box {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+#webchat {
+  flex: 1;
+  overflow: hidden;
+}
+
+.azureBottomBar {
+  background-color: White;
+  border-top: solid 1px #E6E6E6;
+  font-size: 13px;
+  padding: 12px;
+  justify-content: center;
+}
+
+.azureBottomBar--link {
+  align-items: center;
+  color: #707070;
+  display: flex;
+  justify-content: center;
+  padding: 4px;
+  text-decoration: none;
+}
+
+.azureBottomBar--image {
+  height: 16px;
+}
+
+.azureBottomBar--text {
+  font-family: 'Segoe Semibold', 'Calibri', 'Helvetica Neue', 'Arial', 'sans-serif';
+  padding: 0 8px;
 }

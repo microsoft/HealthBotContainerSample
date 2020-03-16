@@ -1,54 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script crossorigin="anonymous" integrity="sha384-qn+ML/QkkJxqn4LLs1zjaKxlTg2Bl/6yU/xBTJAgxkmNGc6kMZyeskAG0a7eJBR1" src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
+    <meta name="viewport" content="width=device-width" />
     <script src="https://cdn.botframework.com/botframework-webchat/4.8.0/webchat-es5.js"></script>
     <script src="index.js"></script>
     <link href="stylesheets/style.css" rel="stylesheet" />
-    <style type="text/css">
-        .chat-box {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        #webchat {
-            flex: 1
-        }
-
-        .azureBottomBar {
-            background-color: White;
-            border-top: solid 1px #E6E6E6;
-            font-size: 13px;
-            padding: 12px;
-            justify-content: center;
-        }
-
-        .azureBottomBar--link {
-            color: #707070;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        .azureBottomBar--image {
-            height: 30px;
-        }
-
-        .azureBottomBar--text {
-            /* color: #005EAA; */
-            font-family: 'Segoe Semibold', 'Calibri', 'Helvetica Neue', 'Arial', 'sans-serif';
-            padding: 0 4px;
-        }
-    </style>
 </head>
 <body>
     <div class="chat-box">
         <div id="webchat" role="main"></div>
         <div class="azureBottomBar">
-            <a class="azureBottomBar--link" href="https://aka.ms/powered-ms-azure">
-                <img alt="" class="azureBottomBar--image" src="microsoft.png" />
+            <a class="azureBottomBar--link" href="https://aka.ms/powered-ms-azure" target="_blank">
+                <img alt="" class="azureBottomBar--image" src="microsoft.svg" />
                 <span class="azureBottomBar--text">Powered by Microsoft Azure</span>
             </a>
         </div>
