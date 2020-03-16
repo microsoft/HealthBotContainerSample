@@ -31,11 +31,44 @@
         .microsoft-brand a:hover {
             text-decoration: underline;
         }
+
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #webchat {
+            flex: 1
+        }
+
+        .azureBottomBar {
+            background-color: #F7F7F7;
+            display: flex;
+            font-family: 'Segoe UI Regular', 'Calibri', 'Helvetica Neue', 'Arial', 'sans-serif';
+            font-size: 12px;
+            padding: 8px 10px;
+            justify-content: center;
+        }
+
+        .azureBottomBar--link {
+            color: #5E5E5E;
+            text-decoration: none;
+        }
+
+        .azureBottomBar--link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-<img class="azure-logo" src="azure.svg" />
-<div id="webchat" role="main"></div>
+    <div class="chat-box">
+        <img class="azure-logo" src="azure.svg" />
+        <div id="webchat" role="main"></div>
+        <div class="azureBottomBar">
+            <a class="azureBottomBar--link" href="https://aka.ms/powered-ms-azure">Powered by Microsoft</a>
+        </div>
+    </div>
 <script>requestChatBot();</script>
 </body>
 </html>

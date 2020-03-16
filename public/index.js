@@ -31,7 +31,7 @@ function initBotConversation() {
         // botAvatarInitials: '',
         // userAvatarImage: '',
         userAvatarInitials: 'You',
-        hideSendBox: true
+        // hideSendBox: true
     };
 
     const store = window.WebChat.createStore(
