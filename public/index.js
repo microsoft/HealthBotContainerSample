@@ -53,11 +53,24 @@ function initBotConversation() {
                         */
 
                         store.dispatch({
-                            type: 'WEB_CHAT/SET_NOTIFICATION',
+                            type: 'WEB_CHAT/SEND_MESSAGE',
+                            meta: { method: 'keyboard' },
                             payload: {
-                                id: 'powered-by-azure',
-                                level: 'success',
-                                message: 'Powered by Azure'
+                                type: 'message',
+                                text: 'Hello, World!'
+                            }
+                        });
+
+                        store.dispatch({
+                            type: 'DIRECT_LINE/INCOMING_ACTIVITY',
+                            payload: {
+                                activity: {
+                                    from: {
+                                        role: 'channel'
+                                    },
+                                    type: 'event',
+                                    name: 'ms-logo'
+                                }
                             }
                         });
 
@@ -95,35 +108,24 @@ function initBotConversation() {
         userID: user.id,
         username: user.name,
         locale: 'en',
-        toastMiddleware: function () {
+        activityMiddleware: function () {
             return function (next) {
                 return function (arg) {
-                    const notification = arg.notification;
+                    const activity = arg.activity;
 
-                    if (notification && notification.id === 'powered-by-azure') {
-                        return (
-                            window.React.createElement(
-                                'div',
-                                {
-                                    className: 'microsoft-brand'
-                                },
-                                window.React.createElement(
-                                    'a',
-                                    {
-                                        'aria-label': 'Powered by Microsoft Azure',
-                                        href: 'https://aka.ms/powered-ms-azure',
-                                        target: '_blank'
-                                    },
-                                    undefined,
-                                    'Powered by Microsoft Azure'
-                                )
-                            )
-                        );
+                    if (activity.type === 'event' && activity.name === 'ms-logo') {
+                        return () => window.React.createElement(
+                            'div',
+                            {
+                                className: 'firstActivityBranding'
+                            },
+                            'Powered by Microsoft'
+                        )
                     }
 
                     return next(arg);
                 };
-            }
+            };
         }
     };
     startChat(user, webchatOptions);
