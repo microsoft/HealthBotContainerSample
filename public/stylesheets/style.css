@@ -29,6 +29,22 @@ body {
   text-decoration: underline;
 }
 
-.firstActivityBranding {
-  height: 16px;
+#webchat [role="complementary"] ul[role="list"]::after {
+  color: #707070;
+  font-family: 'Segoe Semibold', Calibri, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  content: 'Powered by Microsoft Azure';
+  position: sticky;
+  bottom: 0;
+  right: 0;
+  padding: 8px;
+  text-align: right;
+  display: block;
+}
+
+.webchat__scrollToEndButton {
+  bottom: 32px;
+  left: 50%;
+  right: unset;
+  transform: translate(-50%, 0);
 }

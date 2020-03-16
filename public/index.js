@@ -61,19 +61,19 @@ function initBotConversation() {
                             }
                         });
 
-                        store.dispatch({
-                            type: 'DIRECT_LINE/INCOMING_ACTIVITY',
-                            payload: {
-                                activity: {
-                                    from: {
-                                        role: 'channel'
-                                    },
-                                    timestamp: '2999-12-31T23:59:59.999Z',
-                                    type: 'event',
-                                    name: 'ms-logo'
-                                }
-                            }
-                        });
+                        // store.dispatch({
+                        //     type: 'DIRECT_LINE/INCOMING_ACTIVITY',
+                        //     payload: {
+                        //         activity: {
+                        //             from: {
+                        //                 role: 'channel'
+                        //             },
+                        //             timestamp: '2999-12-31T23:59:59.999Z',
+                        //             type: 'event',
+                        //             name: 'ms-logo'
+                        //         }
+                        //     }
+                        // });
 
                         // Use the following activity to proactively invoke a bot scenario
                         /*
@@ -109,24 +109,24 @@ function initBotConversation() {
         userID: user.id,
         username: user.name,
         locale: 'en',
-        activityMiddleware: function () {
-            return function (next) {
-                return function (arg) {
-                    const activity = arg.activity;
+        // activityMiddleware: function () {
+        //     return function (next) {
+        //         return function (arg) {
+        //             const activity = arg.activity;
 
-                    if (activity.type === 'event' && activity.name === 'ms-logo') {
-                        return () => window.React.createElement(
-                            'div',
-                            {
-                                className: 'firstActivityBranding'
-                            }
-                        )
-                    }
+        //             if (activity.type === 'event' && activity.name === 'ms-logo') {
+        //                 return () => window.React.createElement(
+        //                     'div',
+        //                     {
+        //                         className: 'firstActivityBranding'
+        //                     }
+        //                 )
+        //             }
 
-                    return next(arg);
-                };
-            };
-        }
+        //             return next(arg);
+        //         };
+        //     };
+        // }
     };
     startChat(user, webchatOptions);
 }
@@ -134,5 +134,5 @@ function initBotConversation() {
 function startChat(user, webchatOptions) {
     const botContainer = document.getElementById('webchat');
     window.WebChat.renderWebChat(webchatOptions, botContainer);
-    document.querySelector('.brandingWatermark--link').removeAttribute('hidden');
+    // document.querySelector('.brandingWatermark--link').removeAttribute('hidden');
 }
