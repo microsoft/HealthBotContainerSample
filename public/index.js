@@ -72,7 +72,7 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
 
-    // Use the following acitivty to enable an authenticated end user experience.
+    // Use the following activity to enable an authenticated end user experience.
     /*
     botConnection.postActivity(
         {type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"
