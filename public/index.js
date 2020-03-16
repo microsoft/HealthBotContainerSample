@@ -98,8 +98,6 @@ function initBotConversation() {
         toastMiddleware: function () {
             return function (next) {
                 return function (arg) {
-                    console.log(arg);
-
                     const notification = arg.notification;
 
                     if (notification && notification.id === 'powered-by-azure') {
