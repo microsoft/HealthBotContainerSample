@@ -1,6 +1,7 @@
 html, body {
   height: 100%;
 }
+
 body {
   margin: 0;
 }
@@ -8,4 +9,26 @@ body {
 #webchat {
   height: 100%;
   width: 100%;
+}
+
+.brandingWatermark {
+  position: absolute;
+  bottom: 40px;
+  padding: 8px;
+  right: 0;
+}
+
+.brandingWatermark--link {
+  color: #707070;
+  font-family: 'Segoe Semibold', Calibri, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.brandingWatermark--link:hover {
+  text-decoration: underline;
+}
+
+.firstActivityBranding {
+  height: 16px;
 }

@@ -5,19 +5,12 @@
     <script src="https://cdn.botframework.com/botframework-webchat/4.8.0/webchat-es5.js"></script>
     <script src="index.js"></script>
     <link href="stylesheets/style.css" rel="stylesheet" />
-    <style type="text/css">
-        .firstActivityBranding {
-            color: #5E5E5E;
-            font-family: 'Segoe UI Regular', 'Calibri', 'Helvetica Neue', 'Arial', 'sans-serif';
-            font-size: 12px;
-            /* opacity: 20%; */
-            padding: 0 10px;
-            text-align: right;
-        }
-    </style>
 </head>
 <body>
 <div id="webchat" role="main"></div>
+<div class="brandingWatermark">
+    <a class="brandingWatermark--link" hidden href="https://aka.ms/">Powered by Microsoft Azure</a>
+</div>
 <script>requestChatBot();</script>
 </body>
 </html>

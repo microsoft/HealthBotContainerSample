@@ -119,8 +119,7 @@ function initBotConversation() {
                             'div',
                             {
                                 className: 'firstActivityBranding'
-                            },
-                            'Powered by Microsoft'
+                            }
                         )
                     }
 
@@ -135,4 +134,5 @@ function initBotConversation() {
 function startChat(user, webchatOptions) {
     const botContainer = document.getElementById('webchat');
     window.WebChat.renderWebChat(webchatOptions, botContainer);
+    document.querySelector('.brandingWatermark--link').removeAttribute('hidden');
 }
