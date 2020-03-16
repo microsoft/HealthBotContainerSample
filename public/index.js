@@ -31,7 +31,7 @@ function initBotConversation() {
         // botAvatarInitials: '',
         // userAvatarImage: '',
         userAvatarInitials: 'You',
-        hideSendBox: true
+        // hideSendBox: true
     };
 
     const store = window.WebChat.createStore(
@@ -68,6 +68,7 @@ function initBotConversation() {
                                     from: {
                                         role: 'channel'
                                     },
+                                    timestamp: '2999-12-31T23:59:59.999Z',
                                     type: 'event',
                                     name: 'ms-logo'
                                 }
