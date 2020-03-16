@@ -28,12 +28,10 @@ function initBotConversation() {
     });
     const styleOptions = {
         backgroundColor: '#F8F8F8',
-        // botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
-        // botAvatarImage: 'cdc2.svg',
-        botAvatarInitials: 'CDC',
+        botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
+        // botAvatarInitials: '',
         // userAvatarImage: '',
-        userAvatarInitials: 'You',
-        // hideSendBox: true
+        userAvatarInitials: 'You'
     };
 
     const store = window.WebChat.createStore(
