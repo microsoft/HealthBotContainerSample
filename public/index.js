@@ -29,7 +29,7 @@ function initBotConversation() {
     const styleOptions = {
         backgroundColor: '#F8F8F8',
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
-        // botAvatarInitials: '',
+        botAvatarInitials: 'MS',
         // userAvatarImage: '',
         userAvatarInitials: 'You'
     };
