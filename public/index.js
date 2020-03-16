@@ -27,6 +27,7 @@ function initBotConversation() {
         domain: domain
     });
     const styleOptions = {
+        backgroundColor: '#F8F8F8',
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
         // botAvatarInitials: '',
         // userAvatarImage: '',
@@ -51,15 +52,6 @@ function initBotConversation() {
                             }
                         });
                         */
-
-                        store.dispatch({
-                            type: 'WEB_CHAT/SET_NOTIFICATION',
-                            payload: {
-                                id: 'powered-by-azure',
-                                level: 'success',
-                                message: 'Powered by Azure'
-                            }
-                        });
 
                         // Use the following activity to proactively invoke a bot scenario
                         /*
@@ -94,37 +86,7 @@ function initBotConversation() {
         styleOptions: styleOptions,
         userID: user.id,
         username: user.name,
-        locale: 'en',
-        toastMiddleware: function () {
-            return function (next) {
-                return function (arg) {
-                    const notification = arg.notification;
-
-                    if (notification && notification.id === 'powered-by-azure') {
-                        return (
-                            window.React.createElement(
-                                'div',
-                                {
-                                    className: 'microsoft-brand'
-                                },
-                                window.React.createElement(
-                                    'a',
-                                    {
-                                        'aria-label': 'Powered by Microsoft Azure',
-                                        href: 'https://aka.ms/powered-ms-azure',
-                                        target: '_blank'
-                                    },
-                                    undefined,
-                                    'Powered by Microsoft Azure'
-                                )
-                            )
-                        );
-                    }
-
-                    return next(arg);
-                };
-            }
-        }
+        locale: 'en'
     };
     startChat(user, webchatOptions);
 }
