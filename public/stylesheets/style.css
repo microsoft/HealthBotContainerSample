@@ -32,3 +32,48 @@ html, body {
 .ac-input div input[type="checkbox"]:checked + div{
   color: #0177ca!important
 }
+
+.wc-app ::-webkit-scrollbar-thumb {
+    background-color: #f5f5f5;
+}
+
+.wc-header {
+    background-color: #003A60;
+    background-image: url(../images/Triage-header.jpg);
+    background-position-x: center;
+    background-repeat: no-repeat;
+    padding: 0;
+    height: 109px;
+}
+
+.wc-console {
+    border-color: #f5f5f5;
+}
+
+.wc-message-from-bot .wc-message-content {
+    background-color: #f3f3f3;
+}
+
+.wc-message-from-me .wc-message-content {
+    background-color: #337cb3;
+}
+
+.wc-message-from-me svg.wc-message-callout path {
+    fill: #337cb3;
+}
+
+.wc-card button {
+    color: #337cb3;
+}
+
+.wc-card button:hover {
+    background-color: transparent;
+    border-color: #337cb3;
+    color: #337cb3;
+}
+
+.wc-card button:active {
+    background-color: #337cb3;
+    border-color: #337cb3;
+    color: #ffffff;
+}

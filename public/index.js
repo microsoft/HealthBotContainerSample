@@ -80,20 +80,15 @@ function initBotConversation() {
     */
 
     // Use the following activity to proactively invoke a bot scenario. 
-    /*
     botConnection.postActivity({
         type: "invoke",
         value: {
-            trigger: "{scenario}",
-            args: {
-                myVar1: "{custom_arg_1}",
-                myVar2: "{custom_arg_2}"
-            }
+            trigger: "triage"
         },
         from: user,
         name: "TriggerScenario"
     }).subscribe(function(id) {});
-    */
+    
 
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
@@ -108,7 +103,8 @@ function startChat(user, botConnection) {
         botConnection: botConnection,
         user: user,
         locale: 'en',
-        resize: 'detect'
+        resize: 'detect',
+        chatTitle: ' '
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
 }
