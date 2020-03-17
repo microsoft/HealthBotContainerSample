@@ -70,18 +70,7 @@ function initBotConversation() {
         domain,
         webSocket: true
     });
-    startChat(user, botConnection);
-
-    botConnection.postActivity({
-        type: "event", 
-        value: {
-            trigger: "covid19_metrics",
-            args: {
-                intent: "total_metrics"
-            }
-        }, 
-        from: user, 
-        name: "TriggerScenario"}).subscribe(function (id) {});
+    startChat(user, botConnection);   
 
     botConnection.postActivity({
         type: "event",
