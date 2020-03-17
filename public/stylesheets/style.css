@@ -42,8 +42,25 @@ html, body {
     background-image: url(../images/Triage-header.jpg);
     background-position-x: center;
     background-repeat: no-repeat;
+    background-size: auto 100%;
     padding: 0;
-    height: 109px;
+    min-height: 40px;
+    max-height: 109px;
+    height: 40px;
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    .wc-header {
+        height: 70px;
+    }     
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    .wc-header {
+        height: 109px;
+    }     
 }
 
 .wc-console {
