@@ -53,15 +53,6 @@ function initBotConversation() {
                         });
                         */
 
-                        store.dispatch({
-                            type: 'WEB_CHAT/SEND_MESSAGE',
-                            meta: { method: 'keyboard' },
-                            payload: {
-                                type: 'message',
-                                text: 'Hello, World!'
-                            }
-                        });
-
                         // Use the following activity to proactively invoke a bot scenario
                         /*
                         store.dispatch({
