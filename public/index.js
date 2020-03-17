@@ -27,8 +27,9 @@ function initBotConversation() {
         domain: domain
     });
     const styleOptions = {
+        backgroundColor: '#F8F8F8',
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
-        // botAvatarInitials: '',
+        botAvatarInitials: 'CDC',
         // userAvatarImage: '',
         userAvatarInitials: 'You',
         // hideSendBox: true
@@ -60,20 +61,6 @@ function initBotConversation() {
                                 text: 'Hello, World!'
                             }
                         });
-
-                        // store.dispatch({
-                        //     type: 'DIRECT_LINE/INCOMING_ACTIVITY',
-                        //     payload: {
-                        //         activity: {
-                        //             from: {
-                        //                 role: 'channel'
-                        //             },
-                        //             timestamp: '2999-12-31T23:59:59.999Z',
-                        //             type: 'event',
-                        //             name: 'ms-logo'
-                        //         }
-                        //     }
-                        // });
 
                         // Use the following activity to proactively invoke a bot scenario
                         /*
@@ -108,25 +95,7 @@ function initBotConversation() {
         styleOptions: styleOptions,
         userID: user.id,
         username: user.name,
-        locale: 'en',
-        // activityMiddleware: function () {
-        //     return function (next) {
-        //         return function (arg) {
-        //             const activity = arg.activity;
-
-        //             if (activity.type === 'event' && activity.name === 'ms-logo') {
-        //                 return () => window.React.createElement(
-        //                     'div',
-        //                     {
-        //                         className: 'firstActivityBranding'
-        //                     }
-        //                 )
-        //             }
-
-        //             return next(arg);
-        //         };
-        //     };
-        // }
+        locale: 'en'
     };
     startChat(user, webchatOptions);
 }
@@ -134,5 +103,4 @@ function initBotConversation() {
 function startChat(user, webchatOptions) {
     const botContainer = document.getElementById('webchat');
     window.WebChat.renderWebChat(webchatOptions, botContainer);
-    // document.querySelector('.brandingWatermark--link').removeAttribute('hidden');
 }

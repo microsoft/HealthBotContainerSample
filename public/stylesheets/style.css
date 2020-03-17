@@ -11,35 +11,17 @@ body {
   width: 100%;
 }
 
-.brandingWatermark {
-  position: absolute;
-  bottom: 40px;
-  padding: 8px;
-  right: 0;
-}
-
-.brandingWatermark--link {
-  color: #707070;
-  font-family: 'Segoe Semibold', Calibri, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 13px;
-  text-decoration: none;
-}
-
-.brandingWatermark--link:hover {
-  text-decoration: underline;
-}
-
 #webchat [role="complementary"] ul[role="list"]::after {
+  background: linear-gradient(rgba(248, 248, 248, 0), rgba(248, 248, 248, .63), #F8F8F8 40%);
+  bottom: 0;
   color: #707070;
+  content: 'Powered by Microsoft Azure';
+  display: block;
   font-family: 'Segoe Semibold', Calibri, 'Helvetica Neue', Arial, sans-serif;
   font-size: 13px;
-  content: 'Powered by Microsoft Azure';
+  padding: 17px 8px 8px;
   position: sticky;
-  bottom: 0;
-  right: 0;
-  padding: 8px;
   text-align: right;
-  display: block;
 }
 
 .webchat__scrollToEndButton {
