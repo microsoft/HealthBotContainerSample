@@ -72,7 +72,7 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
 
-    botConnection.postActivity({type: "event", value: {trigger: "covid19_assessment"}, from: user, name: "BeginDebugScenario"}).subscribe(function (id) {});
+    botConnection.postActivity({type: "event", value: {trigger: "covid19_assessment"}, from: user, name: "TriggerScenario"}).subscribe(function (id) {});
 
     var shellInput = document.querySelector(".wc-console.has-upload-button");
         shellInput.parentNode.removeChild(shellInput);
