@@ -2,7 +2,7 @@ function requestChatBot() {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
-    oReq.open("GET", path);
+    oReq.open("POST", path);
     oReq.send();
 }
 
