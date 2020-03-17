@@ -4,6 +4,9 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 const rp = require("request-promise");
 const cookieParser = require('cookie-parser');
+const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
+const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
+const APP_SECRET = process.env.APP_SECRET;
 
 // Initialize the web app instance,
 const app = express();
@@ -22,7 +25,7 @@ function isUserAuthenticated(){
     return true;
 }
 
-app.get('/chatBot',  function(req, res) {
+app.post('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
         return
@@ -31,7 +34,7 @@ app.get('/chatBot',  function(req, res) {
         method: 'POST',
         uri: 'https://directline.botframework.com/v3/directline/tokens/generate',
         headers: {
-            'Authorization': 'Bearer ' + process.env.WEBCHAT_SECRET
+            'Authorization': 'Bearer ' + WEBCHAT_SECRET
         },
         json: true
     };
@@ -51,8 +54,8 @@ app.get('/chatBot',  function(req, res) {
             if (req.query.lat && req.query.long)  {
                 response['location'] = {lat: req.query.lat, long: req.query.long};
             }
-            response['directLineURI'] = process.env.DIRECTLINE_ENDPOINT_URI;
-            const jwtToken = jwt.sign(response, process.env.APP_SECRET);
+            response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
+            const jwtToken = jwt.sign(response, APP_SECRET);
             res.send(jwtToken);
         })
         .catch(function (err) {

@@ -10,7 +10,7 @@ function requestChatBot(loc) {
     if (params['userId']) {
         path += "&userId=" + params['userId'];
     }
-    oReq.open("GET", path);
+    oReq.open("POST", path);
     oReq.send();
 }
 
@@ -84,6 +84,7 @@ function initBotConversation() {
     /* var shellInput = document.querySelector(".wc-console.has-upload-button");
         shellInput.parentNode.removeChild(shellInput); */
     // Use the following acitivty to enable an authenticated end user experience.
+
     /*
     botConnection.postActivity(
         {type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"
