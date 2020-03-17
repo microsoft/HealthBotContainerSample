@@ -6,7 +6,7 @@ function requestChatBot() {
     if (params['userId']) {
         path += "&userId=" + params['userId'];
     }
-    oReq.open("GET", path);
+    oReq.open("POST", path);
     oReq.send();
 }
 
