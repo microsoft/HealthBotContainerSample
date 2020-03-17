@@ -77,11 +77,20 @@ function initBotConversation() {
         value: {
             trigger: "covid19_metrics",
             args: {
-                intent: "top_metrics"
+                intent: "total_metrics"
             }
         }, 
+        from: user, 
+        name: "TriggerScenario"}).subscribe(function (id) {});
 
-    from: user, name: "TriggerScenario"}).subscribe(function (id) {});
+    botConnection.postActivity({
+        type: "event",
+        value: {
+            trigger: "covid19_assessment"
+        },
+        from: user,
+        name: "TriggerScenario"}).subscribe(function (id) {});
+
 
     /* var shellInput = document.querySelector(".wc-console.has-upload-button");
         shellInput.parentNode.removeChild(shellInput); */
