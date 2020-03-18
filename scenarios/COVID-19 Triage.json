@@ -1,0 +1,10 @@
+{
+ "name": "COVID-19 Triage",
+ "id": "7c06eec1-65bd-4a53-a85b-d8ee62202c7a",
+ "scenario_trigger": "triage",
+ "description": "",
+ "active": true,
+ "updated": "2020-03-15T20:58:21.8320000Z",
+ "userDisplayName": "Alex Sabchyshyn",
+ "code": "{\"version\":3,\"steps\":[{\"id\":\"c710ca0cab6b-e27c11c94fb5319e-7c03\",\"type\":\"prompt\",\"dataType\":\"[\\\"An Adult (18+)\\\", \\\"A Child (17 and younger)\\\"]\",\"designer\":{\"xLocation\":520,\"yLocation\":120,\"listStyle\":3,\"next\":\"a798c74a25f3-90d98dd98287307c-5570\"},\"text\":\"Who are you doing an assesment for?\",\"variable\":\"AgeGroup\",\"maxRetries\":1,\"stringId\":\"stringId_5433820f4f4e5da5\",\"choiceType\":\"choice\"},{\"id\":\"a798c74a25f3-90d98dd98287307c-5570\",\"type\":\"branch\",\"condition\":\"scenario.AgeGroup.index === 0\",\"designer\":{\"xLocation\":524,\"yLocation\":216,\"next\":\"ed0a7ef44baf-31a16db97b393c6a-d70f\"},\"targetStepId\":\"b04b2382e7e2-8ca8282ce3720bc3-a1d8\"},{\"id\":\"b04b2382e7e2-8ca8282ce3720bc3-a1d8\",\"type\":\"beginScenario\",\"designer\":{\"xLocation\":654,\"yLocation\":296},\"scenario\":\"hsc\"},{\"id\":\"ed0a7ef44baf-31a16db97b393c6a-d70f\",\"type\":\"beginScenario\",\"designer\":{\"xLocation\":400,\"yLocation\":292},\"scenario\":\"phsc\"}],\"interrupting\":false,\"breaking\":false,\"returningMessage\":\"\"}"
+}
