@@ -79,7 +79,7 @@ html, body {
     display: none;
 }
 .wc-message-groups {
-    bottom: 0;
+    bottom: 32px;
 }
 
 
