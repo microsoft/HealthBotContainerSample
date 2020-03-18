@@ -1,3 +1,57 @@
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function (searchString, position) {
+        position = position || 0;
+        return this.substr(position, searchString.length) === searchString;
+    };
+}
+
+// https://tc39.github.io/ecma262/#sec-array.prototype.find
+if (!Array.prototype.find) {
+    Object.defineProperty(Array.prototype, 'find', {
+        value: function (predicate) {
+            // 1. Let O be ? ToObject(this value).
+            if (this == null) {
+                throw TypeError('"this" is null or not defined');
+            }
+
+            var o = Object(this);
+
+            // 2. Let len be ? ToLength(? Get(O, "length")).
+            var len = o.length >>> 0;
+
+            // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+            if (typeof predicate !== 'function') {
+                throw TypeError('predicate must be a function');
+            }
+
+            // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+            var thisArg = arguments[1];
+
+            // 5. Let k be 0.
+            var k = 0;
+
+            // 6. Repeat, while k < len
+            while (k < len) {
+                // a. Let Pk be ! ToString(k).
+                // b. Let kValue be ? Get(O, Pk).
+                // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+                // d. If testResult is true, return kValue.
+                var kValue = o[k];
+                if (predicate.call(thisArg, kValue, k, o)) {
+                    return kValue;
+                }
+                // e. Increase k by 1.
+                k++;
+            }
+
+            // 7. Return undefined.
+            return undefined;
+        },
+        configurable: true,
+        writable: true
+    });
+}
+
 function requestChatBot(loc) {
     const params = BotChat.queryParams(location.search);
     const oReq = new XMLHttpRequest();
@@ -27,8 +81,8 @@ function chatRequested() {
 
 function getUserLocation(callback) {
     navigator.geolocation.getCurrentPosition(
-        function(position) {
-            var latitude  = position.coords.latitude;
+        function (position) {
+            var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
             var location = {
                 lat: latitude,
@@ -36,7 +90,7 @@ function getUserLocation(callback) {
             }
             callback(location);
         },
-        function(error) {
+        function (error) {
             // user declined to share location
             console.log("location error:" + error.message);
             callback();
@@ -45,7 +99,7 @@ function getUserLocation(callback) {
 
 function sendUserLocation(botConnection, user) {
     getUserLocation(function (location) {
-        botConnection.postActivity({type: "message", text: JSON.stringify(location), from: user}).subscribe(function (id) {console.log("success")});
+        botConnection.postActivity({ type: "message", text: JSON.stringify(location), from: user }).subscribe(function (id) { console.log("success") });
     });
 }
 
@@ -63,11 +117,11 @@ function initBotConversation() {
     };
     let domain = undefined;
     if (tokenPayload.directLineURI) {
-        domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
+        domain = "https://" + tokenPayload.directLineURI + "/v3/directline";
     }
     const botConnection = new BotChat.DirectLine({
         token: tokenPayload.connectorToken,
-        domain,
+        domain: domain,
         webSocket: true
     });
     startChat(user, botConnection);
@@ -87,20 +141,20 @@ function initBotConversation() {
         },
         from: user,
         name: "TriggerScenario"
-    }).subscribe(function(id) {});
-    
+    }).subscribe(function (id) { });
+
 
     botConnection.activity$
-        .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
-        .subscribe(function (activity) {sendUserLocation(botConnection, user)});
+        .filter(function (activity) { return activity.type === "event" && activity.name === "shareLocation" })
+        .subscribe(function (activity) { sendUserLocation(botConnection, user) });
 
-        setInterval(function() {    
-            // remove all buttons except the selected one, change its color, and make unclickable
-            var buttons = document.getElementsByClassName("ac-pushButton");
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].addEventListener("click", selectOption);
-            }
-        }, 10);
+    setInterval(function () {
+        // remove all buttons except the selected one, change its color, and make unclickable
+        var buttons = document.getElementsByClassName("ac-pushButton");
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener("click", selectOption);
+        }
+    }, 10);
 }
 
 function startChat(user, botConnection) {
@@ -112,7 +166,7 @@ function startChat(user, botConnection) {
         user: user,
         locale: 'en',
         resize: 'detect',
-        chatTitle: ' '
+        chatTitle: ' ' // title bar is hidden if empty or undefined so set to space
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
 }
