@@ -93,6 +93,14 @@ function initBotConversation() {
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
         .subscribe(function (activity) {sendUserLocation(botConnection, user)});
+
+        setInterval(function() {    
+            // remove all buttons except the selected one, change its color, and make unclickable
+            var buttons = document.getElementsByClassName("ac-pushButton");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener("click", selectOption);
+            }
+        }, 10);
 }
 
 function startChat(user, botConnection) {
@@ -107,4 +115,40 @@ function startChat(user, botConnection) {
         chatTitle: ' '
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
+}
+
+function selectOption(event) {
+    disableButtons(event.target);
+}
+
+function nonSelectedButton(button) {
+    button.style.backgroundColor = "#f3f3f3";
+    button.style.color = "#cccccc";
+    button.style.borderColor = "#cccccc";
+}
+
+function selectedButton(button) {
+    button.style.backgroundColor = "#337cb3";
+    button.style.color = "white";
+    button.style.borderColor = "#cccccc";
+}
+
+function disableButtons(targetButton) {
+    selectedButton(targetButton);
+    targetButton.classList.add("old-button");
+    targetButton.parentNode.parentNode.parentNode.parentNode.style.cursor = "not-allowed";
+    var allChildren = targetButton.parentNode.childNodes;
+    for (let i = 0; i < allChildren.length; i++) {
+        if (allChildren[i].innerText) {
+            if (allChildren[i].innerText !== targetButton.innerText) {
+                nonSelectedButton(allChildren[i]);
+            }
+            allChildren[i].classList.remove("ac-pushButton");
+            allChildren[i].classList.add("old-button");
+            allChildren[i].onclick = "null";
+            allChildren[i].removeEventListener("click", selectOption);
+            allChildren[i].style.outline = "none";
+            allChildren[i].style.cursor = "not-allowed";
+        }
+    }
 }
