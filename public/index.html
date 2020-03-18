@@ -5,7 +5,15 @@
     <title>Health Bot</title>
     <link href="https://hbs.azureedge.net/public-websites/webchat/botchat.css" rel="stylesheet" />
     <link href="stylesheets/style.css?v=5" rel="stylesheet" />
-    <script src=”https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+
+    <script>
+        if (!String.prototype.startsWith) {
+            String.prototype.startsWith = function(searchString, position) {
+              position = position || 0;
+              return this.indexOf(searchString, position) === position;
+            };
+          }
+    </script>
     <script src="https://hbs.azureedge.net/public-websites/webchat/botchat.js"></script>
     <script src="index.js?v=5"></script>
 </head>
