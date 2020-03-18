@@ -67,7 +67,7 @@ function initBotConversation() {
     }
     const botConnection = new BotChat.DirectLine({
         token: tokenPayload.connectorToken,
-        domain,
+        //domain,
         webSocket: true
     });
     startChat(user, botConnection);   
