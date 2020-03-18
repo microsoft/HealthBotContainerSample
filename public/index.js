@@ -75,10 +75,7 @@ function initBotConversation() {
     botConnection.postActivity({
         type: "invoke",
         value: {
-            trigger: "covid19_metrics",
-            args: {
-                intent: "total_metrics"
-            }
+            trigger: "main"
         },
         from: user,
         name: "TriggerScenario"}).subscribe(function (id) {});
