@@ -48,12 +48,18 @@ html, body {
     max-height: 109px;
     height: 40px;
 }
+.wc-message-groups {
+    top: 48px;
+}
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
     .wc-header {
         height: 70px;
     }     
+    .wc-message-groups {
+        top: 78px;
+    }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
@@ -61,7 +67,21 @@ html, body {
     .wc-header {
         height: 109px;
     }     
+    .wc-message-groups {
+        top: 117px;
+    }
 }
+
+/* hide various UI elements : text input, bot's username, user's chat bubbles, etc */
+.wc-message-from.wc-message-from-bot,
+.wc-message-from-me,
+.wc-console {
+    display: none;
+}
+.wc-message-groups {
+    bottom: 0;
+}
+
 
 .wc-console {
     border-color: #f5f5f5;
