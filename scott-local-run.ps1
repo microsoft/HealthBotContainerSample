@@ -1,0 +1,1 @@
+$env:WEBCHAT_SECRET="ztQ1iwALDC8.MIvxUeIZ0Xzw0txRn1s08t92CRH0s9VJ4cX4qRojZNI" ; $env:APP_SECRET="sib/3dI7twcq/8/bhYUJeLN5Q=H229?6" ; node server.js

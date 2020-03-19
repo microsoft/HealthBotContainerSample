@@ -1,15 +1,32 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <title>Health Bot</title>
+
     <link href="https://hbs.azureedge.net/public-websites/webchat/botchat.css" rel="stylesheet" />
-    <link href="stylesheets/style.css?v=5" rel="stylesheet" />
+    <link href="/stylesheets/style.css?v=5" rel="stylesheet" />
+
     <script src="https://hbs.azureedge.net/public-websites/webchat/botchat.js"></script>
-    <script src="index.js?v=5"></script>
+    <script src="/polyfills/polyfills.js"></script>
+    <script src="/polyfills/es6-promise.min.js"></script>
+    <script src="/polyfills/es6-promise.auto.min.js"></script>
+    <script src="/index.js?v=5"></script>
 </head>
+
 <body>
-<div id="botContainer" style="width:100%"></div>
-<script>chatRequested();</script>
+    <div id="botContainer" class="hidden" style="width:100%;"></div>
+    <div id="botLoader" style="width:100%;">
+        <h1>Loading</h1>
+        <p id="botLoaderError" class="hidden">Couldn't connect.  Please refresh.</p>
+    </div>
+    <script>chatRequested();</script>
 </body>
+
 </html>
