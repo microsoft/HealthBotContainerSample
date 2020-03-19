@@ -14,5 +14,8 @@
   },
   "scripts": {
     "prestart": "npm install"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
   }
 }
