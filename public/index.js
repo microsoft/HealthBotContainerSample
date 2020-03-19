@@ -27,11 +27,6 @@ function initBotConversation() {
         domain: domain
     });
 
-    //supresses the text entry portion of the chat bot
-    
-    var shellInput = document.querySelector(".wc-console.has-upload-button");
-    shellInput.parentNode.removeChild(shellInput);
-
     const styleOptions = {
         botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
         // botAvatarInitials: '',
