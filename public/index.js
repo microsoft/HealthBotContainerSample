@@ -27,10 +27,10 @@ function initBotConversation() {
         domain: domain
     });
     const styleOptions = {
-        // botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
-        botAvatarInitials: 'SWL',
-        // userAvatarImage: '',
-        userAvatarInitials: 'You'
+        botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
+        // botAvatarInitials: '',
+        userAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
+        // userAvatarInitials: 'You'
     };
 
     const store = window.WebChat.createStore(
@@ -58,7 +58,7 @@ function initBotConversation() {
                             meta: {method: 'keyboard'},
                             payload: {
                                 activity: {
-                                    type: "invoke",
+                                    type: "event",
                                     name: "TriggerScenario",
                                     value: {
                                         trigger: "covid19_assessment",
