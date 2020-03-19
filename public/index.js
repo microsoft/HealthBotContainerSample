@@ -1,15 +1,24 @@
 function requestChatBot(loc) {
+    setTimeout(function () {
+        const botLoaderError = document.getElementById('botLoaderError');
+        botLoaderError.classList.remove("hidden");
+    }, 10000);
+
     const params = BotChat.queryParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
     path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
-    if (params['userId']) {
-        path += "&userId=" + params['userId'];
-    }
+    // if (params['userId']) {
+    //     path += "&userId=" + params['userId'];
+    // }
+    var userId = Math.floor(Math.random() * 10000000000);
+    path += "&userId=" + userId;
+
     oReq.open("GET", path);
     oReq.send();
 }
@@ -57,7 +66,7 @@ function initBotConversation() {
     // extract the data from the JWT
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
-    console.log(tokenPayload.connectorToken.substr(tokenPayload.connectorToken.length - 15));
+    console.log(tokenPayload.userId + tokenPayload.connectorToken.substr(tokenPayload.connectorToken.length - 15));
     const user = {
         id: tokenPayload.userId,
         name: tokenPayload.userName
@@ -106,7 +115,6 @@ function initBotConversation() {
 
 function startChat(user, botConnection) {
     const botContainer = document.getElementById('botContainer');
-    botContainer.classList.add("wc-display");
 
     var x = BotChat.App({
         botConnection: botConnection,
@@ -117,18 +125,32 @@ function startChat(user, botConnection) {
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
 
-    clearOldMessages();
+    clearOldMessagesIntervalId = setInterval(clearOldMessages, 10);
 }
 
+var clearOldMessagesIntervalId;
+
 function clearOldMessages() {
+    const botContainer = document.getElementById('botContainer');
+    const botLoader = document.getElementById('botLoader');
     var messages = document.querySelector(".wc-message-group-content");
 
-    if (messages && messages.childNodes) {
-        // remove everything except the last bot message
+    if (messages && messages.childNodes && messages.childNodes.length >= 1) {
+        // once at least one message exists
+        // - stop looking for messages
+        // - remove everything except the last bot message
+        // - show messages and hide loader
+        clearInterval(clearOldMessagesIntervalId);
         while (messages.childNodes.length > 1) {
             messages.removeChild(messages.childNodes[0]);
         }
+        botContainer.classList.remove("hidden");
+        botLoader.classList.add("hidden");
     }
+}
+
+function nodeIsPrivacyMessage(node) {
+
 }
 
 function selectOption(event) {
