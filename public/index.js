@@ -57,6 +57,7 @@ function initBotConversation() {
     // extract the data from the JWT
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
+    console.log(tokenPayload.connectorToken.substr(tokenPayload.connectorToken.length - 15));
     const user = {
         id: tokenPayload.userId,
         name: tokenPayload.userName
