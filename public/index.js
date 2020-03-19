@@ -15,7 +15,6 @@ function requestChatBot(loc) {
 }
 
 function chatRequested() {
-    clearOldMessages();
     const params = BotChat.queryParams(location.search);
     var shareLocation = params["shareLocation"];
     if (shareLocation) {
@@ -23,13 +22,6 @@ function chatRequested() {
     }
     else {
         requestChatBot();
-    }
-}
-
-function clearOldMessages() {
-    var messages = document.querySelector(".wc-message-wrapper");
-    if (messages) {
-        messages.textContent = "";
     }
 }
 
@@ -116,7 +108,7 @@ function startChat(user, botConnection) {
     const botContainer = document.getElementById('botContainer');
     botContainer.classList.add("wc-display");
 
-    BotChat.App({
+    var x = BotChat.App({
         botConnection: botConnection,
         user: user,
         locale: 'en',
@@ -124,6 +116,19 @@ function startChat(user, botConnection) {
         chatTitle: ' ' // title bar is hidden if empty or undefined so set to space
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
+
+    clearOldMessages();
+}
+
+function clearOldMessages() {
+    var messages = document.querySelector(".wc-message-group-content");
+
+    if (messages && messages.childNodes) {
+        // remove everything except the last bot message
+        while (messages.childNodes.length > 1) {
+            messages.removeChild(messages.childNodes[0]);
+        }
+    }
 }
 
 function selectOption(event) {
