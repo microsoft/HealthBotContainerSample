@@ -29,7 +29,7 @@ function initBotConversation() {
     const styleOptions = {
         botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
         // botAvatarInitials: '',
-        userAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
+        userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
         // userAvatarInitials: 'You'
     };
 
