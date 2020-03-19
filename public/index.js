@@ -15,6 +15,7 @@ function requestChatBot(loc) {
 }
 
 function chatRequested() {
+    clearOldMessages();
     const params = BotChat.queryParams(location.search);
     var shareLocation = params["shareLocation"];
     if (shareLocation) {
@@ -22,6 +23,13 @@ function chatRequested() {
     }
     else {
         requestChatBot();
+    }
+}
+
+function clearOldMessages() {
+    var messages = document.querySelector(".wc-message-wrapper");
+    if (messages) {
+        messages.textContent = "";
     }
 }
 
