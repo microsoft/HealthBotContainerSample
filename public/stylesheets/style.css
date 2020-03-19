@@ -1,34 +1,11 @@
 html, body {
   height: 100%;
+}
+body {
   margin: 0;
 }
 
-.content {
-  float: left;
+#webchat {
   height: 100%;
-  padding-left: 10px;
-}
-
-#botContainer {
-  float: right;
-  height: 99%;
-  width: 460px;
-  position: relative;
-  display: none;
-  border-width: 2px;
-  border-style: inset;
-}
-
-#botContainer.wc-display {
-  display: block;
-}
-
-.ac-input div input[type="checkbox"] + div{
-  flex: auto !important;
-  white-space: unset!important;
-  margin: -5px 6px 10px 6px !important;
-}
-
-.ac-input div input[type="checkbox"]:checked + div{
-  color: #0177ca!important
+  width: 100%;
 }
