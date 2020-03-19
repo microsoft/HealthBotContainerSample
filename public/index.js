@@ -13,11 +13,11 @@ function requestChatBot(loc) {
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
-    // if (params['userId']) {
-    //     path += "&userId=" + params['userId'];
-    // }
-    var userId = Math.floor(Math.random() * 10000000000);
-    path += "&userId=" + userId;
+    if (params['userId']) {
+        path += "&userId=" + params['userId'];
+    }
+    // var userId = Math.floor(Math.random() * 10000000000);
+    // path += "&userId=" + userId;
 
     oReq.open("GET", path);
     oReq.send();
