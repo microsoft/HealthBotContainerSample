@@ -32,6 +32,7 @@ function initBotConversation() {
         // botAvatarInitials: '',
         userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
         // userAvatarInitials: 'You'
+        hideSendBox: true,
     };
 
     const store = window.WebChat.createStore(
