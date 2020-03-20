@@ -120,8 +120,8 @@ function initBotConversation() {
         username: user.name,
         locale: 'en'
     };
-    startChat(user, webchatOptions);
     sendUserLocation(botConnection, user);
+    startChat(user, webchatOptions);
 }
 
 function startChat(user, webchatOptions) {
