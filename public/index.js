@@ -85,7 +85,7 @@ function initBotConversation() {
                                     value: {
                                         trigger: "covid19_assessment",
                                         args: {
-                                            location: userLocation
+                                            location: "test stuff"
                                         }
                                     }
                                 }
