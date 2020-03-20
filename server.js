@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const express = require("express");
 const path = require("path");
+const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const rp = require("request-promise");
 const cookieParser = require('cookie-parser');
@@ -9,6 +10,8 @@ const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
 const APP_SECRET = process.env.APP_SECRET;
 
 // Initialize the web app instance,
+dotenv.config();
+
 const app = express();
 app.use(cookieParser());
 // Indicate which directory static resources
