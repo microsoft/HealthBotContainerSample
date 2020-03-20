@@ -1,3 +1,14 @@
+function chatRequested() {
+    const params = BotChat.queryParams(location.search);
+    var shareLocation = params["shareLocation"];
+    if (shareLocation) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }
+}
+
 function getUserLocation(callback) {
     navigator.geolocation.getCurrentPosition(
         function(position) {
