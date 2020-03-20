@@ -57,9 +57,9 @@ function initBotConversation() {
     });
 
     const styleOptions = {
-        botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
+        // botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
         // botAvatarInitials: '',
-        userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
+        // userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
         // userAvatarInitials: 'You'
         hideSendBox: false,
     };
