@@ -6,13 +6,6 @@ function requestChatBot(loc) {
     oReq.send();
 }
 
-function getPostionValues(loc)
-{
-    var lat = loc.lat;
-    var long = loc.long;
-
-    return loc;
-}
 function getUserLocation(callback) {
     navigator.geolocation.getCurrentPosition(
         function(position) {
@@ -79,25 +72,37 @@ function initBotConversation() {
                         */
 
                         // Use the following activity to proactively invoke a bot scenario
-                        
-                        var userLocation = getUserLocation(getPostionValues);
-
-                        store.dispatch({
-                            type: 'DIRECT_LINE/POST_ACTIVITY',
-                            meta: {method: 'keyboard'},
-                            payload: {
-                                activity: {
-                                    type: "event",
-                                    name: "TriggerScenario",
-                                    value: {
-                                        trigger: "covid19_assessment",
-                                        args: {
-                                            location: userLocation
-                                        }
-                                    }
-                                }
+ 
+            navigator.geolocation.getCurrentPosition(function(pos){
+                var latitude = pos.coords.latitude;
+                var longitude = pos.coords.longitude;
+ 
+                var location = {
+                    lat: latitude,
+                    long: longitude
+                };
+ 
+                dispatch({
+                    type: 'DIRECT_LINE/POST_ACTIVITY',
+                    meta: {method: 'keyboard'},
+                    payload: {
+                        activity: {
+                            type: "invoke",
+                            name: "TriggerScenario",
+                            value: {
+                                trigger: "main",
+                                args: {
+                                    location: location
+                                }                           
                             }
-                        });
+                        }
+                    }
+                });
+ 
+            },
+            function(err){
+                console.log(err);
+            });
                         
                     }
                     return next(action);
