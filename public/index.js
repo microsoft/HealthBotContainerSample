@@ -6,9 +6,14 @@ function requestChatBot(loc) {
     oReq.send();
 }
 
-function getUserLocation() {
-    var rtnLocation;
+function getPostionValues(loc)
+{
+    var lat = loc.lat;
+    var long = loc.long;
 
+    return loc;
+}
+function getUserLocation(callback) {
     navigator.geolocation.getCurrentPosition(
         function(position) {
             var latitude  = position.coords.latitude;
@@ -17,15 +22,13 @@ function getUserLocation() {
                 lat: latitude,
                 long: longitude
             }
-            rtnLocation = location;
+            callback(location);
         },
         function(error) {
             // user declined to share location
             console.log("location error:" + error.message);
-            return null;
+            callback();
         });
-
-        return rtnLocation;
 }
 
 function initBotConversation() {
@@ -77,7 +80,7 @@ function initBotConversation() {
 
                         // Use the following activity to proactively invoke a bot scenario
                         
-                        var userLocation = getUserLocation();
+                        var userLocation = getUserLocation(getPostionValues);
 
                         store.dispatch({
                             type: 'DIRECT_LINE/POST_ACTIVITY',
