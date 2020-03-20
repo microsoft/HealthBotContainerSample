@@ -1,4 +1,4 @@
-function requestChatBot() {
+function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
@@ -6,8 +6,41 @@ function requestChatBot() {
     if (params['userId']) {
         path += "&userId=" + params['userId'];
     }
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    }
     oReq.open("POST", path);
     oReq.send();
+}
+
+function chatRequested() {
+    /*const params = BotChat.queryParams(location.search);
+    var shareLocation = params["shareLocation"];
+    if (shareLocation) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }*/
+    getUserLocation(requestChatBot);
+}
+
+function getUserLocation(callback) {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            }
+            callback(location);
+        },
+        function(error) {
+            // user declined to share location
+            console.log("location error:" + error.message);
+            callback();
+        });
 }
 
 function initBotConversation() {
