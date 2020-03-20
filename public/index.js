@@ -1,12 +1,12 @@
 function chatRequested() {
-    const params = BotChat.queryParams(location.search);
-    var shareLocation = params["shareLocation"];
-    if (shareLocation) {
-        getUserLocation(requestChatBot);
-    }
-    else {
-        requestChatBot();
-    }
+    // const params = BotChat.queryParams(location.search);
+    //var shareLocation = params["shareLocation"];
+    // if (shareLocation) {
+    getUserLocation(requestChatBot);
+    //}
+    //else {
+        //requestChatBot();
+    //}
 }
 
 function getUserLocation(callback) {
@@ -27,7 +27,7 @@ function getUserLocation(callback) {
         });
 }
 
-function requestChatBot() {
+function requestChatBot(loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
