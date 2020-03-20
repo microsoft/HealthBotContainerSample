@@ -7,6 +7,7 @@ function requestChatBot(loc) {
 }
 
 function getUserLocation() {
+    /*
     navigator.geolocation.getCurrentPosition(
         function(position) {
             var latitude  = "38.1"; //position.coords.latitude;
@@ -22,6 +23,16 @@ function getUserLocation() {
             console.log("location error:" + error.message);
             return null;
         });
+        */
+       var latitude  = "38.1"; //position.coords.latitude;
+       var longitude = "47.3"; //position.coords.longitude;
+       
+       var location = {
+            lat: latitude,
+            long: longitude
+            };
+
+        return location;
 }
 
 function initBotConversation() {
