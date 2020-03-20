@@ -1,32 +1,3 @@
-function chatRequested() {
-    // const params = BotChat.queryParams(location.search);
-    //var shareLocation = params["shareLocation"];
-    // if (shareLocation) {
-    getUserLocation(requestChatBot);
-    //}
-    //else {
-        //requestChatBot();
-    //}
-}
-
-function getUserLocation(callback) {
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            var latitude  = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            var location = {
-                lat: latitude,
-                long: longitude
-            }
-            callback(location);
-        },
-        function(error) {
-            // user declined to share location
-            console.log("location error:" + error.message);
-            callback();
-        });
-}
-
 function requestChatBot(loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
@@ -57,9 +28,9 @@ function initBotConversation() {
     });
 
     const styleOptions = {
-        // botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
+        botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
         // botAvatarInitials: '',
-        // userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
+        userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
         // userAvatarInitials: 'You'
         hideSendBox: false,
     };
