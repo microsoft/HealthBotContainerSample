@@ -1,3 +1,27 @@
+function getUserLocation(callback) {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            }
+            callback(location);
+        },
+        function(error) {
+            // user declined to share location
+            console.log("location error:" + error.message);
+            callback();
+        });
+}
+
+function sendUserLocation(botConnection, user) {
+    getUserLocation(function (location) {
+        botConnection.postActivity({type: "message", text: JSON.stringify(location), from: user}).subscribe(function (id) {console.log("success")});
+    });
+}
+
 function requestChatBot() {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
