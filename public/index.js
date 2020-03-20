@@ -9,8 +9,8 @@ function requestChatBot(loc) {
 function getUserLocation() {
     navigator.geolocation.getCurrentPosition(
         function(position) {
-            var latitude  = position.coords.latitude;
-            var longitude = position.coords.longitude;
+            var latitude  = "38.1"; //position.coords.latitude;
+            var longitude = "47.3"; //position.coords.longitude;
             var location = {
                 lat: latitude,
                 long: longitude
