@@ -6,6 +6,24 @@ function requestChatBot(loc) {
     oReq.send();
 }
 
+function getUserLocation() {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            }
+            return location;
+        },
+        function(error) {
+            // user declined to share location
+            console.log("location error:" + error.message);
+            return null;
+        });
+}
+
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -55,6 +73,8 @@ function initBotConversation() {
 
                         // Use the following activity to proactively invoke a bot scenario
                         
+                        var userLocation = getUserLocation();
+
                         store.dispatch({
                             type: 'DIRECT_LINE/POST_ACTIVITY',
                             meta: {method: 'keyboard'},
@@ -64,7 +84,9 @@ function initBotConversation() {
                                     name: "TriggerScenario",
                                     value: {
                                         trigger: "covid19_assessment",
-                                        args: {}
+                                        args: {
+                                            location: userLocation
+                                        }
                                     }
                                 }
                             }
