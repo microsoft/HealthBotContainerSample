@@ -7,32 +7,25 @@ function requestChatBot(loc) {
 }
 
 function getUserLocation() {
-    /*
+    var rtnLocation;
+
     navigator.geolocation.getCurrentPosition(
         function(position) {
-            var latitude  = "38.1"; //position.coords.latitude;
-            var longitude = "47.3"; //position.coords.longitude;
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
             var location = {
                 lat: latitude,
                 long: longitude
             }
-            return location;
+            rtnLocation = location;
         },
         function(error) {
             // user declined to share location
             console.log("location error:" + error.message);
             return null;
         });
-        */
-       var latitude  = "38.1"; //position.coords.latitude;
-       var longitude = "47.3"; //position.coords.longitude;
-       
-       var location = {
-            lat: latitude,
-            long: longitude
-            };
 
-        return location;
+        return rtnLocation;
 }
 
 function initBotConversation() {
