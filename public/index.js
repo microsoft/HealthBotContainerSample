@@ -121,11 +121,10 @@ function initBotConversation() {
         locale: 'en'
     };
     startChat(user, webchatOptions);
-
-    sendUserLocation(botConnection, user);
 }
 
 function startChat(user, webchatOptions) {
     const botContainer = document.getElementById('webchat');
     window.WebChat.renderWebChat(webchatOptions, botContainer);
+    sendUserLocation(botConnection, user);
 }
