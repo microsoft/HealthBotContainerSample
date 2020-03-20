@@ -33,10 +33,29 @@ function sendUserLocation(botConnection, user) {
     });
 }
 
+/*
 function requestChatBot() {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
+    oReq.open("POST", path);
+    oReq.send();
+}
+*/
+
+//update
+function requestChatBot(loc) {
+    const params = BotChat.queryParams(location.search);
+    const oReq = new XMLHttpRequest();
+    oReq.addEventListener("load", initBotConversation);
+    var path = "/chatBot";
+    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    }
+    if (params['userId']) {
+        path += "&userId=" + params['userId'];
+    }
     oReq.open("POST", path);
     oReq.send();
 }
