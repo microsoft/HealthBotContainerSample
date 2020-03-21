@@ -14,15 +14,14 @@ function requestChatBot(loc) {
 }
 
 function chatRequested() {
-    /*const params = BotChat.queryParams(location.search);
+    const params = new URLSearchParams(location.search);
     var shareLocation = params["shareLocation"];
     if (shareLocation) {
         getUserLocation(requestChatBot);
     }
     else {
         requestChatBot();
-    }*/
-    getUserLocation(requestChatBot);
+    }
 }
 
 function getUserLocation(callback) {
