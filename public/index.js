@@ -1,9 +1,26 @@
 function requestChatBot(loc) {
+    const params = new URLSearchParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot";
+    var path = "/chatBot?";
+    if (params.has('userId')) {
+        path += "&userId=" + params.get('userId');
+    }
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    }
     oReq.open("POST", path);
     oReq.send();
+}
+
+function chatRequested() {
+    const params = new URLSearchParams(location.search);
+    if (params.has('shareLocation')) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }
 }
 
 function getUserLocation(callback) {
@@ -40,81 +57,62 @@ function initBotConversation() {
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
+    let location = undefined;
+    if (tokenPayload.location) {
+        location = tokenPayload.location;
+    }
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
-        domain: domain
-    });
+        domain
 
+    });
     const styleOptions = {
-        botAvatarImage: 'http://2.bp.blogspot.com/-XREa0Fl9LjI/Us920clfaII/AAAAAAAAAiQ/L2TZqVbxlOA/s1600/Robot3.png',
-        // botAvatarInitials: '',
-        userAvatarImage: 'https://img.freepik.com/free-vector/illustration-robot-vector-graphic_53876-26790.jpg?size=338&ext=jpg',
-        // userAvatarInitials: 'You'
-        hideSendBox: false,
+        //botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
+        botAvatarInitials: 'Bot',
+        // userAvatarImage: '',
+        userAvatarInitials: 'You'
     };
 
-    const store = window.WebChat.createStore(
-        {},
-        function(store) {
-            return function(next) {
-                return function(action) {
-                    if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
+    const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
+        if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
 
-                        // Use the following activity to enable an authenticated end user experience
-                        /*
-                        store.dispatch({
-                            type: 'WEB_CHAT/SEND_EVENT',
-                            payload: {
-                                name: "InitAuthenticatedConversation",
-                                value: jsonWebToken
-                            }
-                        });
-                        */
+            // Use the following activity to enable an authenticated end user experience
+            /*
+            dispatch({
+                type: 'WEB_CHAT/SEND_EVENT',
+                payload: {
+                    name: "InitAuthenticatedConversation",
+                    value: jsonWebToken
+                }
+            });
+            */
 
-                        // Use the following activity to proactively invoke a bot scenario
- 
-            navigator.geolocation.getCurrentPosition(function(pos){
-                var latitude = pos.coords.latitude;
-                var longitude = pos.coords.longitude;
- 
-                var location = {
-                    lat: latitude,
-                    long: longitude
-                };
- 
-                dispatch({
-                    type: 'DIRECT_LINE/POST_ACTIVITY',
-                    meta: {method: 'keyboard'},
-                    payload: {
-                        activity: {
-                            type: "invoke",
-                            name: "TriggerScenario",
-                            value: {
-                                trigger: "main",
-                                args: {
-                                    location: location
-                                }                           
+            // Use the following activity to proactively invoke a bot scenario
+            
+            dispatch({
+                type: 'DIRECT_LINE/POST_ACTIVITY',
+                meta: {method: 'keyboard'},
+                payload: {
+                    activity: {
+                        type: "invoke",
+                        name: "TriggerScenario",
+                        value: {
+                            trigger: "main",
+                            args: {
+                                location: location
                             }
                         }
                     }
-                });
- 
-            },
-            function(err){
-                console.log(err);
-            });
-                        
-                    }
-                    return next(action);
                 }
-            }
+            });
+            
         }
-    );
-
+        return next(action);
+    });
     const webchatOptions = {
         directLine: botConnection,
-        store: store,
-        styleOptions: styleOptions,
+        styleOptions,
+        store,
         userID: user.id,
         username: user.name,
         locale: 'en'
