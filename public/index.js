@@ -97,7 +97,7 @@ function initBotConversation() {
                         type: "invoke",
                         name: "TriggerScenario",
                         value: {
-                            trigger: "main",
+                            trigger: "covid19_assessment",
                             args: {
                                 location: location
                             }
