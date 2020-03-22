@@ -27,9 +27,10 @@ app.get('/chatBot',  function(req, res) {
         res.status(403).send();
         return
     }
+    var directLineTokenEp = "https://" + process.env.DIRECTLINE_ENDPOINT_URI + "/v3/directline/tokens/generate";
     const options = {
         method: 'POST',
-        uri: 'https://directline.botframework.com/v3/directline/tokens/generate',
+        uri: directLineTokenEp,
         headers: {
             'Authorization': 'Bearer ' + process.env.WEBCHAT_SECRET
         },
