@@ -27,7 +27,8 @@ app.get('/chatBot',  function(req, res) {
         res.status(403).send();
         return
     }
-    var directLineTokenEp = "https://" + process.env.DIRECTLINE_ENDPOINT_URI + "/v3/directline/tokens/generate";
+    var directLineHost = ("DIRECTLINE_ENDPOINT_URI" in process.env) ? process.env.DIRECTLINE_ENDPOINT_URI : "directline.botframework.com";
+    var directLineTokenEp = "https://" + directLineHost + "/v3/directline/tokens/generate";
     const options = {
         method: 'POST',
         uri: directLineTokenEp,
@@ -51,7 +52,7 @@ app.get('/chatBot',  function(req, res) {
             if (req.query.lat && req.query.long)  {
                 response['location'] = {lat: req.query.lat, long: req.query.long};
             }
-            response['directLineURI'] = process.env.DIRECTLINE_ENDPOINT_URI;
+            response['directLineURI'] = directLineHost;
             var scnId = process.env.SCENARIO_ID;
             if ( scnId ) {
               response['optionalAttributes'] = {scenarioId: scnId};
