@@ -67,10 +67,10 @@ function initBotConversation() {
 
     });
     const styleOptions = {
-        //botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
-        botAvatarInitials: 'Bot',
-        // userAvatarImage: '',
-        userAvatarInitials: 'You'
+        botAvatarImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Cartoon_Robot.svg/512px-Cartoon_Robot.svg.png',
+        //botAvatarInitials: 'Bot',
+        userAvatarImage: 'https://cdn3.iconfinder.com/data/icons/cardiovascular-1/120/heart_patient-512.png',
+        //userAvatarInitials: 'You'
     };
 
     const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
