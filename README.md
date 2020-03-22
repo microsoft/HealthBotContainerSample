@@ -22,6 +22,8 @@ A simple web page to hand off users to the Microsoft Health bot.
 
    `WEBCHAT_SECRET`
 
+   `DIRECTLINE_ENDPOINT_URI` (Defaults to: directline.botframework.com)
+
 ## B. Deploy the Web Chat Client Application on *Azure Kubernetes Service*
 
 1. Provision an *Azure Kubernetes Service* (AKS) cluster
