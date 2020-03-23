@@ -71,6 +71,7 @@ function initBotConversation() {
         //botAvatarInitials: 'Bot',
         userAvatarImage: 'https://cdn3.iconfinder.com/data/icons/cardiovascular-1/120/heart_patient-512.png',
         //userAvatarInitials: 'You'
+        avatarSize: 60,
     };
 
     const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
