@@ -66,7 +66,10 @@ function initBotConversation() {
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
         // botAvatarInitials: '',
         // userAvatarImage: '',
-        userAvatarInitials: 'You'
+        hideSendBox: false, /* set to true to hide the send box from the view */
+        botAvatarInitials: 'CDC',
+        userAvatarInitials: 'You',
+        backgroundColor: '#F8F8F8'
     };
 
     const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
