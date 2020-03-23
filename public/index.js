@@ -1,13 +1,44 @@
-function requestChatBot() {
+function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot";
-    if (params['userId']) {
-        path += "&userId=" + params['userId'];
+    var path = "/chatBot?";
+    if (params.has('userId')) {
+        path += "&userId=" + params.get('userId');
+    }
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
     oReq.open("POST", path);
     oReq.send();
+}
+
+function chatRequested() {
+    const params = new URLSearchParams(location.search);
+    if (params.has('shareLocation')) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }
+}
+
+function getUserLocation(callback) {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            }
+            callback(location);
+        },
+        function(error) {
+            // user declined to share location
+            console.log("location error:" + error.message);
+            callback();
+        });
 }
 
 function initBotConversation() {
@@ -72,6 +103,7 @@ function initBotConversation() {
                 }
             });
             */
+            
         }
         return next(action);
     });
