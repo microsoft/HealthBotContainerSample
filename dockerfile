@@ -1,5 +1,5 @@
 FROM node:latest
-MAINTAINER Ganesh Radhakrishnan ganrad01@gmail.com
+MAINTAINER Microsoft Healthcare Bot Team
 
 # Create app directory
 WORKDIR /usr/src/app
