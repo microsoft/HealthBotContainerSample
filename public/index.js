@@ -95,7 +95,7 @@ function initBotConversation() {
         },
         from: user,
         name: "TriggerScenario",
-        locale: params['locale']
+        locale: locale
     }).subscribe(function(id) {});
     */
 
