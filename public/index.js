@@ -67,14 +67,6 @@ function initBotConversation() {
         location = tokenPayload.location;
     }
 
-    /*
-    const botConnection = new BotChat.DirectLine({
-        token: tokenPayload.connectorToken,
-        domain: domain,
-        webSocket: true
-    });
-    */
-
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
         domain: domain,
@@ -120,46 +112,6 @@ function initBotConversation() {
             };
         }
     );
-
-    /*
-    const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
-        if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
-
-            // Use the following activity to enable an authenticated end user experience
-            /*
-            dispatch({
-                type: 'WEB_CHAT/SEND_EVENT',
-                payload: {
-                    name: "InitAuthenticatedConversation",
-                    value: jsonWebToken
-                }
-            });
-            */
-
-            // Use the following activity to proactively invoke a bot scenario
-            /*
-            dispatch({
-                type: 'DIRECT_LINE/POST_ACTIVITY',
-                meta: {method: 'keyboard'},
-                payload: {
-                    activity: {
-                        type: "invoke",
-                        name: "TriggerScenario",
-                        value: {
-                            trigger: "covid19_assessment",
-                            args: {
-                                location: location
-                            }
-                        }
-                    }
-                }
-            });
-            
-        }
-        return next(action);
-    });
-    */
-
 
     const webchatOptions = {
         directLine: botConnection,
