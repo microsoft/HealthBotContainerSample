@@ -72,7 +72,7 @@ function initBotConversation() {
         domain: domain,
         webSocket: true
     });
-    
+
     /*
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
@@ -91,6 +91,37 @@ function initBotConversation() {
         avatarSize: 60,
     };
 
+    const store = window.WebChat.createStore(
+        {},
+        function(store) {
+            return function(next) {
+                return function(action) {
+                    if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') 
+                        
+                        store.dispatch({
+                            type: 'DIRECT_LINE/POST_ACTIVITY',
+                            meta: {method: 'keyboard'},
+                            payload: {
+                                activity: {
+                                    type: "invoke",
+                                    name: "TriggerScenario",
+                                    value: {
+                                        trigger: "covid19_assessment",
+                                        args: {
+                                            location: location
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    return next(action);
+                }
+            }
+        }
+    );
+
+    /*
     const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
 
@@ -106,7 +137,7 @@ function initBotConversation() {
             */
 
             // Use the following activity to proactively invoke a bot scenario
-            
+            /*
             dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
                 meta: {method: 'keyboard'},
@@ -127,6 +158,9 @@ function initBotConversation() {
         }
         return next(action);
     });
+    */
+
+
     const webchatOptions = {
         directLine: botConnection,
         styleOptions,
