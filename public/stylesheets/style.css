@@ -17,3 +17,25 @@ body {
   height: 100%;
   width: 100%;
 }
+
+#webchat[powered-by-microsoft-azure] [role="complementary"] ul[role="list"]::after {
+  content: 'Powered by Microsoft Azure';
+  background: linear-gradient(rgba(248, 248, 248, 0), rgba(248, 248, 248, .63), #F8F8F8 40%);
+  bottom: 0;
+  right: 0;
+  color: #707070;
+  display: block;
+  font-family: 'Segoe Semibold', Calibri, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  padding: 15px 10px 10px;
+  position: absolute;
+  position: sticky;
+  text-align: right;
+}
+
+#webchat[powered-by-microsoft-azure] .webchat__scrollToEndButton {
+  bottom: 32px;
+  left: 50%;
+  right: unset;
+  transform: translate(-50%, 0);
+}
