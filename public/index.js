@@ -72,6 +72,9 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
 
+    const params = BotChat.queryParams(location.search);
+    const locale = params['locale'] || 'en_us';
+
     // Use the following activity to enable an authenticated end user experience.
     /*
     botConnection.postActivity(
@@ -91,7 +94,8 @@ function initBotConversation() {
             }
         },
         from: user,
-        name: "TriggerScenario"
+        name: "TriggerScenario",
+        locale: params['locale']
     }).subscribe(function(id) {});
     */
 
@@ -103,11 +107,13 @@ function initBotConversation() {
 function startChat(user, botConnection) {
     const botContainer = document.getElementById('botContainer');
     botContainer.classList.add("wc-display");
+    const params = BotChat.queryParams(location.search);
+    const locale = params['locale'] || 'en_us';
 
     BotChat.App({
         botConnection: botConnection,
         user: user,
-        locale: 'en',
+        locale: locale,
         resize: 'detect'
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
