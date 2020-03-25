@@ -46,6 +46,7 @@ function initBotConversation() {
         alert(this.statusText);
         return;
     }
+
     // extract the data from the JWT
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
@@ -53,19 +54,33 @@ function initBotConversation() {
         id: tokenPayload.userId,
         name: tokenPayload.userName
     };
+
     let domain = undefined;
+
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
+
     let location = undefined;
+
     if (tokenPayload.location) {
         location = tokenPayload.location;
     }
+
+    const botConnection = new BotChat.DirectLine({
+        token: tokenPayload.connectorToken,
+        domain: domain,
+        webSocket: true
+    });
+    
+    /*
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
         domain: domain,
         webSocket: true
     });
+    */
+
     const styleOptions = {
         botAvatarImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Cartoon_Robot.svg/512px-Cartoon_Robot.svg.png',
         botAvatarBackgroundColor: '#1abc9c',
