@@ -63,8 +63,8 @@ function initBotConversation() {
     }
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
-        domain
-
+        domain: domain,
+        webSocket: true
     });
     const styleOptions = {
         botAvatarImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Cartoon_Robot.svg/512px-Cartoon_Robot.svg.png',
