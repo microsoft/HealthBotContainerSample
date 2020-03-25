@@ -96,7 +96,7 @@ function initBotConversation() {
         function(store) {
             return function(next) {
                 return function(action) {
-                    if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') 
+                    if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
                         
                         store.dispatch({
                             type: 'DIRECT_LINE/POST_ACTIVITY',
@@ -116,8 +116,8 @@ function initBotConversation() {
                         });
                     }
                     return next(action);
-                }
-            }
+                };
+            };
         }
     );
 
