@@ -65,7 +65,7 @@ html, body {
 .aah-bot-language-picker {
     background-color: #f3f3f3;
     padding: 4px;
-    text-align: right;
+    text-align: center;
 }
 
 .aah-bot-language-picker select {
@@ -73,8 +73,12 @@ html, body {
     padding: 10px 5px;
     border: 0;
     background-color: #f3f3f3;
-    border-bottom: 3px solid #337AAB;
+    /* border-bottom: 3px solid #337AAB; */
     font-family: "Segoe UI", sans-serif;
+}
+
+.aah-bot-language-picker select:focus {
+    border: 0;
 }
 
 .aah-bot-language-picker select option {
