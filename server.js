@@ -25,7 +25,7 @@ function isUserAuthenticated(){
     return true;
 }
 
-app.get('/chatBot',  function(req, res) {
+app.post('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
         return

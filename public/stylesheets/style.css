@@ -61,6 +61,27 @@ html, body {
     background-color: #f5f5f5;
 }
 
+
+.aah-bot-language-picker {
+    background-color: #f3f3f3;
+    padding: 4px;
+    text-align: right;
+}
+
+.aah-bot-language-picker select {
+    font-size: 1.25em;
+    padding: 10px 5px;
+    border: 0;
+    background-color: #f3f3f3;
+    border-bottom: 3px solid #337AAB;
+    font-family: "PT Sans",sans-serif;
+}
+
+.aah-bot-language-picker select option {
+    padding: 10px 5px;
+}
+
+
 .aah-bot-header {
     background-color: #003A60;
     background-image: url(../images/Triage-header.jpg);

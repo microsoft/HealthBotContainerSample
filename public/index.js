@@ -19,10 +19,8 @@ function requestChatBot(loc) {
     if (params['userId']) {
         path += "&userId=" + params['userId'];
     }
-    // var userId = Math.floor(Math.random() * 10000000000);
-    // path += "&userId=" + userId;
 
-    oReq.open("GET", path);
+    oReq.open("POST", path);
     oReq.send();
 }
 
