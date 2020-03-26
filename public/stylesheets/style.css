@@ -66,6 +66,7 @@ html, body {
     background-color: #f3f3f3;
     padding: 4px;
     text-align: center;
+    height: 45px;
 }
 
 .aah-bot-language-picker select {
@@ -75,10 +76,6 @@ html, body {
     background-color: #f3f3f3;
     /* border-bottom: 3px solid #337AAB; */
     font-family: "Segoe UI", sans-serif;
-}
-
-.aah-bot-language-picker select:focus {
-    border: 0;
 }
 
 .aah-bot-language-picker select option {
@@ -101,7 +98,7 @@ html, body {
     top: 48px;
 }
 #botContainer, #botLoader {
-    height: calc(99% - 40px);
+    height: calc(99% - 40px - 46px);
 }
 
 
@@ -114,7 +111,7 @@ html, body {
         top: 78px;
     }
     #botContainer, #botLoader {
-        height: calc(99% - 70px);
+        height: calc(99% - 70px - 46px);
     }
 }
 
@@ -127,7 +124,7 @@ html, body {
         top: 117px;
     }
     #botContainer, #botLoader {
-        height: calc(99% - 109px);
+        height: calc(99% - 109px - 46px);
     }
 }
 
