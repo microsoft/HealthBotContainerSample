@@ -69,12 +69,12 @@ html, body {
 }
 
 .aah-bot-language-picker select {
-    font-size: 1.25em;
+    font-size: 15px;
     padding: 10px 5px;
     border: 0;
     background-color: #f3f3f3;
     border-bottom: 3px solid #337AAB;
-    font-family: "PT Sans",sans-serif;
+    font-family: "Segoe UI", sans-serif;
 }
 
 .aah-bot-language-picker select option {
