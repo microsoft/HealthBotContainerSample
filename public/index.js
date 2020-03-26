@@ -1,3 +1,6 @@
+var trigger;
+var locale;
+
 function requestChatBot(loc) {
     setTimeout(function () {
         const botLoaderError = document.getElementById('botLoaderError');
@@ -23,9 +26,12 @@ function requestChatBot(loc) {
     oReq.send();
 }
 
-function chatRequested() {
+function chatRequested(t) {
     const params = BotChat.queryParams(location.search);
     var shareLocation = params["shareLocation"];
+    trigger = t;
+    locale = BotChat.queryParams(location.search)["locale"] || 'en';
+
     if (shareLocation) {
         getUserLocation(requestChatBot);
     }
@@ -66,7 +72,7 @@ function initBotConversation() {
     // extract the data from the JWT
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
-    console.log(tokenPayload.userId + tokenPayload.connectorToken.substr(tokenPayload.connectorToken.length - 15));
+    //console.log(tokenPayload.userId + tokenPayload.connectorToken.substr(tokenPayload.connectorToken.length - 15));
     const user = {
         id: tokenPayload.userId,
         name: tokenPayload.userName
@@ -92,8 +98,9 @@ function initBotConversation() {
     // Use the following activity to proactively invoke a bot scenario. 
     botConnection.postActivity({
         type: "invoke",
+        locale: locale,
         value: {
-            trigger: "triage"
+            trigger: trigger || "triage"
         },
         from: user,
         name: "TriggerScenario"
@@ -119,9 +126,9 @@ function startChat(user, botConnection) {
     var x = BotChat.App({
         botConnection: botConnection,
         user: user,
-        locale: 'en',
+        locale: locale,
         resize: 'detect',
-        chatTitle: ' ' // title bar is hidden if empty or undefined so set to space
+        chatTitle: '' // title bar is hidden if empty or undefined so set to space
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
 

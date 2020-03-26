@@ -15,7 +15,7 @@ html, body {
     width: 460px;
     position: relative;
     display: block;
-    border-width: 2px;
+    border-width: 0px;
     border-style: inset;
   }
 
@@ -25,7 +25,7 @@ html, body {
     width: 460px;
     position: relative;
     display: block;
-    border-width: 2px;
+    border-width: 0px;
     border-style: inset;
 
     background-color: #f5f5f5;
@@ -61,7 +61,7 @@ html, body {
     background-color: #f5f5f5;
 }
 
-.wc-header {
+.aah-bot-header {
     background-color: #003A60;
     background-image: url(../images/Triage-header.jpg);
     background-position-x: center;
@@ -75,24 +75,34 @@ html, body {
 .wc-message-groups {
     top: 48px;
 }
+#botContainer, #botLoader {
+    height: calc(99% - 40px);
+}
+
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-    .wc-header {
+    .aah-bot-header {
         height: 70px;
     }     
     .wc-message-groups {
         top: 78px;
     }
+    #botContainer, #botLoader {
+        height: calc(99% - 70px);
+    }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
-    .wc-header {
+    .aah-bot-header {
         height: 109px;
     }     
     .wc-message-groups {
         top: 117px;
+    }
+    #botContainer, #botLoader {
+        height: calc(99% - 109px);
     }
 }
 
