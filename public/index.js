@@ -1,9 +1,40 @@
-function requestChatBot() {
+function requestChatBot(loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
+    if (loc) {
+        path += "?lat=" + loc.lat + "&long=" + loc.long;
+    }
     oReq.open("POST", path);
     oReq.send();
+}
+
+function chatRequested() {
+    const params = new URLSearchParams(location.search);
+    if (params.has('shareLocation')) {
+        getUserLocation(requestChatBot);
+    }
+    else {
+        requestChatBot();
+    }
+}
+
+function getUserLocation(callback) {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            }
+            callback(location);
+        },
+        function(error) {
+            // user declined to share location
+            console.log("location error:" + error.message);
+            callback();
+        });
 }
 
 function initBotConversation() {
@@ -22,6 +53,8 @@ function initBotConversation() {
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
+    let location = tokenPayload.location;
+
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
         domain: domain
@@ -66,7 +99,7 @@ function initBotConversation() {
                                     value: {
                                         trigger: "{scenario_id}",
                                         args: {
-                                            myVar1: "{custom_arg_1}",
+                                            location: location,
                                             myVar2: "{custom_arg_2}"
                                         }
                                     }
