@@ -113,13 +113,16 @@ function initBotConversation() {
         }
     );
 
+    const params = BotChat.queryParams(location.search);
+    const locale = params['locale'] || 'en_us';
+
     const webchatOptions = {
         directLine: botConnection,
         styleOptions,
         store,
         userID: user.id,
         username: user.name,
-        locale: 'en'
+        locale: locale
     };
     startChat(user, webchatOptions);
 }
