@@ -6,6 +6,9 @@ function requestChatBot(loc) {
     if (params.has('userId')) {
         path += "&userId=" + params.get('userId');
     }
+    if (params.has('locale')) {
+        path += "&locale=" + params.get('locale');
+    }
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
