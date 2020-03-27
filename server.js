@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
 const APP_SECRET = process.env.APP_SECRET;
+const directLineTokenEp = `https://${directLineHost || "directline.botframework.com"}/v3/directline/tokens/generate`;
 
 // Initialize the web app instance,
 const app = express();
@@ -16,6 +17,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 // begin listening for requests.
 const port = process.env.PORT || 8080;
+const region = process.env.REGION || "Unknown";
+
 app.listen(port, function() {
     console.log("Express server listening on port " + port);
 });
@@ -25,22 +28,54 @@ function isUserAuthenticated(){
     return true;
 }
 
-app.post('/chatBot',  function(req, res) {
-    if (!isUserAuthenticated()) {
-        res.status(403).send();
-        return
-    }
-    const directLineHost = DIRECTLINE_ENDPOINT_URI ? DIRECTLINE_ENDPOINT_URI : "directline.botframework.com";
-    const directLineTokenEp = "https://" + directLineHost + "/v3/directline/tokens/generate";
-    const options = {
+const appConfig = {
+    isHealthy : false,
+    options : {
         method: 'POST',
         uri: directLineTokenEp,
         headers: {
             'Authorization': 'Bearer ' + WEBCHAT_SECRET
         },
         json: true
-    };
-    rp(options)
+    }
+};
+
+function healthResponse(res, statusCode, message) {
+    res.status(statusCode).send({
+        health: message,
+        region: region
+    });
+}
+function healthy(res) {
+    healthResponse(res, 200, "Ok");
+}
+
+function unhealthy(res) {
+    healthResponse(res, 503, "Unhealthy");
+}
+
+app.get('/health', function(req, res){
+    if (!appConfig.isHealthy) {
+        rp(appConfig.options)
+            .then((body) => {
+                appConfig.isHealthy = true;
+                healthy(res);
+            })
+            .catch((err) =>{
+                unhealthy(res);
+            });
+    }
+    else {
+        healthy(res);
+    }
+});
+
+app.post('/chatBot',  function(req, res) {
+    if (!isUserAuthenticated()) {
+        res.status(403).send();
+        return
+    }
+    rp(appConfig.options)
         .then(function (parsedBody) {
             var userid = req.query.userId || req.cookies.userid;
             if (!userid) {
@@ -61,6 +96,7 @@ app.post('/chatBot',  function(req, res) {
             res.send(jwtToken);
         })
         .catch(function (err) {
+            appConfig.isHealthy = false;
             res.status(err.statusCode).send();
             console.log("failed");
         });

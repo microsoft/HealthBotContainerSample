@@ -1,5 +1,9 @@
+let params;
+let locale;
+
 function requestChatBot(loc) {
-    const params = BotChat.queryParams(location.search);
+    params = BotChat.queryParams(location.search);
+    locale = params['locale'] || 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
@@ -15,7 +19,6 @@ function requestChatBot(loc) {
 }
 
 function chatRequested() {
-    const params = BotChat.queryParams(location.search);
     var shareLocation = params["shareLocation"];
     if (shareLocation) {
         getUserLocation(requestChatBot);
@@ -91,7 +94,8 @@ function initBotConversation() {
             }
         },
         from: user,
-        name: "TriggerScenario"
+        name: "TriggerScenario",
+        locale: locale
     }).subscribe(function(id) {});
     */
 
@@ -107,7 +111,7 @@ function startChat(user, botConnection) {
     BotChat.App({
         botConnection: botConnection,
         user: user,
-        locale: 'en',
+        locale: locale,
         resize: 'detect'
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
