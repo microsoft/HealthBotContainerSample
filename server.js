@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
 const APP_SECRET = process.env.APP_SECRET;
+const directLineTokenEp = `https://${directLineHost || "directline.botframework.com"}/v3/directline/tokens/generate`;
 
 // Initialize the web app instance,
 const app = express();
@@ -15,7 +16,7 @@ app.use(cookieParser());
 // (e.g. stylesheets) should be served from.
 app.use(express.static(path.join(__dirname, "public")));
 // begin listening for requests.
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 const region = process.env.REGION || "Unknown";
 
 app.listen(port, function() {
@@ -31,7 +32,7 @@ const appConfig = {
     isHealthy : false,
     options : {
         method: 'POST',
-        uri: 'https://directline.botframework.com/v3/directline/tokens/generate',
+        uri: directLineTokenEp,
         headers: {
             'Authorization': 'Bearer ' + WEBCHAT_SECRET
         },
