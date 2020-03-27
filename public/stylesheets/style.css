@@ -128,10 +128,15 @@ html, body {
     }
 }
 
+/* .wc-message-groups {
+    padding-bottom: 50px;
+} */
+
 @supports (-webkit-touch-callout: none) {
     /* CSS specific to iOS devices */ 
     .wc-message-groups {
         bottom: 76px;
+        padding-bottom: 50px;
     }
 }
 
