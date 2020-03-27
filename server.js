@@ -15,7 +15,7 @@ app.use(cookieParser());
 // (e.g. stylesheets) should be served from.
 app.use(express.static(path.join(__dirname, "public")));
 // begin listening for requests.
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 app.listen(port, function() {
     console.log("Express server listening on port " + port);
 });
@@ -30,9 +30,11 @@ app.post('/chatBot',  function(req, res) {
         res.status(403).send();
         return
     }
+    const directLineHost = DIRECTLINE_ENDPOINT_URI ? DIRECTLINE_ENDPOINT_URI : "directline.botframework.com";
+    const directLineTokenEp = "https://" + directLineHost + "/v3/directline/tokens/generate";
     const options = {
         method: 'POST',
-        uri: 'https://directline.botframework.com/v3/directline/tokens/generate',
+        uri: directLineTokenEp,
         headers: {
             'Authorization': 'Bearer ' + WEBCHAT_SECRET
         },
