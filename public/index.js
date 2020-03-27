@@ -122,11 +122,7 @@ function initBotConversation() {
         }
     );
 
-    /*
-    const params = new URLSearchParams(location.search);
-    const localetest = params['locale'];
-    const locale = 'es-es';
-    */
+    const locale2 = 'es-es';
 
     const webchatOptions = {
         directLine: botConnection,
@@ -134,7 +130,7 @@ function initBotConversation() {
         store,
         userID: user.id,
         username: user.name,
-        locale: locale
+        locale: locale2
     };
     startChat(user, webchatOptions);
 }
