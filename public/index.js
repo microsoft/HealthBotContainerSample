@@ -75,7 +75,7 @@ function initBotConversation() {
 
     const styleOptions = {
         botAvatarImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Cartoon_Robot.svg/512px-Cartoon_Robot.svg.png',
-        botAvatarBackgroundColor: '#1abc9c',
+        botAvatarBackgroundColor: '#555659',
         //botAvatarInitials: 'Bot',
         userAvatarImage: 'https://cdn3.iconfinder.com/data/icons/cardiovascular-1/120/heart_patient-512.png',
         userAvatarBackgroundColor: '#1abc9c',
