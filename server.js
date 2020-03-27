@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+const crypto = require('crypto');
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
@@ -50,9 +50,11 @@ app.post('/chatBot',  function(req, res) {
             response['userId'] = userid;
             response['userName'] = req.query.userName;
             response['connectorToken'] = parsedBody.token;
-            response['optionalAttributes'] = {age: 33};
             if (req.query.lat && req.query.long)  {
                 response['location'] = {lat: req.query.lat, long: req.query.long};
+            }
+            if (req.query.locale) {
+                response['locale'] = req.query.locale;
             }
             response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
             const jwtToken = jwt.sign(response, APP_SECRET);

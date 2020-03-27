@@ -1,9 +1,16 @@
 function requestChatBot(loc) {
+    const params = new URLSearchParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot";
+    var path = "/chatBot?";
+    if (params.has('userId')) {
+        path += "&userId=" + params.get('userId');
+    }
+    if (params.has('locale')) {
+        path += "&locale=" + params.get('locale');
+    }
     if (loc) {
-        path += "?lat=" + loc.lat + "&long=" + loc.long;
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
     oReq.open("POST", path);
     oReq.send();
@@ -42,6 +49,7 @@ function initBotConversation() {
         alert(this.statusText);
         return;
     }
+
     // extract the data from the JWT
     const jsonWebToken = this.response;
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
@@ -49,16 +57,31 @@ function initBotConversation() {
         id: tokenPayload.userId,
         name: tokenPayload.userName
     };
+
     let domain = undefined;
+
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
-    let location = tokenPayload.location;
+
+    let location = undefined;
+
+    if (tokenPayload.location) {
+        location = tokenPayload.location;
+    }
+
+    let locale = undefined;
+
+    if (tokenPayload.locale) {
+        locale=tokenPayload.locale || 'en-us';
+    }
 
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
-        domain: domain
+        domain: domain,
+        webSocket: true
     });
+
     const styleOptions = {
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
         // botAvatarInitials: '',
@@ -75,7 +98,7 @@ function initBotConversation() {
             return function(next) {
                 return function(action) {
                     if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
-
+                        
                         // Use the following activity to enable an authenticated end user experience
                         /*
                         store.dispatch({
@@ -109,19 +132,20 @@ function initBotConversation() {
                         */
                     }
                     return next(action);
-                }
-            }
+                };
+            };
         }
     );
 
     const webchatOptions = {
         directLine: botConnection,
-        store: store,
-        styleOptions: styleOptions,
+        styleOptions,
+        store,
         userID: user.id,
         username: user.name,
-        locale: 'en'
+        locale: locale
     };
+
     startChat(user, webchatOptions);
 }
 
