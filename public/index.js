@@ -113,7 +113,7 @@ function initBotConversation() {
         }
     );
 
-    const params = BotChat.queryParams(location.search);
+    const params = new URLSearchParams(location.search);
     const locale = params['locale'] || 'en_us';
 
     const webchatOptions = {
