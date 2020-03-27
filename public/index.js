@@ -122,6 +122,7 @@ function initBotConversation() {
         }
     );
 
+    const localfromrequest = locale;
     const locale2 = 'es-es';
 
     const webchatOptions = {
