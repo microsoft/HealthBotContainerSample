@@ -78,7 +78,7 @@ html, body
 
 .aah-bot-locale-select
 {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 25px;
     padding: 5px 3px;
     margin: 5px 2px;
@@ -87,9 +87,9 @@ html, body
     font-family: "Segoe UI", sans-serif;
 }
 
-.aah-bot-language-picker select option 
+.aah-bot-locale-select option 
 {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 25px;
     padding: 5px 3px;
     margin: 5px 2px;
