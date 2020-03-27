@@ -70,6 +70,12 @@ function initBotConversation() {
         location = tokenPayload.location;
     }
 
+    let locale = undefined;
+
+    if (tokenPayload.locale) {
+        locale=tokenPayload.locale;
+    }
+
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
         domain: domain,
@@ -116,9 +122,11 @@ function initBotConversation() {
         }
     );
 
+    /*
     const params = new URLSearchParams(location.search);
     const localetest = params['locale'];
     const locale = 'es-es';
+    */
 
     const webchatOptions = {
         directLine: botConnection,
