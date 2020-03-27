@@ -117,7 +117,7 @@ function initBotConversation() {
     );
 
     const params = new URLSearchParams(location.search);
-    //const locale = params['locale'] || 'en_us';
+    const localetest = params['locale'];
     const locale = 'es-es';
 
     const webchatOptions = {
