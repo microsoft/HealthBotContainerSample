@@ -124,8 +124,8 @@ function initBotConversation() {
         }
     );
 
-    const localfromrequest = locale;
-    const locale2 = 'es-es';
+    //const localfromrequest = locale;
+    //const locale2 = 'es-es';
 
     const webchatOptions = {
         directLine: botConnection,

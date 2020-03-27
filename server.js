@@ -54,7 +54,7 @@ app.post('/chatBot',  function(req, res) {
                 response['location'] = {lat: req.query.lat, long: req.query.long};
             }
             if (req.query.locale) {
-                response['locale'] = {locale: req.query.locale};
+                response['locale'] = req.query.locale;
             }
             response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
             const jwtToken = jwt.sign(response, APP_SECRET);
