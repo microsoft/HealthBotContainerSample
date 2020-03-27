@@ -131,7 +131,7 @@ function initBotConversation() {
         store,
         userID: user.id,
         username: user.name,
-        locale: locale2
+        locale: localfromrequest
     };
     startChat(user, webchatOptions);
 }
