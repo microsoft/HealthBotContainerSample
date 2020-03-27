@@ -1,5 +1,9 @@
+let params;
+let locale;
+
 function requestChatBot(loc) {
-    const params = BotChat.queryParams(location.search);
+    params = BotChat.queryParams(location.search);
+    locale = params['locale'] || 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot";
@@ -15,7 +19,6 @@ function requestChatBot(loc) {
 }
 
 function chatRequested() {
-    const params = BotChat.queryParams(location.search);
     var shareLocation = params["shareLocation"];
     if (shareLocation) {
         getUserLocation(requestChatBot);
@@ -72,9 +75,6 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
 
-    const params = BotChat.queryParams(location.search);
-    const locale = params['locale'] || 'en_us';
-
     // Use the following activity to enable an authenticated end user experience.
     /*
     botConnection.postActivity(
@@ -107,8 +107,6 @@ function initBotConversation() {
 function startChat(user, botConnection) {
     const botContainer = document.getElementById('botContainer');
     botContainer.classList.add("wc-display");
-    const params = BotChat.queryParams(location.search);
-    const locale = params['locale'] || 'en_us';
 
     BotChat.App({
         botConnection: botConnection,
