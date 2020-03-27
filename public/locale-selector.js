@@ -1,34 +1,43 @@
-document.addEventListener("DOMContentLoaded", function (event) {
+document.addEventListener("DOMContentLoaded", function (event)
+{
     // set selection based on URL param
     setSelectedLocale()
 
     // reload page if selection changes
-    document.getElementById("locale").addEventListener("change", function (e) {
+    document.getElementById("locale").addEventListener("change", function ()
+    {
         const params = BotChat.queryParams(location.search);
-        var curr = params["locale"] || 'en-en';
-        var el = document.getElementById("locale");
-        if (el) {
-            var choice = el.options[el.selectedIndex].value;
-            if (choice !== curr) {
+        var currlocale = params["locale"] || 'en-en';
+        var localepicker = document.getElementById("locale");
+        if (localepicker)
+        {
+            var choice = localepicker.options[localepicker.selectedIndex].value;
+            if (choice !== currlocale)
+            {
                 params["locale"] = choice;
                 location.href = "?" + objectToQueryString(params);
             }
         }
     });
 
-    function setSelectedLocale() {
+    function setSelectedLocale()
+    {
         const params = BotChat.queryParams(location.search);
         var l = params["locale"] || 'en-en';
         var opt = document.getElementById("locale").querySelector('option[value="' + l + '"]');
-        if (opt) {
+        if (opt)
+        {
             opt.selected = true;
         }
     }
 
-    function objectToQueryString(obj) {
+    function objectToQueryString(obj)
+    {
         var str = [];
-        for (var p in obj) {
-            if ( obj.hasOwnProperty(p)) {
+        for (var p in obj)
+        {
+            if (obj.hasOwnProperty(p))
+            {
                 str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
             }
         }
