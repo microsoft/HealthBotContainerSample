@@ -74,7 +74,7 @@ app.get('/health', function(req, res){
 app.post('/chatBot',  function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
-        return
+        return;
     }
     rp(appConfig.options)
         .then(function (parsedBody) {
