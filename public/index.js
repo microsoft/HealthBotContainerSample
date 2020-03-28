@@ -78,7 +78,7 @@ function initBotConversation() {
         backgroundColor: '#F8F8F8'
     };
 
-    const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
+    const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
             dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
@@ -120,11 +120,11 @@ function initBotConversation() {
             }
         }
         return next(action);
-    });
+    }}});
     const webchatOptions = {
         directLine: botConnection,
-        styleOptions,
-        store,
+        styleOptions: styleOptions,
+        store: store,
         userID: user.id,
         username: user.name,
         locale: user.locale
