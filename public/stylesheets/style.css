@@ -10,8 +10,8 @@ body {
   width: 100%;
 }
 
-#webchat[powered-by-microsoft-azure] [role="complementary"] ul[role="list"]::after {
-  content: 'Powered by Microsoft Azure';
+#webchat[watermark="true"] [role="complementary"] ul[role="list"]::after {
+  content: "Powered By ...";
   background: linear-gradient(rgba(248, 248, 248, 0), rgba(248, 248, 248, .63), #F8F8F8 40%);
   bottom: 0;
   color: #707070;
@@ -23,7 +23,7 @@ body {
   text-align: right;
 }
 
-#webchat[powered-by-microsoft-azure] .webchat__scrollToEndButton {
+#webchat[watermark="true"] .webchat__scrollToEndButton {
   bottom: 32px;
   left: 50%;
   right: unset;

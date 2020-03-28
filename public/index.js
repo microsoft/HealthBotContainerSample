@@ -1,6 +1,6 @@
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
-    const locale = params['locale'] || 'en_us';
+    const locale = params.has('locale') ? params.get('locale') : 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?";
@@ -109,12 +109,12 @@ function initBotConversation() {
 
         }
         else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
-            if (action.payload && action.payload.activity && action.payload.type === "event" && action.payload.name === "ShareLocationEvent") {
+            if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
                 // share
                 getUserLocation(function (location) {
                     store.dispatch({
-                        type: 'WEB_CHAT/SEND_MESSAGE',
-                        payload: { text: JSON.stringify(location) }
+                        type: 'WEB_CHAT/SEND_POST_BACK',
+                        payload: { value: JSON.stringify(location) }
                     });
                 });
             }
