@@ -47,10 +47,6 @@ function getUserLocation(callback) {
         });
 }
 
-function sendUserLocation(botConnection, user) {
-
-}
-
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
