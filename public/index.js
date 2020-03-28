@@ -1,24 +1,24 @@
-let params;
-let locale;
-
 function requestChatBot(loc) {
-    params = BotChat.queryParams(location.search);
-    locale = params['locale'] || 'en_us';
+    const params = BotChat.queryParams(location.search);
+    const locale = params['locale'] || 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot";
-    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    var path = "/chatBot?locale=" + locale;
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
     if (params['userId']) {
         path += "&userId=" + params['userId'];
     }
+    if (params['userName']) {
+        path += "&userName=" + params['userName'];
+    }
     oReq.open("POST", path);
     oReq.send();
 }
 
 function chatRequested() {
+    const params = BotChat.queryParams(location.search);
     var shareLocation = params["shareLocation"];
     if (shareLocation) {
         getUserLocation(requestChatBot);
@@ -62,7 +62,8 @@ function initBotConversation() {
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
     const user = {
         id: tokenPayload.userId,
-        name: tokenPayload.userName
+        name: tokenPayload.userName,
+        locale: tokenPayload.locale
     };
     let domain = undefined;
     if (tokenPayload.directLineURI) {
@@ -75,29 +76,26 @@ function initBotConversation() {
     });
     startChat(user, botConnection);
 
-    // Use the following activity to enable an authenticated end user experience.
-    /*
-    botConnection.postActivity(
-        {type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"
-    }).subscribe(function (id) {});
-    */
-
-    // Use the following activity to proactively invoke a bot scenario. 
-    /*
     botConnection.postActivity({
         type: "invoke",
+        name: "InitConversation",
+        locale: user.locale,
         value: {
-            trigger: "{scenario}",
-            args: {
-                myVar1: "{custom_arg_1}",
-                myVar2: "{custom_arg_2}"
+            // must use for authenticated conversation.
+            jsonWebToken: jsonWebToken,
+
+            // Use the following activity to proactively invoke a bot scenario
+            /*
+            triggeredScenario: {
+                trigger: "{scenario_id}",
+                args: {
+                    myVar1: "{custom_arg_1}",
+                    myVar2: "{custom_arg_2}"
+                }
             }
-        },
-        from: user,
-        name: "TriggerScenario",
-        locale: locale
+            */
+        }
     }).subscribe(function(id) {});
-    */
 
     botConnection.activity$
         .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
@@ -111,7 +109,7 @@ function startChat(user, botConnection) {
     BotChat.App({
         botConnection: botConnection,
         user: user,
-        locale: locale,
+        locale: user.locale,
         resize: 'detect'
         // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
     }, botContainer);
