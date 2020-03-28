@@ -1,9 +1,6 @@
-var params;
-var locale;
-
 function requestChatBot(loc) {
-    params = new URLSearchParams(location.search);
-    locale = params['locale'] || 'en_us';
+    const params = new URLSearchParams(location.search);
+    const locale = params['locale'] || 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?";
@@ -17,6 +14,7 @@ function requestChatBot(loc) {
     if (params.has('userName')) {
         path += "&userName=" + params.get('userName');
     }
+    path += "&locale=" + locale;
     oReq.open("POST", path);
     oReq.send();
 }
@@ -63,7 +61,8 @@ function initBotConversation() {
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
     const user = {
         id: tokenPayload.userId,
-        name: tokenPayload.userName
+        name: tokenPayload.userName,
+        locale: tokenPayload.locale
     };
     let domain = undefined;
     if (tokenPayload.directLineURI) {
@@ -92,6 +91,7 @@ function initBotConversation() {
                     activity: {
                         type: "invoke",
                         name: "InitConversation",
+                        locale: user.locale,
                         value: {
                             // must use for authenticated conversation.
                             jsonWebToken: jsonWebToken,
@@ -131,7 +131,7 @@ function initBotConversation() {
         store,
         userID: user.id,
         username: user.name,
-        locale: 'en'
+        locale: user.locale
     };
     startChat(user, webchatOptions);
 }

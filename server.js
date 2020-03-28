@@ -86,6 +86,7 @@ app.post('/chatBot',  function(req, res) {
             var response = {};
             response['userId'] = userid;
             response['userName'] = req.query.userName;
+            response['locale'] = req.query.locale;
             response['connectorToken'] = parsedBody.token;
             response['optionalAttributes'] = {age: 33};
             if (req.query.lat && req.query.long)  {
