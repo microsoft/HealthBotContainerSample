@@ -81,39 +81,37 @@ function initBotConversation() {
 
     const store = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
-
-            // Use the following activity to enable an authenticated end user experience
-            /*
-            dispatch({
-                type: 'WEB_CHAT/SEND_EVENT',
-                payload: {
-                    name: "InitAuthenticatedConversation",
-                    value: jsonWebToken
-                }
-            });
-            */
-
-            // Use the following activity to proactively invoke a bot scenario
-            /*
             dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
                 meta: {method: 'keyboard'},
                 payload: {
                     activity: {
                         type: "invoke",
-                        name: "TriggerScenario",
+                        name: "InitConversation",
                         value: {
-                            trigger: "{scenario_id}",
-                            args: {
-                                myVar1: "{custom_arg_1}",
-                                myVar2: "{custom_arg_2}"
+                            // must use for authenticated conversation.
+                            jsonWebToken: jsonWebToken,
+
+                            // Use the following activity to proactively invoke a bot scenario
+                            /*
+                            triggeredScenario: {
+                                trigger: "{scenario_id}",
+                                args: {
+                                    myVar1: "{custom_arg_1}",
+                                    myVar2: "{custom_arg_2}"
+                                }
                             }
+                            */
                         }
                     }
                 }
             });
-            */
-            
+
+        }
+        else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+            if (action.payload && action.payload.activity && action.payload.type === "event" && action.payload.name === "ShareLocationEvent") {
+                // share
+            }
         }
         return next(action);
     });
