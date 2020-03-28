@@ -10,9 +10,7 @@ function requestChatBot(loc) {
     if (params['userId']) {
         path += "&userId=" + params['userId'];
     }
-    if (params['userName']) {
-        path += "&userName=" + params['userName'];
-    }
+    path += "&userName=" + (params['userName'] || "You");
     oReq.open("POST", path);
     oReq.send();
 }
