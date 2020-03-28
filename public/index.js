@@ -80,7 +80,7 @@ function initBotConversation() {
 
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
-            dispatch({
+            store.dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
                 meta: {method: 'keyboard'},
                 payload: {
