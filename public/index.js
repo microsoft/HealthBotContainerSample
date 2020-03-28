@@ -1,13 +1,21 @@
+var params;
+var locale;
+
 function requestChatBot(loc) {
-    const params = new URLSearchParams(location.search);
+    params = new URLSearchParams(location.search);
+    locale = params['locale'] || 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?";
+
+    if (loc) {
+        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    }
     if (params.has('userId')) {
         path += "&userId=" + params.get('userId');
     }
-    if (loc) {
-        path += "&lat=" + loc.lat + "&long=" + loc.long;
+    if (params.has('userName')) {
+        path += "&userName=" + params.get('userName');
     }
     oReq.open("POST", path);
     oReq.send();
@@ -59,8 +67,7 @@ function initBotConversation() {
     }
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
-        domain
-
+        domain: domain
     });
     const styleOptions = {
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
