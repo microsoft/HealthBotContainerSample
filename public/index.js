@@ -3,7 +3,7 @@ function requestChatBot(loc) {
     const locale = params.has('locale') ? params.get('locale') : 'en_us';
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot?";
+    var path = "/chatBot?locale=" + locale;
 
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
@@ -14,7 +14,6 @@ function requestChatBot(loc) {
     if (params.has('userName')) {
         path += "&userName=" + params.get('userName');
     }
-    path += "&locale=" + locale;
     oReq.open("POST", path);
     oReq.send();
 }
