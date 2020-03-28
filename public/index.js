@@ -49,6 +49,10 @@ function getUserLocation(callback) {
         });
 }
 
+function sendUserLocation(botConnection, user) {
+
+}
+
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -111,6 +115,12 @@ function initBotConversation() {
         else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
             if (action.payload && action.payload.activity && action.payload.type === "event" && action.payload.name === "ShareLocationEvent") {
                 // share
+                getUserLocation(function (location) {
+                    store.dispatch({
+                        type: 'WEB_CHAT/SEND_MESSAGE',
+                        payload: { text: JSON.stringify(location) }
+                    });
+                });
             }
         }
         return next(action);
