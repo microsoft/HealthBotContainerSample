@@ -40,13 +40,13 @@
                 "description": "Location for all resources."
             }
         },
-        "app_secret": {
+        "appSecret": {
             "type": "securestring",
             "metadata":{
                 "description": "Healthbot application secret."
             }
         },
-        "webchat_secret": {
+        "webchatSecret": {
             "type": "securestring",
             "metadata":{
                 "description": "Healthbot webchat secret."   
@@ -79,11 +79,11 @@
                     "appSettings": [
                         {
                         "name": "APP_SECRET",
-                        "value": "[parameters('app_secret')]"
+                        "value": "[parameters('appSecret')]"
                         },
                         {
                         "name": "WEBCHAT_SECRET",
-                        "value": "[parameters('webchat_secret')]"
+                        "value": "[parameters('webchatSecret')]"
                         }
                     ]
                 },
