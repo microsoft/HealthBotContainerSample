@@ -7,7 +7,7 @@ A simple web page to hand off users to the Microsoft Health bot
 
 1. Deploy the website:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbalteravishay%2FHealthBotContainerSample%2Favbalter%2F305-deploy-to-azure%2Fazuredeploy.json)
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
 2.Set the following environment variables:
 
