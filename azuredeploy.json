@@ -33,7 +33,7 @@
                 "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
             }
         },
-        "location": {
+        "siteLocation": {
             "type": "string",
             "metadata":{
                 "description": "Location for all resources."
@@ -66,7 +66,7 @@
             "apiVersion": "2018-02-01",
             "name": "[parameters('siteName')]",
             "type": "Microsoft.Web/sites",
-            "location": "[parameters('location')]",
+            "location": "[parameters('siteLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
             ],
@@ -94,7 +94,7 @@
                     "type": "sourcecontrols",
                     "apiVersion": "2018-02-01",
                     "name": "web",
-                    "location": "[parameters('location')]",
+                    "location": "[parameters('siteLocation')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
                     ],
@@ -110,7 +110,7 @@
             "apiVersion": "2018-02-01",
             "name": "[variables('hostingPlanName')]",
             "type": "Microsoft.Web/serverfarms",
-            "location": "[parameters('location')]",
+            "location": "[parameters('siteLocation')]",
             "kind": "linux",
             "sku": {
                 "Name": "[variables('skuCode')]"
