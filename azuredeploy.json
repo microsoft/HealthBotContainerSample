@@ -33,6 +33,13 @@
                 "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
             }
         },
+        "numberOfInstances": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata":{
+                "description": "Number of instances the app service is scaled to. Check the maximum instances your plan can host at https://azure.microsoft.com/en-us/pricing/details/app-service"
+            }
+        },
         "siteLocation": {
             "type": "string",
             "metadata":{
@@ -55,7 +62,7 @@
     "variables":{
         "alwaysOn": true,
         "skuCode": "[parameters('skuName')]",
-        "numberOfWorkers": "3",
+        "numberOfWorkers": "[parameters('numberOfInstances')]",
         "linuxFxVersion": "NODE|lts",
         "hostingPlanName": "[concat('hpn-', parameters('siteName'))]",
         "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
