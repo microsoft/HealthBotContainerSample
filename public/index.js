@@ -1,6 +1,9 @@
+const defaultLocale = 'en-US';
+const localeRegExPattern = /^[a-z]{2}(-[A-Z]{2})?$/;
+
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
-    const locale = params.has('locale') ? params.get('locale') : 'en_us';
+    const locale = params.has('locale') ? extractLocale(params.get('locale')) : defaultLocale;
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?locale=" + locale;
@@ -16,6 +19,18 @@ function requestChatBot(loc) {
     }
     oReq.open("POST", path);
     oReq.send();
+}
+
+function extractLocale(localeParam) {
+    if(localeParam === 'autodetect') {
+        return navigator.language;
+    }
+
+    //Before assigning, ensure it's a valid locale string (xx or xx-XX)
+    if(localeParam.search(localeRegExPattern) === 0) {
+        return localeParam;
+    }
+    return defaultLocale;
 }
 
 function chatRequested() {
