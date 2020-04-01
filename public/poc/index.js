@@ -204,5 +204,5 @@ function disableButtonsAfterClick() {
         for (let i = 0; i < buttons.length; i++) {
             buttons[i].addEventListener("click", optionSelected);
         }
-    }, 10);
+    }, 250);
 }
