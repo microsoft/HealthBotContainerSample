@@ -62,7 +62,7 @@
     "variables":{
         "alwaysOn": "[if(equals(parameters('skuName'), 'F1'), 'false', 'true')]",
         "skuCode": "[parameters('skuName')]",
-        "numberOfWorkers": "[parameters('numberOfInstances')]",
+        "numberOfWorkers": "[if(or(equals(parameters('skuName'), 'F1'), equals(parameters('skuName'), 'D1')), 1, parameters('numberOfInstances'))]",
         "linuxFxVersion": "NODE|lts",
         "hostingPlanName": "[concat('hpn-', parameters('siteName'))]",
         "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
