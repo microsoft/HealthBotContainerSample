@@ -23,16 +23,18 @@ function unhealthy(res) {
     healthResponse(res, 503, "Unhealthy");
 }
 
+function validateDirectLineSecret(appConfig) {
+    return rp(appConfig.options);
+}
+
 function executeHealthProbe(res, appConfig) {
     if (!appConfig.isHealthy) {
-        rp(appConfig.options)
-            .then((body) => {
+        validateDirectLineSecret(appConfig)
+            .then(() => {
                 appConfig.isHealthy = true;
                 healthy(res);
             })
-            .catch((err) =>{
-                unhealthy(res);
-            });
+            .catch(() => unhealthy(res));
     }
     else {
         healthy(res);
