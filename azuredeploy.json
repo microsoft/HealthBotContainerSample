@@ -60,7 +60,7 @@
         }
     },
     "variables":{
-        "alwaysOn": "[if(equals(parameters('skuName'), 'F'), 'false', 'true')]",
+        "alwaysOn": "[if(equals(parameters('skuName'), 'F1'), 'false', 'true')]",
         "skuCode": "[parameters('skuName')]",
         "numberOfWorkers": "[parameters('numberOfInstances')]",
         "linuxFxVersion": "NODE|lts",
