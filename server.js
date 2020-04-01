@@ -7,6 +7,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 const rp = require("request-promise");
 const cookieParser = require('cookie-parser');
+const health = require('./src').Health;
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
 const APP_SECRET = process.env.APP_SECRET;
@@ -20,7 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 // begin listening for requests.
 const port = process.env.PORT || 8080;
-const region = process.env.REGION || "Unknown";
+
+health.setRegion(process.env.REGION || "Unknown");
 
 app.listen(port, function() {
     console.log("Express server listening on port " + port);
@@ -50,34 +52,8 @@ const appConfig = {
     }
 };
 
-function healthResponse(res, statusCode, message) {
-    res.status(statusCode).send({
-        health: message,
-        region: region
-    });
-}
-function healthy(res) {
-    healthResponse(res, 200, "Ok");
-}
-
-function unhealthy(res) {
-    healthResponse(res, 503, "Unhealthy");
-}
-
-app.get('/health', function(req, res){
-    if (!appConfig.isHealthy) {
-        rp(appConfig.options)
-            .then((body) => {
-                appConfig.isHealthy = true;
-                healthy(res);
-            })
-            .catch((err) =>{
-                unhealthy(res);
-            });
-    }
-    else {
-        healthy(res);
-    }
+app.get('/health', function(req, res) {
+    health.probe(res, appConfig);
 });
 
 app.post('/chatBot',  function(req, res) {
