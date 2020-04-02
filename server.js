@@ -11,7 +11,8 @@ const health = require('./src').Health;
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
 const APP_SECRET = process.env.APP_SECRET;
-const directLineTokenEp = `https://${DIRECTLINE_ENDPOINT_URI || "directline.botframework.com"}/v3/directline/tokens/generate`;
+const directLineUri = `https://${DIRECTLINE_ENDPOINT_URI || "directline.botframework.com"}`;
+const directLineTokenEp = `${directLineUri}/v3/directline/tokens/generate`;
 
 // Initialize the web app instance,
 const app = express();
@@ -42,6 +43,8 @@ function getValidatedLocale(loc) {
 
 const appConfig = {
     isHealthy : false,
+    directLine : directLineUri,
+    appSecret : APP_SECRET,
     options : {
         method: 'POST',
         uri: directLineTokenEp,
