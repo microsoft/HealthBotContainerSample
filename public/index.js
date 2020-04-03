@@ -1,5 +1,8 @@
+import { request } from "express";
+
 const defaultLocale = 'en-US';
 const localeRegExPattern = /^[a-z]{2}(-[A-Z]{2})?$/;
+const ipLocationLookupEndpoint = 'http://ip-api.com/json';
 
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
@@ -7,8 +10,6 @@ function requestChatBot(loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?locale=" + locale;
-
-    console.log("requestChatBot Position: " + JSON.stringify(loc));
 
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
@@ -19,6 +20,7 @@ function requestChatBot(loc) {
     if (params.has('userName')) {
         path += "&userName=" + params.get('userName');
     }
+
     oReq.open("POST", path);
     oReq.send();
 }
@@ -60,9 +62,28 @@ function getUserLocation(callback) {
             // user declined to share location
             console.log("location error:" + error.message);
 
+            getUserLocationIp(callback);
             // Get Location via IP
-            callback();
+            // callback();
         });
+}
+
+function getUserLocationIp(callback) {
+    const oReq = new XMLHttpRequest();
+    
+    oReq.open("GET", ipLocationLookupEndpoint, true);
+
+    request.onload = function(position) {
+        var latitude = position.lat;
+        var longitude = position.lon;
+        var location = { lat: latitude, long: longitude};
+        callback(location);
+
+    }
+
+    request.error = callback();
+
+    oReq.send();    
 }
 
 function initBotConversation() {
