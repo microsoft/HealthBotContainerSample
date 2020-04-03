@@ -93,6 +93,8 @@ function initBotConversation() {
     };
 
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
+        console.log("Position: " + location);
+        
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
             store.dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
