@@ -115,7 +115,7 @@ function initBotConversation() {
                             triggeredScenario: {
                                 trigger: "covid19_assessment",
                                 args: {
-                                    location: loc
+                                    location: location
                                 }
                             }
                             
