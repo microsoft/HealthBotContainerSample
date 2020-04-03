@@ -1,5 +1,6 @@
 const defaultLocale = 'en-US';
 const localeRegExPattern = /^[a-z]{2}(-[A-Z]{2})?$/;
+const ipLocationLookupEndpoint = 'http://ip-api.com/json';
 
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
@@ -7,8 +8,6 @@ function requestChatBot(loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?locale=" + locale;
-
-    console.log("requestChatBot Position: " + JSON.stringify(loc));
 
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
@@ -61,9 +60,35 @@ function getUserLocation(callback) {
             console.log("location error:" + error.message);
 
             // Get Location via IP
-            callback();
+            getUserLocationIp(callback);
+
+
+            //callback();
         });
 }
+
+function getUserLocationIp(callback) {
+    const oReq = new XMLHttpRequest();
+
+    oReq.open("GET", ipLocationLookupEndpoint, true);
+
+    request.onload = function () {
+        var position = JSON.parse(this.response);
+        console.log("IP Position: " + JSON.stringify(position));
+        if (request.status >= 200 && request.status <= 400) {
+            var latitude = position.lat;
+            var longitude = position.lon;
+            var location = { lat: latitude, long: longitude };
+            callback(location);
+        }
+        else {
+            callback();
+        }
+    }
+
+    oReq.send();
+}
+
 
 function initBotConversation() {
     if (this.status >= 400) {
@@ -104,7 +129,6 @@ function initBotConversation() {
     
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
 
-        console.log("CONNECT_FULFILLED Position: " + JSON.stringify(location));
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
             store.dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
@@ -135,7 +159,6 @@ function initBotConversation() {
             if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
                 // share
                 getUserLocation(function (location) {
-                    console.log("INCOMING Position: " + JSON.stringify(location));
                     store.dispatch({
                         type: 'WEB_CHAT/SEND_POST_BACK',
                         payload: { value: JSON.stringify(location) }
