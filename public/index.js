@@ -94,10 +94,9 @@ function initBotConversation() {
         backgroundColor: '#F8F8F8'
     };
     
-    console.log("initBotConversation Position: " + JSON.stringify(loc));
-    
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
 
+        console.log("CONNECT_FULFILLED Position: " + JSON.stringify(location));
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
             store.dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
@@ -117,8 +116,7 @@ function initBotConversation() {
                                 args: {
                                     location: location
                                 }
-                            }
-                            
+                            }                            
                         }
                     }
                 }
@@ -129,6 +127,7 @@ function initBotConversation() {
             if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
                 // share
                 getUserLocation(function (location) {
+                    console.log("INCOMING Position: " + JSON.stringify(location));
                     store.dispatch({
                         type: 'WEB_CHAT/SEND_POST_BACK',
                         payload: { value: JSON.stringify(location) }
