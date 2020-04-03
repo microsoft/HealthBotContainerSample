@@ -59,6 +59,8 @@ function getUserLocation(callback) {
         function(error) {
             // user declined to share location
             console.log("location error:" + error.message);
+
+            // Get Location via IP
             callback();
         });
 }
@@ -80,6 +82,12 @@ function initBotConversation() {
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
+
+    let location = undefined;
+    if(tokenPayload.location) {
+        location = tokenPayload.location;
+    }
+
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
         domain: domain
