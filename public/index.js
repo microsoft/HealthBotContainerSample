@@ -72,7 +72,7 @@ function getUserLocationIp(callback) {
 
     oReq.open("GET", ipLocationLookupEndpoint, true);
 
-    request.onload = function () {
+    oReq.onload = function () {
         var position = JSON.parse(this.response);
         console.log("IP Position: " + JSON.stringify(position));
         if (request.status >= 200 && request.status <= 400) {
