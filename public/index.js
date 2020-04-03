@@ -62,7 +62,6 @@ function getUserLocation(callback) {
             // Get Location via IP
             getUserLocationIp(callback);
 
-
             //callback();
         });
 }
