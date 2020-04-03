@@ -75,7 +75,7 @@ function getUserLocationIp(callback) {
     oReq.onload = function () {
         var position = JSON.parse(this.response);
         console.log("IP Position: " + JSON.stringify(position));
-        if (request.status >= 200 && request.status <= 400) {
+        if (oReq.status >= 200 && oReq.status <= 400) {
             var latitude = position.lat;
             var longitude = position.lon;
             var location = { lat: latitude, long: longitude };
