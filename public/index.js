@@ -86,7 +86,7 @@ function initBotConversation() {
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
         // botAvatarInitials: '',
         // userAvatarImage: '',
-        hideSendBox: false, /* set to true to hide the send box from the view */
+        hideSendBox: true, /* set to true to hide the send box from the view */
         botAvatarInitials: 'Bot',
         userAvatarInitials: 'You',
         backgroundColor: '#F8F8F8'
@@ -106,16 +106,14 @@ function initBotConversation() {
                             // must use for authenticated conversation.
                             jsonWebToken: jsonWebToken,
 
-                            // Use the following activity to proactively invoke a bot scenario
-                            /*
+                            // Use the following activity to proactively invoke a bot scenario                            
                             triggeredScenario: {
-                                trigger: "{scenario_id}",
+                                trigger: "covid_19_assesment",
                                 args: {
-                                    myVar1: "{custom_arg_1}",
-                                    myVar2: "{custom_arg_2}"
+                                    location: location
                                 }
                             }
-                            */
+                            
                         }
                     }
                 }
