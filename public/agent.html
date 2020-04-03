@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Health Bot</title>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat-es5.gzip.js"></script>
+    <link href="stylesheets/style.css?v=5" rel="stylesheet" />
+    <link href="stylesheets/agent.css?v=5" rel="stylesheet" />
+</head>
+
+<body>
+    <h1> Agent Webchat</h1>
+    <h2 id="logon-title"> Login page </h2>
+
+    <form id="logon-form">
+        <label for="user-name">Enter your name (as it should appear in the chat)</label>
+        <br>
+        <input id="user-name" type="text">
+        <br><br>
+
+        <label for="user-id">Enter login ID here</label>
+        <br>
+        <input id="user-id" type="text">
+        <br><br>
+        <button id="submit-btn" type="submit">Log In</button>
+    </form>
+
+    <table id="webchat-container" class="invisible">
+        <tr>
+            <td style="width:150px; border-right: groove; vertical-align: top;">
+                <div class="agent-buttons hidden">
+                    <button type="button" onclick="talk('list')"> List </button>
+                    <button type="button" onclick="talk('connect')"> Connect </button>
+                    <button type="button" onclick="talk('disconnect')"> End conversation </button>
+                    <button type="button" onclick="talk('options')"> Options </button>
+                </div>
+            </td>
+            <td style="width:100%">
+                <div id="webchat" role="main" watermark="false"></div>
+            </td>
+        </tr>
+    </table>
+    <script src="index.js?v=5"></script>
+    <script src="agent.js"></script>
+</body>
+
+</html>

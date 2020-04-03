@@ -31,6 +31,10 @@ function isUserAuthenticated(){
     return true;
 }
 
+function isAgentAuthenticated(req) {
+    return Boolean(req.query.agent);
+}
+
 function getValidatedLocale(loc) {
     if (loc.search(localeRegExPattern) === 0) {
         return loc;
@@ -56,6 +60,7 @@ function healthResponse(res, statusCode, message) {
         region: region
     });
 }
+
 function healthy(res) {
     healthResponse(res, 200, "Ok");
 }
@@ -106,6 +111,9 @@ app.post('/chatBot',  function(req, res) {
 
             if (req.query.lat && req.query.long)  {
                 response['location'] = {lat: req.query.lat, long: req.query.long};
+            }
+            if (isAgentAuthenticated(req)) {
+                response['isAgent'] = true;
             }
             response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
             const jwtToken = jwt.sign(response, APP_SECRET);
