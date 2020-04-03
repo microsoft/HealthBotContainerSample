@@ -94,7 +94,7 @@ function initBotConversation() {
         backgroundColor: '#F8F8F8'
     };
     
-    console.log("initBotConversation Position: " + JSON.stringify(location));
+    console.log("initBotConversation Position: " + JSON.stringify(loc));
     
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
 
@@ -115,7 +115,7 @@ function initBotConversation() {
                             triggeredScenario: {
                                 trigger: "covid19_assessment",
                                 args: {
-                                    location: location
+                                    location: loc
                                 }
                             }
                             
