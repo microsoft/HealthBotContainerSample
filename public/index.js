@@ -1,6 +1,6 @@
 const defaultLocale = 'en-US';
 const localeRegExPattern = /^[a-z]{2}(-[A-Z]{2})?$/;
-const ipLocationLookupEndpoint = 'https://karimka-hb-locations.azurewebsites.net/api/locationip?code=CSAd2zbcJKQWW/CRnTcQ2ozatYEEHOCr9VRn/K6aUhWa0Swm3jakfw==';
+const ipLocationLookupEndpoint = 'https://geolocation-db.com/jsonp';
 
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
