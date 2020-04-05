@@ -27,6 +27,10 @@
             height: calc(100% - 32px);
         }
 
+        #webchat {
+            height: calc(100vh - 36px);
+        }
+
         #logon-title{
             font-weight: 700;
 

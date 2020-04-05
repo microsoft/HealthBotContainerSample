@@ -55,7 +55,7 @@
         "linuxFxVersion": "NODE|lts",
         "hostingPlanName": "[concat('hpn-', parameters('siteName'))]",
         "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
-        "branch": "master"
+        "branch": "live_agent_handoff"
     },
     "resources": [
         {

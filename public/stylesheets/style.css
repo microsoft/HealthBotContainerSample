@@ -6,7 +6,7 @@ body {
 }
 
 #webchat {
-  height: calc(100vh - 36px);
+  height: 100%;
   width: 100%;
 }
 
