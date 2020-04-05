@@ -63,7 +63,7 @@ function getUserLocation(info, callback) {
             var location = {
                 lat: latitude,
                 long: longitude
-            };
+            }
             callback(info, location);
         },
         function(error) {

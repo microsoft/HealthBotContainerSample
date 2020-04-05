@@ -32,6 +32,7 @@ function isUserAuthenticated(){
 }
 
 function isAgentAuthenticated(req) {
+    // add here the logic to verify the agent is authenticated
     return Boolean(req.query.agent);
 }
 
@@ -60,7 +61,6 @@ function healthResponse(res, statusCode, message) {
         region: region
     });
 }
-
 function healthy(res) {
     healthResponse(res, 200, "Ok");
 }
