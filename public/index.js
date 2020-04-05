@@ -7,19 +7,27 @@ function requestChatBot(info, loc) {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
     var path = "/chatBot?locale=" + locale;
-    const userName = (info && info.userName) || params["userName"] || "You";
-    path += "?userName=" + userName;
-    const userId = (info && info.userId) || params["userId"];
-    if (userId) {
-        path += "&userId=" + userId;
-    }
-    if (info && info.agent) {
-        path += "&agent=true";
-    }
 
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
+
+
+    const userId = (info && info.userId) || (params.has('userId') ? params.get('userId') : undefined);
+    if (userId) {
+        path += "&userId=" + userId;
+    }
+
+    const userName = (info && info.userName) || (params.has('userName') ? params.get('userName') : undefined);
+    if (userName) {
+        path += "&userName=" + userName;
+    }
+
+    if (info && info.agent) {
+        path += "&agent=true";
+    }
+
+
     oReq.open("POST", path);
     oReq.send();
 }
