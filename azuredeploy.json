@@ -1,0 +1,121 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteName": {
+            "type": "string",
+            "defaultValue": "[concat('HealthBot', uniqueString(resourceGroup().name, utcNow('F')))]",
+            "metadata":{
+                "description": "Web site name. Has to be unique."
+                
+            }
+        },
+        "skuName": {
+            "type": "string",
+            "defaultValue": "P1V2",
+            "allowedValues": [ 
+                "B1",
+                "S1",
+                "P1V2"
+            ],
+            "metadata": {
+                "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+            }
+        },
+        "numberOfInstances": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata":{
+                "description": "Number of instances the app service is scaled to. Check the maximum instances your plan can host at https://azure.microsoft.com/en-us/pricing/details/app-service"
+            }
+        },
+        "siteLocation": {
+            "type": "string",
+            "metadata":{
+                "description": "Location for all resources."
+            }
+        },
+        "appSecret": {
+            "type": "securestring",
+            "metadata":{
+                "description": "Healthbot application secret."
+            }
+        },
+        "webchatSecret": {
+            "type": "securestring",
+            "metadata":{
+                "description": "Healthbot webchat secret."   
+            }
+        }
+    },
+    "variables":{
+        "alwaysOn": true,
+        "skuCode": "[parameters('skuName')]",
+        "numberOfWorkers": "[parameters('numberOfInstances')]",
+        "linuxFxVersion": "NODE|lts",
+        "hostingPlanName": "[concat('hpn-', parameters('siteName'))]",
+        "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
+        "branch": "master"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('siteName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('siteLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+            ],
+            "properties": {
+                "name": "[parameters('siteName')]",
+                "siteConfig": {
+                    "linuxFxVersion": "[variables('linuxFxVersion')]",
+                    "alwaysOn": "[variables('alwaysOn')]",
+                    "appSettings": [
+                        {
+                        "name": "APP_SECRET",
+                        "value": "[parameters('appSecret')]"
+                        },
+                        {
+                        "name": "WEBCHAT_SECRET",
+                        "value": "[parameters('webchatSecret')]"
+                        }
+                    ]
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "clientAffinityEnabled": false
+            },
+            "resources": [
+                {
+                    "type": "sourcecontrols",
+                    "apiVersion": "2018-02-01",
+                    "name": "web",
+                    "location": "[parameters('siteLocation')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
+                    ],
+                    "properties": {
+                        "repoUrl": "[variables('repoURL')]",
+                        "branch": "[variables('branch')]",
+                        "isManualIntegration": true
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[variables('hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('siteLocation')]",
+            "kind": "linux",
+            "sku": {
+                "Name": "[variables('skuCode')]"
+            },
+            "properties": {
+                "name": "[variables('hostingPlanName')]",
+                "numberOfWorkers": "[variables('numberOfWorkers')]",
+                "reserved": true
+            }
+        }
+    ]
+}
