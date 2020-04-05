@@ -7,13 +7,24 @@
             "defaultValue": "[concat('HealthBot', uniqueString(resourceGroup().name, utcNow('F')))]",
             "metadata":{
                 "description": "Web site name. Has to be unique."
-                
+
+            }
+        },
+        "serverKind": {
+            "type": "string",
+            "defaultValue": "linux",
+            "allowedValues": [
+                "linux",
+                "windows"
+            ],
+            "metadata": {
+                "description": "Host type: Linux or Windows"
             }
         },
         "skuName": {
             "type": "string",
             "defaultValue": "P1V2",
-            "allowedValues": [ 
+            "allowedValues": [
                 "B1",
                 "S1",
                 "P1V2"
@@ -44,7 +55,7 @@
         "webchatSecret": {
             "type": "securestring",
             "metadata":{
-                "description": "Healthbot webchat secret."   
+                "description": "Healthbot webchat secret."
             }
         }
     },
@@ -53,21 +64,33 @@
         "skuCode": "[parameters('skuName')]",
         "numberOfWorkers": "[parameters('numberOfInstances')]",
         "linuxFxVersion": "NODE|lts",
-        "hostingPlanName": "[concat('hpn-', parameters('siteName'))]",
+        "hostingPlanNameLinux": "[concat('hpn-', parameters('siteName'))]",
+        "hostingPlanNameWin": "[concat('hpn-win-', parameters('siteName'))]",
         "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
-        "branch": "master"
+        "branch": "master",
+        "kind": "[if(equals(parameters('serverKind'), 'windows'), 'app', 'linux')]",
+        "linuxSiteName": "[concat(parameters('siteName'), 'linux')]",
+        "windowsSiteName": "[concat(parameters('siteName'), 'windows')]",
+        "WinSkuCode": "[parameters('skuName')]",
+        "WinSku": "Standard",
+        "workerSize": "0",
+        "workerSizeId": "0",
+        "hostingEnvironment": "",
+        "nodeVersion": "12.13.0",
+        "currentStack": "node"
     },
     "resources": [
         {
             "apiVersion": "2018-02-01",
-            "name": "[parameters('siteName')]",
+            "name": "[variables('linuxSiteName')]",
+            "condition": "[equals(parameters('serverKind'),'linux')]",
             "type": "Microsoft.Web/sites",
             "location": "[parameters('siteLocation')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+                "[resourceId('Microsoft.Web/serverfarms/', variables('hostingPlanNameLinux'))]"
             ],
             "properties": {
-                "name": "[parameters('siteName')]",
+                "name": "[variables('linuxSiteName')]",
                 "siteConfig": {
                     "linuxFxVersion": "[variables('linuxFxVersion')]",
                     "alwaysOn": "[variables('alwaysOn')]",
@@ -82,17 +105,18 @@
                         }
                     ]
                 },
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameLinux'))]",
                 "clientAffinityEnabled": false
             },
             "resources": [
                 {
                     "type": "sourcecontrols",
+                    "condition": "[equals(parameters('serverKind'),'linux')]",
                     "apiVersion": "2018-02-01",
                     "name": "web",
                     "location": "[parameters('siteLocation')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
+                        "[resourceId('Microsoft.Web/sites', variables('linuxSiteName'))]"
                     ],
                     "properties": {
                         "repoUrl": "[variables('repoURL')]",
@@ -104,7 +128,8 @@
         },
         {
             "apiVersion": "2018-02-01",
-            "name": "[variables('hostingPlanName')]",
+            "condition": "[equals(parameters('serverKind'),'linux')]",
+            "name": "[variables('hostingPlanNameLinux')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[parameters('siteLocation')]",
             "kind": "linux",
@@ -112,9 +137,88 @@
                 "Name": "[variables('skuCode')]"
             },
             "properties": {
-                "name": "[variables('hostingPlanName')]",
+                "name": "[variables('hostingPlanNameLinux')]",
                 "numberOfWorkers": "[variables('numberOfWorkers')]",
                 "reserved": true
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "condition": "[equals(parameters('serverKind'),'windows')]",
+            "name": "[variables('windowsSiteName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('siteLocation')]",
+            "tags": null,
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanNameWin'))]"
+            ],
+            "properties": {
+                "name": "[variables('windowsSiteName')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                          "name": "APP_SECRET",
+                          "value": "[parameters('appSecret')]"
+                        },
+                        {
+                          "name": "WEBCHAT_SECRET",
+                          "value": "[parameters('webchatSecret')]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "[variables('nodeVersion')]"
+                        }
+                    ],
+                    "metadata": [
+                        {
+                            "name": "CURRENT_STACK",
+                            "value": "[variables('currentStack')]"
+                        }
+                    ],
+                    "nodeVersion": "[parameters('nodeVersion')]",
+                    "alwaysOn": "[variables('alwaysOn')]"
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameWin'))]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]",
+                "clientAffinityEnabled": true
+            },
+            "resources": [
+                {
+                    "type": "sourcecontrols",
+                    "condition": "[equals(parameters('serverKind'),'windows')]",
+                    "apiVersion": "2018-11-01",
+                    "name": "web",
+                    "location": "[parameters('siteLocation')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('windowsSiteName'))]"
+                    ],
+                    "properties": {
+                        "repoUrl": "[variables('repoURL')]",
+                        "branch": "[variables('branch')]",
+                        "isManualIntegration": true
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[variables('hostingPlanNameWin')]",
+            "condition": "[equals(parameters('serverKind'),'windows')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('siteLocation')]",
+            "kind": "",
+            "tags": null,
+            "dependsOn": [],
+            "properties": {
+                "name": "[variables('hostingPlanNameWin')]",
+                "workerSize": "[variables('workerSize')]",
+                "workerSizeId": "[variables('workerSizeId')]",
+                "numberOfWorkers": "[variables('numberOfWorkers')]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]"
+            },
+            "sku": {
+                "Tier": "[variables('WinSku')]",
+                "Name": "[variables('WinSkuCode')]"
             }
         }
     ]
