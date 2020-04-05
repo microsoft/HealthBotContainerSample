@@ -12,7 +12,6 @@ function requestChatBot(info, loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
 
-
     const userId = (info && info.userId) || (params.has('userId') ? params.get('userId') : undefined);
     if (userId) {
         path += "&userId=" + userId;
