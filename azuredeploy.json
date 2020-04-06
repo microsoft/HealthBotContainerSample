@@ -18,7 +18,7 @@
                 "windows"
             ],
             "metadata": {
-                "description": "Host type: Linux or Windows"
+                "description": "Host type: Linux or Windows. (Linux is recommended)"
             }
         },
         "skuName": {
