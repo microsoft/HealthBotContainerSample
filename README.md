@@ -9,7 +9,8 @@ A simple web page to hand off users to the Microsoft Health bot
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
-Note: to enable online file editing in the portal please choose "Windows", otherwise we recommend you to go with the default (Linux)
+Note: It is recommended you use the default Linux host type when deploying the container.
+However, if you wish to enable online file editing using the App Service Editor, select 'Windows'.
 
 2.Set the following environment variables:
 
