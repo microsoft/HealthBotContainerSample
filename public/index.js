@@ -1,5 +1,6 @@
 const defaultLocale = 'en-US';
 const localeRegExPattern = /^[a-z]{2}(-[A-Z]{2})?$/;
+const ipLocationLookupEndpoint = 'https://geolocation-db.com/jsonp';
 
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
@@ -45,8 +46,8 @@ function chatRequested() {
 
 function getUserLocation(callback) {
     navigator.geolocation.getCurrentPosition(
-        function(position) {
-            var latitude  = position.coords.latitude;
+        function (position) {
+            var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
             var location = {
                 lat: latitude,
@@ -54,11 +55,31 @@ function getUserLocation(callback) {
             }
             callback(location);
         },
-        function(error) {
+        function (error) {
             // user declined to share location
             console.log("location error:" + error.message);
-            callback();
+            // Get Location via IP
+            getUserLocationIp(callback);
         });
+}
+
+function getUserLocationIp(callback) {
+    const oReq = new XMLHttpRequest();
+    oReq.open("GET", ipLocationLookupEndpoint, true);
+    oReq.onload = function () {
+        var position = JSON.parse(this.response);
+        console.log("IP Position: " + JSON.stringify(position));
+        if (oReq.status >= 200 && oReq.status <= 400) {
+            var latitude = position.latitude;
+            var longitude = position.longitude;
+            var location = { lat: latitude, long: longitude };
+            callback(location);
+        }
+        else {
+            callback();
+        }
+    }
+    oReq.send();
 }
 
 function initBotConversation() {
