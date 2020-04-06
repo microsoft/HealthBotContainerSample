@@ -1,5 +1,7 @@
 # Health Bot Container
 
+***This branch uses WebChat v3 which is now deprecated**. For latest version, please visit the [`master`](https://github.com/microsoft/HealthBotContainerSample/tree/master) branch for details.*
+
 **Note:** In order to use this Web Chat with the Health Bot service, you will need to obtain your Web Chat secret by going to ["Integration/Secrets"](./secrets.png) on the navigation panel.
 Please refer to [Microsoft Health Bot](https://www.microsoft.com/en-us/research/project/health-bot/) for a private preview and details.
 
