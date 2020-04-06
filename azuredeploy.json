@@ -175,7 +175,7 @@
                             "value": "[variables('currentStack')]"
                         }
                     ],
-                    "nodeVersion": "[parameters('nodeVersion')]",
+                    "nodeVersion": "[variables('nodeVersion')]",
                     "alwaysOn": "[variables('alwaysOn')]"
                 },
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameWin'))]",
