@@ -9,6 +9,9 @@ A simple web page to hand off users to the Microsoft Health bot
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
+Note: It is recommended you use the default Linux host type when deploying the container.
+However, if you wish to enable online file editing using the App Service Editor, select 'Windows'.
+
 2.Set the following environment variables:
 
 `APP_SECRET`
@@ -48,7 +51,7 @@ In some cases it is required to set the endpoint URI so that it points to a spec
 
 Pass your preferred geographic endpoint URI by setting the environment variable: `DIRECTLINE_ENDPOINT_URI` in your deployment. If no variable is found it will default to `directline.botframework.com`
 
-**Note:** If you are deploying the code sample using the "Deploy to Azure" option, you should add the above secrets to the application settings for your App Service. 
+**Note:** If you are deploying the code sample using the "Deploy to Azure" option, you should add the above secrets to the application settings for your App Service.
 
 ## Agent webchat
 If the agent webchat sample is also required, [switch to the live agent handoff branch](https://github.com/Microsoft/HealthBotContainerSample/tree/live_agent_handoff)
