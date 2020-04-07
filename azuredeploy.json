@@ -10,7 +10,7 @@
 
             }
         },
-        "serverKind": {
+        "operatingSystem": {
             "type": "string",
             "defaultValue": "linux",
             "allowedValues": [
@@ -64,13 +64,13 @@
         "skuCode": "[parameters('skuName')]",
         "numberOfWorkers": "[parameters('numberOfInstances')]",
         "linuxFxVersion": "NODE|lts",
-        "hostingPlanNameLinux": "[concat('hpn-', parameters('siteName'))]",
-        "hostingPlanNameWin": "[concat('hpn-win-', parameters('siteName'))]",
+        "hostingPlanNameLinux": "[concat('plan-linux-', parameters('siteName'))]",
+        "hostingPlanNameWin": "[concat('plan-win-', parameters('siteName'))]",
         "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
         "branch": "master",
-        "kind": "[if(equals(parameters('serverKind'), 'windows'), 'app', 'linux')]",
-        "linuxSiteName": "[concat(parameters('siteName'), 'linux')]",
-        "windowsSiteName": "[concat(parameters('siteName'), 'windows')]",
+        "kind": "[if(equals(parameters('operatingSystem'), 'windows'), 'app', 'linux')]",
+        "linuxSiteName": "[if(equals(parameters('operatingSystem'), 'linux'), parameters('siteName'), 'app-na')]",
+        "windowsSiteName": "[if(equals(parameters('operatingSystem'), 'windows'), parameters('siteName'), 'app-na')]",
         "WinSkuCode": "[parameters('skuName')]",
         "WinSku": "Standard",
         "workerSize": "0",
@@ -83,7 +83,7 @@
         {
             "apiVersion": "2018-02-01",
             "name": "[variables('linuxSiteName')]",
-            "condition": "[equals(parameters('serverKind'),'linux')]",
+            "condition": "[equals(parameters('operatingSystem'),'linux')]",
             "type": "Microsoft.Web/sites",
             "location": "[parameters('siteLocation')]",
             "dependsOn": [
@@ -111,7 +111,7 @@
             "resources": [
                 {
                     "type": "sourcecontrols",
-                    "condition": "[equals(parameters('serverKind'),'linux')]",
+                    "condition": "[equals(parameters('operatingSystem'),'linux')]",
                     "apiVersion": "2018-02-01",
                     "name": "web",
                     "location": "[parameters('siteLocation')]",
@@ -128,7 +128,7 @@
         },
         {
             "apiVersion": "2018-02-01",
-            "condition": "[equals(parameters('serverKind'),'linux')]",
+            "condition": "[equals(parameters('operatingSystem'),'linux')]",
             "name": "[variables('hostingPlanNameLinux')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[parameters('siteLocation')]",
@@ -144,7 +144,7 @@
         },
         {
             "apiVersion": "2018-11-01",
-            "condition": "[equals(parameters('serverKind'),'windows')]",
+            "condition": "[equals(parameters('operatingSystem'),'windows')]",
             "name": "[variables('windowsSiteName')]",
             "type": "Microsoft.Web/sites",
             "location": "[parameters('siteLocation')]",
@@ -185,7 +185,7 @@
             "resources": [
                 {
                     "type": "sourcecontrols",
-                    "condition": "[equals(parameters('serverKind'),'windows')]",
+                    "condition": "[equals(parameters('operatingSystem'),'windows')]",
                     "apiVersion": "2018-11-01",
                     "name": "web",
                     "location": "[parameters('siteLocation')]",
@@ -203,7 +203,7 @@
         {
             "apiVersion": "2018-11-01",
             "name": "[variables('hostingPlanNameWin')]",
-            "condition": "[equals(parameters('serverKind'),'windows')]",
+            "condition": "[equals(parameters('operatingSystem'),'windows')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[parameters('siteLocation')]",
             "kind": "",
