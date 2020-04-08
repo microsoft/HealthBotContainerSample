@@ -1,6 +1,4 @@
 require('dotenv').config();
-const defaultLocale = 'en-US';
-const localeRegExPattern = /^[a-z]{2}(-[A-Z]{2})?$/;
 const crypto = require('crypto');
 const express = require("express");
 const path = require("path");
@@ -34,13 +32,6 @@ function isUserAuthenticated(){
 function isAgentAuthenticated(req) {
     // add here the logic to verify the agent is authenticated
     return Boolean(req.query.agent);
-}
-
-function getValidatedLocale(loc) {
-    if (loc.search(localeRegExPattern) === 0) {
-        return loc;
-    }
-    return defaultLocale;
 }
 
 const appConfig = {
@@ -101,7 +92,7 @@ app.post('/chatBot',  function(req, res) {
             var response = {};
             response['userId'] = userid;
             response['userName'] = req.query.userName;
-            response['locale'] = getValidatedLocale(req.query.locale);
+            response['locale'] = req.query.locale;
             response['connectorToken'] = parsedBody.token;
 
             /*
