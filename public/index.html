@@ -1,40 +1,81 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+        <title>Health Bot</title>
 
-    <title>Health Bot</title>
+        <link href="https://hbs.azureedge.net/public-websites/webchat/botchat.css" rel="stylesheet" />
+        <link href="/stylesheets/style.css?v=5" rel="stylesheet" />
 
-    <link href="https://hbs.azureedge.net/public-websites/webchat/botchat.css" rel="stylesheet" />
-    <link href="/stylesheets/style.css?v=5" rel="stylesheet" />
+        <script src="https://hbs.azureedge.net/public-websites/webchat/botchat.js"></script>
+        <script src="/polyfills/polyfills.js"></script>
+        <script src="/polyfills/es6-promise.min.js"></script>
+        <script src="/polyfills/es6-promise.auto.min.js"></script>
+        <script src="/index.js?v=5"></script>
+        <script src="/locale-selector.js?v=5"></script>
+        <script src="/chat-bot-service.js?v=5"></script>
+    </head>
 
-    <script src="https://hbs.azureedge.net/public-websites/webchat/botchat.js"></script>
-    <script src="/polyfills/polyfills.js"></script>
-    <script src="/polyfills/es6-promise.min.js"></script>
-    <script src="/polyfills/es6-promise.auto.min.js"></script>
-    <script src="/index.js?v=5"></script>
-    <script src="/locale-selector.js?v=5"></script>
-</head>
+    <body>
+        <div class="aah-bot-header"></div>
+        <div class="aah-bot-language-picker">
+            <select id="locale" class="aah-bot-locale-select">
+                <option value="en-en">English</option>
+                <option value="es-es">Español</option>
+            </select>
+        </div>
+        <div id="botContainer" class="hidden" style="width: 100%;"></div>
+        <div id="botLoader" style="width: 100%;">
+            <h1>Loading</h1>
+            <p id="botLoaderError" class="hidden">Couldn't connect. Please refresh.</p>
+        </div>
+        <!-- <script>chatRequested();</script> -->
+        <script>
+      const botContainer = document.getElementById('botContainer');
 
-<body>
-    <div class="aah-bot-header"></div>
-    <div class="aah-bot-language-picker">
-        <select id="locale" class="aah-bot-locale-select">
-            <option value="en-en">English</option>
-            <option value="es-es">Español</option>
-        </select>
-    </div>
-    <div id="botContainer" class="hidden" style="width:100%;"></div>
-    <div id="botLoader" style="width:100%;">
-        <h1>Loading</h1>
-        <p id="botLoaderError" class="hidden">Couldn't connect.  Please refresh.</p>
-    </div>
-    <script>chatRequested();</script>
-</body>
+      var settings = {
+        webSocket: true,
+        resize: 'detect',
+        chatTitle: '',
+        showUploadButton: false,
+        container: botContainer,
+        domain: '',
+        locale: 'en-us',
+        trigger: 'triage_v2',
+      };
 
+      const result = new ChatBotModel(settings, (x) => {
+        x.connection.activity$.subscribe(function (activity) {
+          if (activity.type === 'endOfConversation') {
+            document.querySelector('.wc-console').style.display = 'none';
+          }
+
+          if (activity.type === 'event' && activity.name === 'isFaqMode') {
+            const display = !!activity.value ? 'block' : 'none';
+
+            document.querySelector('.wc-console').style.display = display;
+          }
+
+          const item = document.querySelector('div[data-activity-id="' + activity.id + '"]');
+
+          if (!!item) {
+            item.querySelectorAll('button.ac-pushButton').forEach((x) => {
+              x.addEventListener('click', optionSelected);
+            });
+          }
+        });
+      });
+
+      setInterval(function () {
+        const botLoader = document.getElementById('botLoader');
+        botContainer.classList.remove('hidden');
+        botLoader.classList.add('hidden');
+      }, 10);
+    </script>
+    </body>
 </html>

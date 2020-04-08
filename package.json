@@ -10,7 +10,8 @@
     "express": "^4.15.3",
     "jsonwebtoken": "^7.4.1",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "rxjs": "^6.5.5"
   },
   "scripts": {
     "prestart": "npm install"

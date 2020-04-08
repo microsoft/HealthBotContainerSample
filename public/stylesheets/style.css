@@ -1,216 +1,202 @@
-html, body 
-{
+html,
+body {
   height: 100%;
   margin: 0;
 }
 
-.content 
-{
+.content {
   float: left;
   height: 100%;
   padding-left: 10px;
 }
 
-#botContainer 
-{
-    float: right;
-    height: 99%;
-    width: 460px;
-    position: relative;
-    display: block;
-    border-width: 0;
-    border-style: inset;
-  }
-
-  #botLoader 
-  {
-    float: right;
-    height: 99%;
-    width: 460px;
-    position: relative;
-    display: block;
-    border-width: 0;
-    border-style: inset;
-
-    background-color: #f5f5f5;
-    color: #337cb3;
-    text-align: center;
-    padding-top: 100px;
-    font-family: "PT Sans", sans-serif;
-    font-style: normal;
+#botContainer {
+  float: right;
+  height: 99%;
+  width: 460px;
+  position: relative;
+  display: block;
+  border-width: 0;
+  border-style: inset;
 }
 
-#botLoader h1 
-{
-    font-weight: 700;
-    font-size: 2.5rem;
+#botLoader {
+  float: right;
+  height: 99%;
+  width: 460px;
+  position: relative;
+  display: block;
+  border-width: 0;
+  border-style: inset;
+
+  background-color: #f5f5f5;
+  color: #337cb3;
+  text-align: center;
+  padding-top: 100px;
+  font-family: 'PT Sans', sans-serif;
+  font-style: normal;
 }
 
-#botLoader p 
-{
-    font-size: 1.25rem;
+#botLoader h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
 }
 
-.ac-input div input[type="checkbox"] + div
-{
+#botLoader p {
+  font-size: 1.25rem;
+}
+
+.ac-input div input[type='checkbox'] + div {
   flex: auto !important;
-  white-space: unset!important;
+  white-space: unset !important;
   margin: -5px 6px 10px 6px !important;
 }
 
-.ac-input div input[type="checkbox"]:checked + div
-{
+.ac-input div input[type='checkbox']:checked + div {
   color: #0177ca !important;
 }
 
-.wc-app ::-webkit-scrollbar-thumb 
-{
-    background-color: #f5f5f5;
+.wc-app ::-webkit-scrollbar-thumb {
+  background-color: #f5f5f5;
 }
 
-.aah-bot-language-picker 
-{
-    background-color: #f3f3f3;
-    padding: 4px;
-    text-align: right;
-    height: 46px;
+.aah-bot-language-picker {
+  background-color: #f3f3f3;
+  padding: 4px;
+  text-align: right;
+  height: 46px;
 }
 
-.aah-bot-locale-select
-{
-    font-size: 16px;
-    line-height: 25px;
-    padding: 5px 3px;
-    margin: 5px 2px;
-    border: 0;
-    background-color: #f3f3f3;
-    font-family: "Segoe UI", sans-serif;
+.aah-bot-locale-select {
+  font-size: 16px;
+  line-height: 25px;
+  padding: 5px 3px;
+  margin: 5px 2px;
+  border: 0;
+  background-color: #f3f3f3;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.aah-bot-locale-select option 
-{
-    font-size: 16px;
-    line-height: 25px;
-    padding: 5px 3px;
-    margin: 5px 2px;
+.aah-bot-locale-select option {
+  font-size: 16px;
+  line-height: 25px;
+  padding: 5px 3px;
+  margin: 5px 2px;
 }
 
-.aah-bot-header 
-{
-    background-color: #003A60;
-    background-image: url(../images/Triage-header.jpg);
-    background-position-x: center;
-    background-repeat: no-repeat;
-    background-size: auto 100%;
-    padding: 0;
-    min-height: 40px;
-    max-height: 109px;
-    height: 40px;
+.aah-bot-header {
+  background-color: #003a60;
+  background-image: url(../images/Triage-header.jpg);
+  background-position-x: center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  padding: 0;
+  min-height: 40px;
+  max-height: 109px;
+  height: 40px;
 }
-.wc-message-groups 
-{
-    top: 48px;
+.wc-message-groups {
+  top: 48px;
 }
-#botContainer, #botLoader 
-{
-    height: calc(99% - 40px - 47px);
+#botContainer,
+#botLoader {
+  height: calc(99% - 40px - 47px);
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) 
-{
-    .aah-bot-header 
-    {
-        height: 70px;
-    }     
-    .wc-message-groups 
-    {
-        top: 78px;
-    }
-    #botContainer, #botLoader 
-    {
-        height: calc(99% - 70px - 47px);
-    }
+@media only screen and (min-width: 600px) {
+  .aah-bot-header {
+    height: 70px;
+  }
+  .wc-message-groups {
+    top: 78px;
+  }
+  #botContainer,
+  #botLoader {
+    height: calc(99% - 70px - 47px);
+  }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) 
-{
-    .aah-bot-header 
-    {
-        height: 109px;
-    }     
-    .wc-message-groups 
-    {
-        top: 117px;
-    }
-    #botContainer, #botLoader 
-    {
-        height: calc(99% - 109px - 47px);
-    }
+@media only screen and (min-width: 768px) {
+  .aah-bot-header {
+    height: 109px;
+  }
+  .wc-message-groups {
+    top: 117px;
+  }
+  #botContainer,
+  #botLoader {
+    height: calc(99% - 109px - 47px);
+  }
 }
 
 /* .wc-message-groups {
     padding-bottom: 50px;
 } */
 
-@supports (-webkit-touch-callout: none) 
-{
-    /* CSS specific to iOS devices */ 
-    .wc-message-groups {
-        bottom: 76px;
-        padding-bottom: 50px;
-    }
+@supports (-webkit-touch-callout: none) {
+  /* CSS specific to iOS devices */
+  .wc-message-groups {
+    bottom: 76px;
+    padding-bottom: 50px;
+  }
 }
 
 /* hide various UI elements : text input, bot's username, user's chat bubbles, etc */
 .wc-message-from.wc-message-from-bot,
 .wc-message-from-me,
-.wc-console 
-{
-    display: none;
+.wc-console {
+  display: none;
 }
 
-.wc-console 
-{
-    border-color: #f5f5f5;
+.wc-console {
+  border-color: #f5f5f5;
 }
 
-.wc-message-from-bot .wc-message-content 
-{
-    background-color: #f3f3f3;
+.wc-message-from-bot .wc-message-content {
+  background-color: #f3f3f3;
 }
 
-.wc-message-from-me .wc-message-content 
-{
-    background-color: #337cb3;
+.wc-message-from-me .wc-message-content {
+  background-color: #337cb3;
 }
 
-.wc-message-from-me svg.wc-message-callout path 
-{
-    fill: #337cb3;
+.wc-message-from-me svg.wc-message-callout path {
+  fill: #337cb3;
 }
 
-.wc-card button 
-{
-    color: #337cb3;
+.wc-card button {
+  color: #337cb3;
 }
 
-.wc-card button:hover 
-{
-    background-color: transparent;
-    border-color: #337cb3;
-    color: #337cb3;
+.wc-card button:hover {
+  background-color: transparent;
+  border-color: #337cb3;
+  color: #337cb3;
 }
 
-.wc-card button:active 
-{
-    background-color: #337cb3;
-    border-color: #337cb3;
-    color: #ffffff;
+.wc-card button:active {
+  background-color: #337cb3;
+  border-color: #337cb3;
+  color: #ffffff;
 }
 
-.hidden 
-{
-    display: none !important;
+.hidden {
+  display: none !important;
+}
+
+.c-option {
+  background-color: #f3f3f3 !important;
+  color: #cccccc !important;
+  border-color: #cccccc !important;
+}
+
+.c-option:hover {
+  cursor: default;
+}
+
+.c-option--selected {
+  background-color: #337cb3 !important;
+  color: white !important;
 }

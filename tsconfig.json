@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "importHelpers": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "es5",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "strictNullChecks": false
+  },
+  "files": ["public/chat-bot-service.ts"]
+}
