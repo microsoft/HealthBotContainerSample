@@ -49,21 +49,34 @@ body {
   white-space: pre-wrap !important;
   text-overflow: unset !important;
 }
-#webchat button, #webchat input, #webchat .ac-input input[type="checkbox"] ~label {
+#webchat .ac-actionSet button,
+#webchat .ac-input button,
+#webchat .ac-input input,
+#webchat .ac-input input[type="checkbox"] ~label {
   cursor: pointer;
 }
 
-#webchat button.selected-button, #webchat button:hover, #webchat button[disabled].selected-button {
+#webchat .ac-input button.selected-button,
+#webchat .ac-input button:hover,
+#webchat .ac-input button[disabled].selected-button,
+#webchat .ac-actionSet button.selected-button,
+#webchat .ac-actionSet button:hover,
+#webchat .ac-actionSet button[disabled].selected-button
+ {
   background: rgb(0, 99, 177);
   color: white;
 }
 
-#webchat button[disabled] {
+#webchat .ac-actionSet button[disabled],
+#webchat .ac-input button[disabled] {
   background: transparent;
   color: rgb(0, 99, 177);
 }
 
-#webchat button.past, #webchat input.past, #webchat input.past ~ label {
+#webchat .ac-actionSet button.past,
+#webchat .ac-input button.past,
+#webchat .ac-input input.past,
+#webchat .ac-input input.past ~ label {
   cursor: not-allowed !important;
   mouse-events: none !important;
 
