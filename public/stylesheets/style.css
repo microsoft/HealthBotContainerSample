@@ -45,10 +45,13 @@ body {
   margin-top: 4px !important;
 }
 
-#webchat .ac-input input[type="checkbox"] ~label, #webchat button div {
+#webchat .ac-input input[type="checkbox"] ~label,
+#webchat .ac-input button div,
+#webchat .ac-actionSet button div {
   white-space: pre-wrap !important;
   text-overflow: unset !important;
 }
+
 #webchat .ac-actionSet button,
 #webchat .ac-input button,
 #webchat .ac-input input,
