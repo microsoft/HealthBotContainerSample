@@ -31,3 +31,45 @@ body {
   right: unset;
   transform: translate(-50%, 0);
 }
+
+#webchat .ac-input {
+  position: relative;
+}
+
+#webchat .ac-input > div {
+  align-items: start !important;
+}
+
+#webchat .ac-input input[type="checkbox"] {
+  vertical-align: top !important;
+  margin-top: 4px !important;
+}
+
+#webchat .ac-input input[type="checkbox"] ~label, #webchat button div {
+  white-space: pre-wrap !important;
+  text-overflow: unset !important;
+}
+#webchat button, #webchat input, #webchat .ac-input input[type="checkbox"] ~label {
+  cursor: pointer;
+}
+
+#webchat button.selected-button, #webchat button:hover, #webchat button[disabled].selected-button {
+  background: rgb(0, 99, 177);
+  color: white;
+}
+
+#webchat button[disabled] {
+  background: transparent;
+  color: rgb(0, 99, 177);
+}
+
+#webchat button.past, #webchat input.past, #webchat input.past ~ label {
+  cursor: not-allowed !important;
+  mouse-events: none !important;
+
+}
+
+#webchat input[type="checkbox"]:checked ~ label {
+  color: rgb(0, 99, 177) !important;
+  font-weight: 600 !important;
+}

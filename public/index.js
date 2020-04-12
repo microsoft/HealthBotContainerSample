@@ -114,6 +114,10 @@ function initBotConversation() {
                                 }
                             }
                             */
+                            triggeredScenario: {
+                                trigger: "A",
+                                args: {}
+                            }
                         }
                     }
                 }
