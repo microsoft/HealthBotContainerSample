@@ -1,8 +1,30 @@
 /**
+ * This function will get the user location from the browser
+ * @param callback
+ */
+function getUserLocation(callback) {
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var location = {
+                lat: latitude,
+                long: longitude
+            };
+            callback(location);
+        },
+        function(error) {
+            // user declined to share location
+            console.log("location error:" + error.message);
+            callback();
+        });
+}
+
+/**
  * This function will share location with the bot
  * @param action
  */
-function shareLocation(action) {
+function shareLocation(action, store) {
     if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
         if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
             // share

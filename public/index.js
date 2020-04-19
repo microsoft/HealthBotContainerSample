@@ -41,24 +41,6 @@ function chatRequested() {
     }
 }
 
-function getUserLocation(callback) {
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            var latitude  = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            var location = {
-                lat: latitude,
-                long: longitude
-            }
-            callback(location);
-        },
-        function(error) {
-            // user declined to share location
-            console.log("location error:" + error.message);
-            callback();
-        });
-}
-
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -136,7 +118,7 @@ function initBotConversation() {
         }
 
         // Use the following to share location with the bot
-        // shareLocation(action);
+        // shareLocation(action, store);
 
         // Use the following to set onclick listener of new buttons in view. This will allow targeting specific CSS for selected buttons.
         // markSelectedButtonsOnClick(action);
