@@ -81,13 +81,23 @@ function initBotConversation() {
         domain: domain
     });
     const styleOptions = {
-        botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
-        // botAvatarInitials: '',
-        // userAvatarImage: '',
-        hideSendBox: false, /* set to true to hide the send box from the view */
-        botAvatarInitials: 'Bot',
-        userAvatarInitials: 'You',
-        backgroundColor: '#F8F8F8'
+        /* Avatar */
+        botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0', /* set to false to hide the bot avatar */
+        // botAvatarInitials: 'Bot',
+        // userAvatarImage: 'You',
+
+        /* SenBox controls */
+        hideSendBox: false,         /* set to true to hide the entire send box from the view */
+        hideUploadButton: false,    /* set to true to hide the attachment button the view */
+
+        /* WebChat CSS */
+        backgroundColor: '#FFFFFF',
+        bubbleBackground: '#FFFFFF',
+        bubbleBorderColor: '#B7B7B7',
+        bubbleTextColor: '#000000',
+        bubbleFromUserBackground: '#FFFFFF',
+        bubbleFromUserBorderColor: '#B7B7B7',
+        bubbleFromUserTextColor: '#000000'
     };
 
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
@@ -129,7 +139,47 @@ function initBotConversation() {
                         payload: { value: JSON.stringify(location) }
                     });
                 });
+
             }
+            // Use the following to set onclick listener of new buttons in view. This will allow targeting specific CSS for selected buttons.
+            /*
+            setTimeout(function() {
+                var ul = document.getElementById("webchat").getElementsByTagName("ul")[1];
+                if (!ul) { return; }
+                var untachedButtons = Array.from(ul.getElementsByTagName('button')).filter(function(button) { return !button.classList.contains("touched")});
+                untachedButtons.forEach(function(button) {
+                    button.classList.add("touched");
+                    button.addEventListener("click", function() {
+                        button.classList.add("button-selected");
+                    });
+                });
+            })
+             */
+
+            // Use the following to force scroll chat to the end on new arriving messages from the bot
+            /*
+            setTimeout(function () {
+                document.querySelector('div.css-y1c0xs').scrollTop = document.querySelector('div.css-y1c0xs').scrollHeight
+            });
+             */
+        } else if (action.type === 'WEB_CHAT/SEND_MESSAGE' || action.type === 'WEB_CHAT/SEND_POST_BACK') {
+            // Use the following code to disable old buttons and inputs from being clickable
+            /*
+            setTimeout(function() {
+                var ul = document.getElementById("webchat").getElementsByTagName("ul")[1];
+                if (!ul) { return; }
+                var activeButtons = Array.from(ul.getElementsByTagName('button')).filter(function(button) { return !button.hasAttribute("disabled")});
+                activeButtons.forEach(function(button) {
+                    button.classList.add("past");
+                    button.setAttribute("disabled", true);
+                });
+                var activeButtons = Array.from(ul.getElementsByTagName('input')).filter(function(input) { return !button.hasAttribute("disabled")});
+                activeButtons.forEach(function(button) {
+                    input.classList.add("past");
+                    input.setAttribute("disabled", true);
+                });
+            });
+             */
         }
         return next(action);
     }}});

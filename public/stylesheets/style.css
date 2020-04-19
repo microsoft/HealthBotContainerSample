@@ -40,11 +40,13 @@ body {
   align-items: start !important;
 }
 
+/* CSS for vertical aligning checkboxes to the top of a label */
 #webchat .ac-input input[type="checkbox"] {
   vertical-align: top !important;
   margin-top: 4px !important;
 }
 
+/* CSS for removing the "..." triming of buttons and checkbox labels */
 #webchat .ac-input input[type="checkbox"] ~label,
 #webchat .ac-input button div,
 #webchat .ac-actionSet button div {
@@ -52,6 +54,8 @@ body {
   text-overflow: unset !important;
 }
 
+
+/* CSS for buttons, inputs & checkbox labels */
 #webchat .ac-actionSet button,
 #webchat .ac-input button,
 #webchat .ac-input input,
@@ -59,6 +63,18 @@ body {
   cursor: pointer;
 }
 
+
+/* CSS For PAST buttons and inputs */
+#webchat .ac-actionSet button.past,
+#webchat .ac-input button.past,
+#webchat .ac-input input.past,
+#webchat .ac-input input.past ~ label {
+  cursor: not-allowed !important;
+  mouse-events: none !important;
+  opacity: 0.5;
+}
+
+/* CSS For PAST SELECTED buttons */
 #webchat .ac-input button.selected-button,
 #webchat .ac-input button:hover,
 #webchat .ac-input button[disabled].selected-button,
@@ -68,23 +84,11 @@ body {
  {
   background: rgb(0, 99, 177);
   color: white;
-}
-
-#webchat .ac-actionSet button[disabled],
-#webchat .ac-input button[disabled] {
-  background: transparent;
-  color: rgb(0, 99, 177);
-}
-
-#webchat .ac-actionSet button.past,
-#webchat .ac-input button.past,
-#webchat .ac-input input.past,
-#webchat .ac-input input.past ~ label {
-  cursor: not-allowed !important;
-  mouse-events: none !important;
+  opacity: 1;
 
 }
 
+/* CSS for labels of checked checkbox */
 #webchat input[type="checkbox"]:checked ~ label {
   color: rgb(0, 99, 177) !important;
   font-weight: 600 !important;
