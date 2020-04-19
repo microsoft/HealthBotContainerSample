@@ -133,59 +133,20 @@ function initBotConversation() {
                     }
                 }
             });
-
         }
-        else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
-            if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
-                // share
-                getUserLocation(function (location) {
-                    store.dispatch({
-                        type: 'WEB_CHAT/SEND_POST_BACK',
-                        payload: { value: JSON.stringify(location) }
-                    });
-                });
 
-            }
-            // Use the following to set onclick listener of new buttons in view. This will allow targeting specific CSS for selected buttons.
-            /*
-            setTimeout(function() {
-                var ul = document.getElementById("webchat").getElementsByTagName("ul")[1];
-                if (!ul) { return; }
-                var untachedButtons = Array.from(ul.getElementsByTagName('button')).filter(function(button) { return !button.classList.contains("touched")});
-                untachedButtons.forEach(function(button) {
-                    button.classList.add("touched");
-                    button.addEventListener("click", function() {
-                        button.classList.add("button-selected");
-                    });
-                });
-            })
-             */
+        // Use the following to share location with the bot
+        // shareLocation(action);
 
-            // Use the following to force scroll chat to the end on new arriving messages from the bot
-            /*
-            setTimeout(function () {
-                document.querySelector('div.css-y1c0xs').scrollTop = document.querySelector('div.css-y1c0xs').scrollHeight
-            });
-             */
-        } else if (action.type === 'WEB_CHAT/SEND_MESSAGE' || action.type === 'WEB_CHAT/SEND_POST_BACK') {
-            // Use the following code to disable old buttons and inputs from being clickable
-            /*
-            setTimeout(function() {
-                var ul = document.getElementById("webchat").getElementsByTagName("ul")[1];
-                if (!ul) { return; }
-                var activeButtons = Array.from(ul.getElementsByTagName('button')).filter(function(button) { return !button.hasAttribute("disabled")});
-                activeButtons.forEach(function(button) {
-                    button.classList.add("past");
-                    button.setAttribute("disabled", true);
-                });
-                var activeButtons = Array.from(ul.getElementsByTagName('input')).filter(function(input) { return !button.hasAttribute("disabled")});
-                activeButtons.forEach(function(button) {
-                    input.classList.add("past");
-                    input.setAttribute("disabled", true);
-                });
-            });
-             */
-        }
+        // Use the following to set onclick listener of new buttons in view. This will allow targeting specific CSS for selected buttons.
+        // markSelectedButtonsOnClick(action);
+
+
+        // Use the following to force scroll chat to the end on new arriving messages from the bot
+        // forceScrollDown(action);
+
+        // Use the following code to disable old buttons and inputs from being clickable
+        // disableActiveInputsAndButtons(action);
         return next(action);
     }}});
     const webchatOptions = {
