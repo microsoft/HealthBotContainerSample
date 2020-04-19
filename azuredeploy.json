@@ -57,12 +57,6 @@
             "metadata":{
                 "description": "Healthbot webchat secret."
             }
-        },
-        "repoUrl": {
-            "type": "string"
-        },
-        "branch": {
-            "type": "string"
         }
     },
     "variables":{
@@ -121,12 +115,7 @@
                     "location": "[parameters('siteLocation')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Web/sites', variables('linuxSiteName'))]"
-                    ],
-                    "properties": {
-                        "repoUrl": "[parameters('repoURL')]",
-                        "branch": "[parameters('branch')]",
-                        "isManualIntegration": true
-                    }
+                    ]
                 }
             ]
         },
@@ -195,12 +184,7 @@
                     "location": "[parameters('siteLocation')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Web/sites', variables('windowsSiteName'))]"
-                    ],
-                    "properties": {
-                        "repoUrl": "[parameters('repoURL')]",
-                        "branch": "[parameters('branch')]",
-                        "isManualIntegration": true
-                    }
+                    ]
                 }
             ]
         },
