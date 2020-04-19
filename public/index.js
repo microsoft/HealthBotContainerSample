@@ -84,7 +84,8 @@ function initBotConversation() {
         /* Avatar */
         botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0', /* set to false to hide the bot avatar */
         // botAvatarInitials: 'Bot',
-        // userAvatarImage: 'You',
+        // userAvatarImage: '',
+        // userAvatarInitials: 'You',
 
         // SenBox controls
         /*
