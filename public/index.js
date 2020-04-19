@@ -86,11 +86,14 @@ function initBotConversation() {
         // botAvatarInitials: 'Bot',
         // userAvatarImage: 'You',
 
-        /* SenBox controls */
-        hideSendBox: false,         /* set to true to hide the entire send box from the view */
-        hideUploadButton: false,    /* set to true to hide the attachment button the view */
+        // SenBox controls
+        /*
+        hideSendBox: false,         // set to true to hide the entire send box from the view
+        hideUploadButton: false,    // set to true to hide the attachment button the view
+        */
 
-        /* WebChat CSS */
+        // WebChat CSS
+        /*
         backgroundColor: '#FFFFFF',
         bubbleBackground: '#FFFFFF',
         bubbleBorderColor: '#B7B7B7',
@@ -98,6 +101,7 @@ function initBotConversation() {
         bubbleFromUserBackground: '#FFFFFF',
         bubbleFromUserBorderColor: '#B7B7B7',
         bubbleFromUserTextColor: '#000000'
+        */
     };
 
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
