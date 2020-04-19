@@ -57,6 +57,12 @@
             "metadata":{
                 "description": "Healthbot webchat secret."
             }
+        },
+        "repoUrl": {
+            "type": "string"
+        },
+        "branch": {
+            "type": "string"
         }
     },
     "variables":{
@@ -66,8 +72,6 @@
         "linuxFxVersion": "NODE|lts",
         "hostingPlanNameLinux": "[concat('plan-linux-', parameters('siteName'))]",
         "hostingPlanNameWin": "[concat('plan-win-', parameters('siteName'))]",
-        "repoURL": "https://github.com/microsoft/HealthBotContainerSample.git",
-        "branch": "master",
         "kind": "[if(equals(parameters('operatingSystem'), 'windows'), 'app', 'linux')]",
         "linuxSiteName": "[if(equals(parameters('operatingSystem'), 'linux'), parameters('siteName'), 'app-na')]",
         "windowsSiteName": "[if(equals(parameters('operatingSystem'), 'windows'), parameters('siteName'), 'app-na')]",
@@ -119,8 +123,8 @@
                         "[resourceId('Microsoft.Web/sites', variables('linuxSiteName'))]"
                     ],
                     "properties": {
-                        "repoUrl": "[variables('repoURL')]",
-                        "branch": "[variables('branch')]",
+                        "repoUrl": "[parameters('repoURL')]",
+                        "branch": "[parameters('branch')]",
                         "isManualIntegration": true
                     }
                 }
@@ -193,8 +197,8 @@
                         "[resourceId('Microsoft.Web/sites', variables('windowsSiteName'))]"
                     ],
                     "properties": {
-                        "repoUrl": "[variables('repoURL')]",
-                        "branch": "[variables('branch')]",
+                        "repoUrl": "[parameters('repoURL')]",
+                        "branch": "[parameters('branch')]",
                         "isManualIntegration": true
                     }
                 }
