@@ -1,4 +1,5 @@
 const defaultLocale = 'en-US';
+const disableClickedButtons = true;
 
 function requestChatBot(loc) {
     const params = new URLSearchParams(location.search);
@@ -147,4 +148,83 @@ function initBotConversation() {
 function startChat(user, webchatOptions) {
     const botContainer = document.getElementById('webchat');
     window.WebChat.renderWebChat(webchatOptions, botContainer);
+}
+
+//Entry point. Begin execution when html loaded.
+document.addEventListener("DOMContentLoaded", listenChatDIV);
+
+//This function is used to listen for content changes in "webchat" DIV and react on updates
+function listenChatDIV(){
+    var mutationObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            //Listen for changes in unsorted list, that holds dialog pieces, returned by bot or user
+            if(mutation.target.nodeName === "UL"){
+                processChanges();
+            }
+        });
+    });
+
+    //listen only for child nodes changes in an element tree
+    var trackedElement = document.getElementById("webchat");
+    if(trackedElement != null){
+        mutationObserver.observe(trackedElement, {
+            attributes: false,
+            characterData: false,
+            childList: true,
+            subtree: true,
+            attributeOldValue: false,
+            characterDataOldValue: false
+        });
+    }
+}
+
+function processChanges(){
+    //Hide user input control if buttons are displayed
+    var listItems = document.querySelectorAll('[role="listitem"]');
+
+    if(listItems.length > 0) {
+        var lastListItem = listItems[listItems.length - 1];
+        var buttonsInLastListItem = lastListItem.getElementsByTagName('button');
+        var isUserMessage = lastListItem.getElementsByClassName("webchat__initialsAvatar--fromUser").length > 0;
+
+        if(!isUserMessage){
+            if(buttonsInLastListItem.length > 0) {
+                //For the buttons in a last UL item
+                for (let i = 0; i < buttonsInLastListItem.length; i++) {
+                    //Add handler, if it not yet set for this button
+                    if(disableClickedButtons && !buttonsInLastListItem[i].classList.contains("event-set")) {
+                        buttonsInLastListItem[i].addEventListener("click", disableButtons);
+                        buttonsInLastListItem[i].classList.add("event-set");
+                    }
+
+                    if(buttonsInLastListItem[i].childNodes.length > 0 && buttonsInLastListItem[i].childNodes[0].nodeName == "DIV"){
+                        buttonsInLastListItem[i].childNodes[0].style.cssText = "";
+                    }
+                }
+            }
+        }
+    }
+}
+
+function disableButtons(targetButtonEvent)
+{
+    //let's try to find a button we clicked on
+    var targetButton = targetButtonEvent.target;
+    //Go up to buttons parent node
+    var parentDiv = targetButton.parentNode;
+    //Let's disable child buttons in parent node
+    for (let i = 0; i < parentDiv.childNodes.length; i++) {
+        var childNode = parentDiv.childNodes[i];
+        if(childNode.nodeName == "BUTTON"){
+            disableButton(childNode, childNode == targetButton);
+        }
+    }
+}
+
+function disableButton(button, isClicked){
+    button.classList.add(isClicked ? "clicked-disabled" : "not-clicked-disabled");
+    //Remove events, change cursor and disable button
+    button.removeEventListener("click", disableButtons);
+    button.onclick = "null";
+    button.disabled = true;
 }

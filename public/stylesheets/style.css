@@ -31,3 +31,39 @@ body {
   right: unset;
   transform: translate(-50%, 0);
 }
+
+button > * {
+    pointer-events: none;
+}
+
+*:focus {
+    outline: none;
+}
+
+button.ac-pushButton.style-default {
+  cursor: pointer;
+  word-wrap: break-word;
+}
+
+button.ac-pushButton:hover {
+  border-color: rgb(2, 125, 219);
+  background-color: rgb(2, 125, 219);
+  color: white;
+  cursor: pointer;
+}
+
+button.ac-pushButton.clicked-disabled { 
+  background-color: rgb(0, 99, 177);
+  border-color: rgb(0, 99, 177);
+  color: white;
+  outline: none;
+  cursor: not-allowed;
+}
+
+button.ac-pushButton.not-clicked-disabled { 
+  background-color: rgb(224, 224, 224);
+  border-color: rgb(224, 224, 224);
+  color: white;
+  outline: none;
+  cursor: not-allowed;
+}
