@@ -13,9 +13,13 @@ const directLineTokenEp = `https://${DIRECTLINE_ENDPOINT_URI || "directline.botf
 // Initialize the web app instance,
 const app = express();
 app.use(cookieParser());
+
+let options = {};
+// uncomment the line below if you wish to allow only specific domains to embed this page as a frame
+//options = {setHeaders: (res, path, stat) => {res.set('Content-Security-Policy', 'frame-ancestors example.com')}};
 // Indicate which directory static resources
 // (e.g. stylesheets) should be served from.
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), options));
 // begin listening for requests.
 const port = process.env.PORT || 8080;
 const region = process.env.REGION || "Unknown";
