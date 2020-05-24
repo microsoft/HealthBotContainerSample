@@ -1,6 +1,6 @@
 # Health Bot Container
 
-A simple web page to hand off users to the [Microsoft Health Bot service](https://www.microsoft.com/en-us/research/project/health-bot/).
+A simple web page that allows users to communicate with the [Microsoft Health Bot service](https://www.microsoft.com/en-us/research/project/health-bot/) through a WebChat.
 
 **Note:** In order to use this Web Chat with the Health Bot service, you will need to obtain your Web Chat secret by going to ["Integration/Secrets"](./secrets.png) on the navigation panel.
 
