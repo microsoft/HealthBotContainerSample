@@ -53,7 +53,6 @@ function chatRequested(info) {
 
 function getUserLocation(info, callback) {
     navigator.geolocation.getCurrentPosition(
-        null,
         function(position) {
             var latitude  = position.coords.latitude;
             var longitude = position.coords.longitude;
