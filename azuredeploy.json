@@ -4,6 +4,7 @@
     "parameters": {
         "siteName": {
             "type": "string",
+            "defaultValue": "[concat('healthcare-bot-', uniqueString(utcNow('F')))]",
             "metadata":{
                 "description": "Web site name. Has to be unique."
 
