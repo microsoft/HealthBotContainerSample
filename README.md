@@ -4,13 +4,13 @@ A simple web page that allows users to communicate with the [Microsoft Healthcar
 
 **Note:** In order to use this Web Chat with the Health Bot service, you will need to obtain your Web Chat secret by going to `Integration/Secrets` on the navigation panel.
 <p align="center">
-  <img src="https://raw.githubusercontent.com/microsoft/HealthBotContainerSample/master/secrets.png">
+  <img src="https://raw.githubusercontent.com/microsoft/HealthBotContainerSample/live_agent_handoff/secrets.png">
 </p>
 
 
 1.Deploy the website:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Fmaster%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Flive_agent_handoff%2Fazuredeploy.json)
 
 Note: It is recommended you use the default Linux host type when deploying the container.
 However, if you wish to enable online file editing using the App Service Editor, select 'Windows'.

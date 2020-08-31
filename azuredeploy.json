@@ -68,7 +68,7 @@
         },
         "branch": {
             "type": "string",
-            "defaultValue": "master",
+            "defaultValue": "live_agent_handoff",
             "metadata": {
                 "description": "The branch of the GitHub repository to use."
             }
