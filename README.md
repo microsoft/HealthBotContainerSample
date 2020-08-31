@@ -7,7 +7,7 @@ A simple web page that allows users to communicate with the [Microsoft Health Bo
 
 1.Deploy the website:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Fazure_deploy%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Fmaster%2Fazuredeploy.json)
 
 Note: It is recommended you use the default Linux host type when deploying the container.
 However, if you wish to enable online file editing using the App Service Editor, select 'Windows'.
