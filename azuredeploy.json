@@ -12,13 +12,13 @@
         },
         "operatingSystem": {
             "type": "string",
-            "defaultValue": "linux",
+            "defaultValue": "windows",
             "allowedValues": [
-                "linux",
-                "windows"
+                "windows",
+                "linux"
             ],
             "metadata": {
-                "description": "Host type: Linux or Windows. (Linux is recommended)"
+                "description": "Host type: Windows or Linux. (Windows is recommended)"
             }
         },
         "skuName": {
