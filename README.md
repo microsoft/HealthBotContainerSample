@@ -10,9 +10,6 @@ A simple web page that allows users to communicate with the [Microsoft Healthcar
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Fmaster%2Fazuredeploy.json)
 
-Note: It is recommended you use the default Linux host type when deploying the container.
-However, if you wish to enable online file editing using the App Service Editor, select 'Windows'.
-
 2.Set the following environment variables:
 
 `APP_SECRET`
