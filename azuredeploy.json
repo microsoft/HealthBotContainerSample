@@ -1,0 +1,238 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteName": {
+            "type": "string",
+            "defaultValue": "[concat('healthcare-bot-', uniqueString(utcNow('F')))]",
+            "metadata":{
+                "description": "Web site name. Has to be unique."
+
+            }
+        },
+        "operatingSystem": {
+            "type": "string",
+            "defaultValue": "windows",
+            "allowedValues": [
+                "windows",
+                "linux"
+            ],
+            "metadata": {
+                "description": "Host type: Windows or Linux. (Windows is recommended)"
+            }
+        },
+        "skuName": {
+            "type": "string",
+            "defaultValue": "P1V2",
+            "allowedValues": [
+                "B1",
+                "S1",
+                "P1V2"
+            ],
+            "metadata": {
+                "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+            }
+        },
+        "numberOfInstances": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata":{
+                "description": "Number of instances the app service is scaled to. Check the maximum instances your plan can host at https://azure.microsoft.com/en-us/pricing/details/app-service"
+            }
+        },
+        "siteLocation": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata":{
+                "description": "Location for all resources."
+            }
+        },
+        "appSecret": {
+            "type": "securestring",
+            "metadata":{
+                "description": "Healthbot application secret."
+            }
+        },
+        "webchatSecret": {
+            "type": "securestring",
+            "metadata":{
+                "description": "Healthbot webchat secret."
+            }
+        },
+        "repoUrl": {
+            "type": "string",
+            "defaultValue": "https://github.com/microsoft/HealthBotContainerSample.git",
+            "metadata": {
+                "description": "The URL for the GitHub repository that contains the project to deploy."
+            }
+        },
+        "branch": {
+            "type": "string",
+            "defaultValue": "master",
+            "metadata": {
+                "description": "The branch of the GitHub repository to use."
+            }
+        }
+    },
+    "variables":{
+        "alwaysOn": true,
+        "skuCode": "[parameters('skuName')]",
+        "numberOfWorkers": "[parameters('numberOfInstances')]",
+        "linuxFxVersion": "NODE|lts",
+        "hostingPlanNameLinux": "[concat('plan-linux-', parameters('siteName'))]",
+        "hostingPlanNameWin": "[concat('plan-win-', parameters('siteName'))]",
+        "kind": "[if(equals(parameters('operatingSystem'), 'windows'), 'app', 'linux')]",
+        "linuxSiteName": "[if(equals(parameters('operatingSystem'), 'linux'), parameters('siteName'), 'app-na')]",
+        "windowsSiteName": "[if(equals(parameters('operatingSystem'), 'windows'), parameters('siteName'), 'app-na')]",
+        "WinSkuCode": "[parameters('skuName')]",
+        "WinSku": "Standard",
+        "workerSize": "0",
+        "workerSizeId": "0",
+        "hostingEnvironment": "",
+        "nodeVersion": "12.13.0",
+        "currentStack": "node"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[variables('linuxSiteName')]",
+            "condition": "[equals(parameters('operatingSystem'),'linux')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('siteLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms/', variables('hostingPlanNameLinux'))]"
+            ],
+            "properties": {
+                "name": "[variables('linuxSiteName')]",
+                "siteConfig": {
+                    "linuxFxVersion": "[variables('linuxFxVersion')]",
+                    "alwaysOn": "[variables('alwaysOn')]",
+                    "appSettings": [
+                        {
+                        "name": "APP_SECRET",
+                        "value": "[parameters('appSecret')]"
+                        },
+                        {
+                        "name": "WEBCHAT_SECRET",
+                        "value": "[parameters('webchatSecret')]"
+                        }
+                    ]
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameLinux'))]",
+                "clientAffinityEnabled": false
+            },
+            "resources": [
+                {
+                    "type": "sourcecontrols",
+                    "condition": "[equals(parameters('operatingSystem'),'linux')]",
+                    "apiVersion": "2018-02-01",
+                    "name": "web",
+                    "location": "[parameters('siteLocation')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('linuxSiteName'))]"
+                    ],
+                    "properties": {
+                        "repoUrl": "[parameters('repoURL')]",
+                        "branch": "[parameters('branch')]",
+                        "isManualIntegration": true
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2018-02-01",
+            "condition": "[equals(parameters('operatingSystem'),'linux')]",
+            "name": "[variables('hostingPlanNameLinux')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('siteLocation')]",
+            "kind": "linux",
+            "sku": {
+                "Name": "[variables('skuCode')]"
+            },
+            "properties": {
+                "name": "[variables('hostingPlanNameLinux')]",
+                "numberOfWorkers": "[variables('numberOfWorkers')]",
+                "reserved": true
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "condition": "[equals(parameters('operatingSystem'),'windows')]",
+            "name": "[variables('windowsSiteName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('siteLocation')]",
+            "tags": null,
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanNameWin'))]"
+            ],
+            "properties": {
+                "name": "[variables('windowsSiteName')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                          "name": "APP_SECRET",
+                          "value": "[parameters('appSecret')]"
+                        },
+                        {
+                          "name": "WEBCHAT_SECRET",
+                          "value": "[parameters('webchatSecret')]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "[variables('nodeVersion')]"
+                        }
+                    ],
+                    "metadata": [
+                        {
+                            "name": "CURRENT_STACK",
+                            "value": "[variables('currentStack')]"
+                        }
+                    ],
+                    "nodeVersion": "[variables('nodeVersion')]",
+                    "alwaysOn": "[variables('alwaysOn')]"
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameWin'))]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]",
+                "clientAffinityEnabled": true
+            },
+            "resources": [
+                {
+                    "type": "sourcecontrols",
+                    "condition": "[equals(parameters('operatingSystem'),'windows')]",
+                    "apiVersion": "2018-11-01",
+                    "name": "web",
+                    "location": "[parameters('siteLocation')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('windowsSiteName'))]"
+                    ],
+                    "properties": {
+                        "repoUrl": "[parameters('repoURL')]",
+                        "branch": "[parameters('branch')]",
+                        "isManualIntegration": true
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[variables('hostingPlanNameWin')]",
+            "condition": "[equals(parameters('operatingSystem'),'windows')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('siteLocation')]",
+            "kind": "",
+            "tags": null,
+            "dependsOn": [],
+            "properties": {
+                "name": "[variables('hostingPlanNameWin')]",
+                "workerSize": "[variables('workerSize')]",
+                "workerSizeId": "[variables('workerSizeId')]",
+                "numberOfWorkers": "[variables('numberOfWorkers')]",
+                "hostingEnvironment": "[variables('hostingEnvironment')]"
+            },
+            "sku": {
+                "Tier": "[variables('WinSku')]",
+                "Name": "[variables('WinSkuCode')]"
+            }
+        }
+    ]
+}

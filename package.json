@@ -6,13 +6,15 @@
   "license": "MIT",
   "repository": "https://github.com/Microsoft/HealthBotContainerSample.git",
   "dependencies": {
-    "cookie-parser": "^1.4.3",
-    "express": "^4.15.3",
-    "jsonwebtoken": "^7.4.1",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "dotenv": "^8.2.0",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5"
   },
   "scripts": {
     "prestart": "npm install"
-  }
+  },
+  "devDependencies": {}
 }

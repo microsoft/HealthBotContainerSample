@@ -1,23 +1,39 @@
+const defaultLocale = 'en-US';
+
 function requestChatBot(loc) {
-    const params = BotChat.queryParams(location.search);
+    const params = new URLSearchParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
-    var path = "/chatBot";
-    path += ((params["userName"]) ? "?userName=" + params["userName"] : "?userName=you");
+    var path = "/chatBot?locale=" + extractLocale(params.get('locale'));
+
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
-    if (params['userId']) {
-        path += "&userId=" + params['userId'];
+    if (params.has('userId')) {
+        path += "&userId=" + params.get('userId');
+    }
+    if (params.has('userName')) {
+        path += "&userName=" + params.get('userName');
     }
     oReq.open("POST", path);
     oReq.send();
 }
 
+function extractLocale(localeParam) {
+    if (!localeParam) {
+        return defaultLocale;
+    }
+    else if (localeParam === 'autodetect') {
+        return navigator.language;
+    }
+    else {
+        return localeParam;
+    }
+}
+
 function chatRequested() {
-    const params = BotChat.queryParams(location.search);
-    var shareLocation = params["shareLocation"];
-    if (shareLocation) {
+    const params = new URLSearchParams(location.search);
+    if (params.has('shareLocation')) {
         getUserLocation(requestChatBot);
     }
     else {
@@ -43,12 +59,6 @@ function getUserLocation(callback) {
         });
 }
 
-function sendUserLocation(botConnection, user) {
-    getUserLocation(function (location) {
-        botConnection.postActivity({type: "message", text: JSON.stringify(location), from: user}).subscribe(function (id) {console.log("success")});
-    });
-}
-
 function initBotConversation() {
     if (this.status >= 400) {
         alert(this.statusText);
@@ -59,68 +69,82 @@ function initBotConversation() {
     const tokenPayload = JSON.parse(atob(jsonWebToken.split('.')[1]));
     const user = {
         id: tokenPayload.userId,
-        name: tokenPayload.userName
+        name: tokenPayload.userName,
+        locale: tokenPayload.locale
     };
     let domain = undefined;
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
-    const botConnection = new BotChat.DirectLine({
+    var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
-        domain: domain,
-        webSocket: true
+        domain: domain
     });
-    startChat(user, botConnection);   
+    const styleOptions = {
+        botAvatarImage: 'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
+        // botAvatarInitials: '',
+        // userAvatarImage: '',
+        hideSendBox: false, /* set to true to hide the send box from the view */
+        botAvatarInitials: 'Bot',
+        userAvatarInitials: 'You',
+        backgroundColor: '#F8F8F8'
+    };
 
-    botConnection.postActivity({
-        type: "invoke",
-        value: {
-            trigger: "main"
-        },
-        from: user,
-        name: "TriggerScenario"}).subscribe(function (id) {});
+    const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
+        if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
+            store.dispatch({
+                type: 'DIRECT_LINE/POST_ACTIVITY',
+                meta: {method: 'keyboard'},
+                payload: {
+                    activity: {
+                        type: "invoke",
+                        name: "InitConversation",
+                        locale: user.locale,
+                        value: {
+                            // must use for authenticated conversation.
+                            jsonWebToken: jsonWebToken,
 
+                            // Use the following activity to proactively invoke a bot scenario
+                            /*
+                            triggeredScenario: {
+                                trigger: "{scenario_id}",
+                                args: {
+                                    myVar1: "{custom_arg_1}",
+                                    myVar2: "{custom_arg_2}"
+                                }
+                            }
+                            */
+                        }
+                    }
+                }
+            });
 
-    /* var shellInput = document.querySelector(".wc-console.has-upload-button");
-        shellInput.parentNode.removeChild(shellInput); */
-    // Use the following acitivty to enable an authenticated end user experience.
-
-    /*
-    botConnection.postActivity(
-        {type: "event", value: jsonWebToken, from: user, name: "InitAuthenticatedConversation"
-    }).subscribe(function (id) {});
-    */
-
-    // Use the following activity to proactively invoke a bot scenario. 
-    /*
-    botConnection.postActivity({
-        type: "invoke",
-        value: {
-            trigger: "{scenario}",
-            args: {
-                myVar1: "{custom_arg_1}",
-                myVar2: "{custom_arg_2}"
+        }
+        else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+            if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
+                // share
+                getUserLocation(function (location) {
+                    store.dispatch({
+                        type: 'WEB_CHAT/SEND_POST_BACK',
+                        payload: { value: JSON.stringify(location) }
+                    });
+                });
             }
-        },
-        from: user,
-        name: "TriggerScenario"
-    }).subscribe(function(id) {});
-    */
-
-    botConnection.activity$
-        .filter(function (activity) {return activity.type === "event" && activity.name === "shareLocation"})
-        .subscribe(function (activity) {sendUserLocation(botConnection, user)});
+        }
+        return next(action);
+    }}});
+    const webchatOptions = {
+        directLine: botConnection,
+        styleOptions: styleOptions,
+        store: store,
+        userID: user.id,
+        username: user.name,
+        locale: user.locale
+    };
+    startChat(user, webchatOptions);
 }
 
-function startChat(user, botConnection) {
-    const botContainer = document.getElementById('botContainer');
-    botContainer.classList.add("wc-display");
-
-    BotChat.App({
-        botConnection: botConnection,
-        user: user,
-        locale: 'en',
-        resize: 'detect'
-        // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
-    }, botContainer);
+function startChat(user, webchatOptions) {
+    const botContainer = document.getElementById('webchat');
+    window.WebChat.renderWebChat(webchatOptions, botContainer);
 }
