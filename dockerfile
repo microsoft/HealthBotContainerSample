@@ -1,5 +1,4 @@
 FROM node:latest
-MAINTAINER Microsoft Healthcare Bot Team
 
 # Create app directory
 WORKDIR /usr/src/app
