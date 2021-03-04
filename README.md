@@ -1,6 +1,6 @@
 # Health Bot Container
 
-A simple web page that allows users to communicate with the [Azure Health Bot](https://www.microsoft.com/en-us/research/project/health-bot/) through a WebChat.
+A simple web page that allows users to communicate with the [Azure Health Bot](https://azure.microsoft.com/en-us/services/bot-services/health-bot/) through a WebChat.
 
 **Note:** In order to use this Web Chat with the Health Bot service, you will need to obtain your Web Chat secret by going to `Integration/Secrets` on the navigation panel.
 
