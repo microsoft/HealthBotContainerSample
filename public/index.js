@@ -86,6 +86,16 @@ function initBotConversation() {
     if (tokenPayload.directLineURI) {
         domain =  "https://" +  tokenPayload.directLineURI + "/v3/directline";
     }
+    let location = undefined;
+    if (tokenPayload.location) {
+        location = tokenPayload.location;
+    } else {
+        // set default location if desired
+        /*location = {
+            lat: 44.86448450671394,
+            long: -93.32597021107624
+        }*/
+    }
     var botConnection = window.WebChat.createDirectLine({
         token: tokenPayload.connectorToken,
         domain: domain
@@ -119,6 +129,7 @@ function initBotConversation() {
                             triggeredScenario: {
                                 trigger: "{scenario_id}",
                                 args: {
+                                    location: location,
                                     myVar1: "{custom_arg_1}",
                                     myVar2: "{custom_arg_2}"
                                 }
