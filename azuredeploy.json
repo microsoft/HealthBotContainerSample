@@ -89,7 +89,7 @@
         "workerSize": "0",
         "workerSizeId": "0",
         "hostingEnvironment": "",
-        "nodeVersion": "12.13.0",
+        "nodeVersion": "16.13.0",
         "currentStack": "node"
     },
     "resources": [
