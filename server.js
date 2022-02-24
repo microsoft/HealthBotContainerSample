@@ -85,7 +85,7 @@ app.post('/chatBot',  async function(req, res) {
         var userid = req.query.userId || req.cookies.userid;
         if (!userid) {
             userid = crypto.randomBytes(4).toString('hex');
-            res.cookie("userid", userid);
+            res.cookie("userid", userid, { sameSite: "none", secure: true, httpOnly: true, expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) });
         }
 
         var response = {};
