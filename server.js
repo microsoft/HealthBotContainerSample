@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
-const rp = require("request-promise");
+const fetch = require('node-fetch');
 const cookieParser = require('cookie-parser');
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
@@ -37,11 +37,9 @@ const appConfig = {
     isHealthy : false,
     options : {
         method: 'POST',
-        uri: directLineTokenEp,
         headers: {
             'Authorization': 'Bearer ' + WEBCHAT_SECRET
-        },
-        json: true
+        }
     }
 };
 
@@ -59,56 +57,58 @@ function unhealthy(res) {
     healthResponse(res, 503, "Unhealthy");
 }
 
-app.get('/health', function(req, res){
+app.get('/health', async function(req, res){
     if (!appConfig.isHealthy) {
-        rp(appConfig.options)
-            .then((body) => {
-                appConfig.isHealthy = true;
-                healthy(res);
-            })
-            .catch((err) =>{
-                unhealthy(res);
-            });
+        try {
+            const fetchResponse = await fetch(directLineTokenEp, appConfig.options);
+            const parsedBody = await fetchResponse.json();
+            appConfig.isHealthy = true;
+            healthy(res);
+        }
+        catch (err) {
+            unhealthy(res);
+        }
     }
     else {
         healthy(res);
     }
 });
 
-app.post('/chatBot',  function(req, res) {
+app.post('/chatBot',  async function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
         return;
     }
-    rp(appConfig.options)
-        .then(function (parsedBody) {
-            var userid = req.query.userId || req.cookies.userid;
-            if (!userid) {
-                userid = crypto.randomBytes(4).toString('hex');
-                res.cookie("userid", userid);
-            }
+    try {
+        const fetchResponse = await fetch(directLineTokenEp, appConfig.options);
+        const parsedBody = await fetchResponse.json();
+        var userid = req.query.userId || req.cookies.userid;
+        if (!userid) {
+            userid = crypto.randomBytes(4).toString('hex');
+            res.cookie("userid", userid);
+        }
 
-            var response = {};
-            response['userId'] = userid;
-            response['userName'] = req.query.userName;
-            response['locale'] = req.query.locale;
-            response['connectorToken'] = parsedBody.token;
+        var response = {};
+        response['userId'] = userid;
+        response['userName'] = req.query.userName;
+        response['locale'] = req.query.locale;
+        response['connectorToken'] = parsedBody.token;
 
-            /*
-            //Add any additional attributes
-            response['optionalAttributes'] = {age: 33};
-            */
+        /*
+        //Add any additional attributes
+        response['optionalAttributes'] = {age: 33};
+        */
 
-            if (req.query.lat && req.query.long)  {
-                response['location'] = {lat: req.query.lat, long: req.query.long};
-            }
-            response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
-            const jwtToken = jwt.sign(response, APP_SECRET);
-            res.send(jwtToken);
-        })
-        .catch(function (err) {
-            appConfig.isHealthy = false;
-            res.status(err.statusCode).send();
-            console.log("failed");
-        });
+        if (req.query.lat && req.query.long)  {
+            response['location'] = {lat: req.query.lat, long: req.query.long};
+        }
+        response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
+        const jwtToken = jwt.sign(response, APP_SECRET);
+        res.send(jwtToken);
+    }
+    catch (err) {
+        appConfig.isHealthy = false;
+        res.status(err.statusCode).send();
+        console.log("failed");
+    }
 });
