@@ -1,0 +1,103 @@
+
+        body{
+            font-family: calibri;
+        }
+
+
+        h1 {
+            background-color: grey;
+            color: white;
+            border: solid gray 1px;
+            font-weight: 500;
+            font-size: 20px;
+
+            margin-top: 0;
+            margin-bottom: 0;
+
+            line-height:30px;
+            padding-left: 5px;
+
+            position: relative;
+            top:0;
+            left: 0;
+            z-index: 100000;
+        }
+
+        #webchat-container {
+            height: calc(100% - 32px);
+        }
+
+        #webchat {
+            height: calc(100vh - 36px);
+        }
+
+        #logon-title{
+            font-weight: 700;
+
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+        input {
+            width: 300px;
+            height: 20px;
+            margin-left: 20px;
+        }
+
+        button {
+            width: 130px;
+            height: 50px;
+            background-color: grey;
+
+            color: white;
+            font-size: 16px;
+            border: none;
+            outline: none !important;
+            margin-bottom: 20px;
+        }
+
+#submit-btn {
+        margin-left: 20px;
+}
+
+        .hidden{
+            display: none;
+        }
+
+        label {
+            margin-left: 20px;
+        }
+
+        #botContainer{
+            height: 100%;
+        }
+
+
+        #logon-form{
+            margin-top: 10px;
+        }
+
+        div.wc-header{
+            visibility: hidden;
+        }
+
+        .agent-buttons {
+                width: 130px;
+                padding: 10px;
+        }
+
+        table tr td {
+                padding: 0;
+                margin: 0;
+
+
+        }
+
+        table {
+                border: none;
+                outline: none;
+        }
+
+        .invisible {
+            visibility: hidden
+        }
