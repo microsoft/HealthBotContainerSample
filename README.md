@@ -12,7 +12,7 @@ A simple web page that allows users to communicate with the [Azure Health Bot](h
 
 2.Set the following environment variables:
 
-`APP_SECRET`
+`END_USER_AUTH_JWT_SECRET`
 
 `WEBCHAT_SECRET`
 
