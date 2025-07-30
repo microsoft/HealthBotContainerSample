@@ -33,6 +33,11 @@ function isUserAuthenticated(){
     return true;
 }
 
+function isAgentAuthenticated(req) {
+    // add here the logic to verify the agent is authenticated
+    return Boolean(req.query.agent);
+}
+
 const appConfig = {
     isHealthy : false,
     options : {
@@ -101,6 +106,9 @@ app.post('/chatBot',  async function(req, res) {
 
         if (req.query.lat && req.query.long)  {
             response['location'] = {lat: req.query.lat, long: req.query.long};
+        }
+        if (isAgentAuthenticated(req)) {
+            response['isAgent'] = true;
         }
         response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
         const jwtToken = jwt.sign(response, END_USER_AUTH_JWT_SECRET);

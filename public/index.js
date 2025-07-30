@@ -1,6 +1,6 @@
 const defaultLocale = 'en-US';
 
-function requestChatBot(loc) {
+function requestChatBot(info, loc) {
     const params = new URLSearchParams(location.search);
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", initBotConversation);
@@ -9,12 +9,22 @@ function requestChatBot(loc) {
     if (loc) {
         path += "&lat=" + loc.lat + "&long=" + loc.long;
     }
-    if (params.has('userId')) {
-        path += "&userId=" + params.get('userId');
+
+    const userId = (info && info.userId) || (params.has('userId') ? params.get('userId') : undefined);
+    if (userId) {
+        path += "&userId=" + userId;
     }
-    if (params.has('userName')) {
-        path += "&userName=" + params.get('userName');
+
+    const userName = (info && info.userName) || (params.has('userName') ? params.get('userName') : undefined);
+    if (userName) {
+        path += "&userName=" + userName;
     }
+
+    if (info && info.agent) {
+        path += "&agent=true";
+    }
+
+
     oReq.open("POST", path);
     oReq.send();
 }
@@ -31,17 +41,17 @@ function extractLocale(localeParam) {
     }
 }
 
-function chatRequested() {
+function chatRequested(info) {
     const params = new URLSearchParams(location.search);
     if (params.has('shareLocation')) {
-        getUserLocation(requestChatBot);
+        getUserLocation(info, requestChatBot);
     }
     else {
-        requestChatBot();
+        requestChatBot(info);
     }
 }
 
-function getUserLocation(callback) {
+function getUserLocation(info, callback) {
     navigator.geolocation.getCurrentPosition(
         function(position) {
             var latitude  = position.coords.latitude;
@@ -50,12 +60,12 @@ function getUserLocation(callback) {
                 lat: latitude,
                 long: longitude
             }
-            callback(location);
+            callback(info, location);
         },
         function(error) {
             // user declined to share location
             console.log("location error:" + error.message);
-            callback();
+            callback(info);
         });
 }
 
@@ -134,7 +144,7 @@ function initBotConversation() {
         else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
             if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
                 // share
-                getUserLocation(function (location) {
+                getUserLocation(null, function (location) {
                     store.dispatch({
                         type: 'WEB_CHAT/SEND_POST_BACK',
                         payload: { value: JSON.stringify(location) }
