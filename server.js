@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const cookieParser = require('cookie-parser');
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
-const APP_SECRET = process.env.APP_SECRET;
+const END_USER_AUTH_JWT_SECRET = process.env.END_USER_AUTH_JWT_SECRET
 const directLineTokenEp = `https://${DIRECTLINE_ENDPOINT_URI || "directline.botframework.com"}/v3/directline/tokens/generate`;
 
 // Initialize the web app instance,
@@ -111,7 +111,7 @@ app.post('/chatBot',  async function(req, res) {
             response['isAgent'] = true;
         }
         response['directLineURI'] = DIRECTLINE_ENDPOINT_URI;
-        const jwtToken = jwt.sign(response, APP_SECRET);
+        const jwtToken = jwt.sign(response, END_USER_AUTH_JWT_SECRET);
         res.send(jwtToken);
     }
     catch (err) {
