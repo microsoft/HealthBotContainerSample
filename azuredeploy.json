@@ -47,10 +47,10 @@
                 "description": "Location for all resources."
             }
         },
-        "endUserAuthJwtSecret": {
+        "authJwtSecret": {
             "type": "securestring",
             "metadata":{
-                "description": "Healthbot end user authentication JWT secret."
+                "description": "Healthbot authentication JWT secret."
             }
         },
         "webchatSecret": {
@@ -109,8 +109,8 @@
                     "alwaysOn": "[variables('alwaysOn')]",
                     "appSettings": [
                         {
-                        "name": "END_USER_AUTH_JWT_SECRET",
-                        "value": "[parameters('endUserAuthJwtSecret')]"
+                        "name": "AUTH_JWT_SECRET",
+                        "value": "[parameters('authJwtSecret')]"
                         },
                         {
                         "name": "WEBCHAT_SECRET",
@@ -170,8 +170,8 @@
                 "siteConfig": {
                     "appSettings": [
                         {
-                          "name": "END_USER_AUTH_JWT_SECRET",
-                          "value": "[parameters('endUserAuthJwtSecret')]"
+                          "name": "AUTH_JWT_SECRET",
+                          "value": "[parameters('authJwtSecret')]"
                         },
                         {
                           "name": "WEBCHAT_SECRET",
