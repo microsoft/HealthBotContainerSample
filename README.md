@@ -51,5 +51,8 @@ Pass your preferred geographic endpoint URI by setting the environment variable:
 
 **Note:** If you are deploying the code sample using the "Deploy to Azure" option, you should add the above secrets to the application settings for your App Service.
 
+## Streaming responses
+This sample supports streaming bot responses, so answers appear progressively as they are generated instead of all at once. Streaming is driven by the bot — it activates automatically when the **streaming feature flag is enabled** for your Health Bot instance. When the flag is off, the sample falls back to the standard single-response behavior with no changes required.
+
 ## Agent webchat
 If the agent webchat sample is also required, [switch to the live agent handoff branch](https://github.com/Microsoft/HealthBotContainerSample/tree/live_agent_handoff)

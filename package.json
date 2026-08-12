@@ -13,7 +13,8 @@
     "node-fetch": "^2.6.7"
   },
   "scripts": {
-    "prestart": "npm install"
+    "prestart": "npm install",
+    "test": "node --test"
   },
   "devDependencies": {}
 }
