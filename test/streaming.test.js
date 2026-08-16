@@ -10,7 +10,9 @@
 //       'passthrough' forwards, 'swallow' drops, 'forward'/'forward-final' forward
 //       (final also calls stopTypingAfterFinal()).
 // A fake timer queue advances reveal/typing loops like a real event loop (callbacks run
-// on flush(), not recursively at schedule time), and a mutable clock drives the hard cap.
+// on flush() in due-time order, not recursively at schedule time), and a mutable clock
+// advances as timers are drained, which drives the typing and bubble-expiry hard caps.
+// flush() with no budget drains to quiescence and throws if any timer leaks.
 
 const { readFileSync } = require('node:fs');
 const { resolve } = require('node:path');
@@ -26,24 +28,84 @@ const streamingScript = readFileSync(
 function createHarness() {
     const forwarded = [];
 
-    // Fake timer queue: scheduled callbacks run on flush(), not at schedule time.
+    // Fake timer queue. Each scheduled callback is recorded with its due time and run
+    // on flush(), not at schedule time. flush() drains in due-time order while advancing
+    // a virtual clock, mirroring how a real event loop retires timers.
     let timerId = 0;
     let now = 1700000000000;
     const timers = new Map();
-    const flush = (maxCallbacks = 200) => {
-        let guard = 0;
-        while (timers.size && guard++ < maxCallbacks) {
-            const [id, fn] = timers.entries().next().value;
-            timers.delete(id);
-            fn();
+
+    // Run up to `maxCallbacks` scheduled callbacks in due-time order, advancing the
+    // clock to each callback's due time (never backwards).
+    const runDueTimers = (maxCallbacks) => {
+        let count = 0;
+        while (timers.size && count < maxCallbacks) {
+            let dueId = null;
+            let dueTimer = null;
+            for (const [id, timer] of timers) {
+                if (dueTimer === null || timer.due < dueTimer.due) {
+                    dueTimer = timer;
+                    dueId = id;
+                }
+            }
+            timers.delete(dueId);
+            if (dueTimer.due > now) {
+                now = dueTimer.due;
+            }
+            count += 1;
+            dueTimer.fn();
+        }
+        return count;
+    };
+
+    // Drain-by-due-time. With no argument, run the queue to quiescence and throw if any
+    // timer is still pending, so a leaked or never-terminating loop fails loudly instead
+    // of being silently capped. The self-terminating loops here (typing heartbeat, bubble
+    // expiry) settle once the virtual clock passes their hard caps. With an explicit
+    // budget, step that many callbacks for partial-animation assertions.
+    const SETTLE_BUDGET = 100000;
+    const flush = (maxCallbacks) => {
+        if (maxCallbacks === undefined) {
+            runDueTimers(SETTLE_BUDGET);
+            if (timers.size > 0) {
+                throw new Error(`flush() did not settle: ${timers.size} timer(s) still pending`);
+            }
+            return;
+        }
+        runDueTimers(maxCallbacks);
+    };
+
+    // Run only the tightly-spaced reveal/answer animation timers: keep going while the
+    // next due timer falls within one reveal cadence, so the second-scale typing
+    // heartbeat and the minutes-scale bubble-expiry guard are left pending. Lets a test
+    // assert the fully revealed text without draining into either hard cap.
+    const REVEAL_LOOKAHEAD_MS = 500;
+    const flushReveals = () => {
+        while (timers.size) {
+            let dueId = null;
+            let dueTimer = null;
+            for (const [id, timer] of timers) {
+                if (dueTimer === null || timer.due < dueTimer.due) {
+                    dueTimer = timer;
+                    dueId = id;
+                }
+            }
+            if (dueTimer.due > now + REVEAL_LOOKAHEAD_MS) {
+                break;
+            }
+            timers.delete(dueId);
+            if (dueTimer.due > now) {
+                now = dueTimer.due;
+            }
+            dueTimer.fn();
         }
     };
 
     const context = createContext({
         window: {},
-        setTimeout: (fn) => {
+        setTimeout: (fn, delay = 0) => {
             const id = ++timerId;
-            timers.set(id, fn);
+            timers.set(id, { due: now + delay, fn });
             return id;
         },
         clearTimeout: (id) => {
@@ -128,6 +190,7 @@ function createHarness() {
         streamDelta,
         sendUserMessage,
         flush,
+        flushReveals,
         advanceTime: (ms) => {
             now += ms;
         },
@@ -170,24 +233,17 @@ describe('streaming typing indicator', () => {
         assert.equal(typingFrames().length, typingCount);
     });
 
-    it('keeps the native typing row below streamed frames and refreshes it', () => {
-        const { forwarded, incoming, streamEvent, flush, typingFrames } = createHarness();
+    it('keeps the native typing row styled and refreshed alongside streamed frames', () => {
+        const { incoming, streamEvent, flush, typingFrames, revealFrames } = createHarness();
         incoming({ type: 'typing', from: { role: 'bot', id: 'real-bot' }, channelData: { typingStyle: 'grey' } });
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
         flush(60);
 
-        const revealIndexes = forwarded.flatMap((action, index) =>
-            action.payload.activity.channelData && action.payload.activity.channelData.hasStreamReveal ? [index] : []
-        );
-        assert.ok(revealIndexes.length > 0);
-        assert.ok(revealIndexes.every((index) =>
-            forwarded[index + 1] &&
-            forwarded[index + 1].payload.activity.channelData &&
-            forwarded[index + 1].payload.activity.channelData.hasStreamTyping
-        ));
+        assert.ok(revealFrames().length > 0);
 
         const streamTyping = typingFrames();
-        assert.ok(streamTyping.length > revealIndexes.length);
+        // The heartbeat keeps refreshing the native typing row while the stream runs.
+        assert.ok(streamTyping.length > 1);
         assert.ok(streamTyping.every((a) =>
             a.payload.activity.type === 'typing' &&
             a.payload.activity.text === undefined &&
@@ -230,11 +286,11 @@ describe('streamed answer', () => {
     });
 
     it('accumulates deltas across frames into the growing answer', () => {
-        const { streamDelta, flush, revealFrames } = createHarness();
+        const { streamDelta, flushReveals, revealFrames } = createHarness();
         streamDelta('Hello ');
-        flush();
+        flushReveals();
         streamDelta('world');
-        flush();
+        flushReveals();
         const frames = revealFrames();
         assert.equal(frames[frames.length - 1].payload.activity.text, 'Hello world');
     });
@@ -246,11 +302,11 @@ describe('streamed answer', () => {
     });
 
     it('clears the previous answer buffer when the streamId changes', () => {
-        const { streamDelta, flush, revealFrames } = createHarness();
+        const { streamDelta, flushReveals, revealFrames } = createHarness();
         streamDelta('AAA', 'run_1');
-        flush();
+        flushReveals();
         streamDelta('BBBBBBBBBB', 'run_2');
-        flush();
+        flushReveals();
         const frames = revealFrames();
         const last = frames[frames.length - 1].payload.activity.text;
         // The new stream must not concatenate onto the previous buffer.
@@ -324,29 +380,29 @@ describe('streamed progress (pre-answer events)', () => {
     });
 
     it('renders the tool progress intent', () => {
-        const { streamEvent, flush, revealFrames } = createHarness();
+        const { streamEvent, flushReveals, revealFrames } = createHarness();
         streamEvent({
             type: 'TOOL_CALL_START',
             toolCallId: 'tc-1',
             toolCallName: 'generate_answer',
             extensions: { toolProgress: 'Drafting a prior authorization note' },
         });
-        flush();
+        flushReveals();
         const frames = revealFrames();
         assert.ok(frames.length > 0);
         assert.equal(frames[frames.length - 1].payload.activity.text, 'Drafting a prior authorization note');
     });
 
     it('renders run start as evaluating the request', () => {
-        const { streamEvent, flush, revealFrames } = createHarness();
+        const { streamEvent, flushReveals, revealFrames } = createHarness();
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
-        flush();
+        flushReveals();
         const frames = revealFrames();
         assert.equal(frames[frames.length - 1].payload.activity.text, 'Evaluating your request');
     });
 
     it('finishes each progress message before revealing the next stream', () => {
-        const { streamEvent, streamDelta, flush, revealFrames } = createHarness();
+        const { streamEvent, streamDelta, flushReveals, revealFrames } = createHarness();
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
         streamEvent({
             type: 'TOOL_CALL_START',
@@ -355,13 +411,19 @@ describe('streamed progress (pre-answer events)', () => {
             extensions: { toolProgress: 'Searching medical information' },
         });
         streamDelta('Final answer');
-        flush();
+        flushReveals();
 
         const revealedTexts = revealFrames().map((a) => a.payload.activity.text);
+        // Find the first animation frame that is a non-empty, still-incomplete prefix
+        // of the eventual full line. This asserts ordering without hard-coding the
+        // reveal chunk math (a fixed 'S' / 'Fi' frame silently passes as -1 if the
+        // chunking ever changes).
+        const firstPrefixIndex = (texts, full) =>
+            texts.findIndex((t) => t.length > 0 && t.length < full.length && full.startsWith(t));
         const runStartEnd = revealedTexts.indexOf('Evaluating your request');
-        const toolStart = revealedTexts.indexOf('S');
+        const toolStart = firstPrefixIndex(revealedTexts, 'Searching medical information');
         const toolEnd = revealedTexts.indexOf('Searching medical information');
-        const answerStart = revealedTexts.indexOf('Fi');
+        const answerStart = firstPrefixIndex(revealedTexts, 'Final answer');
 
         assert.ok(runStartEnd > -1);
         assert.ok(toolStart > runStartEnd);
@@ -371,7 +433,7 @@ describe('streamed progress (pre-answer events)', () => {
     });
 
     it('keeps only the newest pending progress message', () => {
-        const { streamEvent, flush, revealFrames } = createHarness();
+        const { streamEvent, flushReveals, revealFrames } = createHarness();
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
         streamEvent({
             type: 'TOOL_CALL_START',
@@ -385,7 +447,7 @@ describe('streamed progress (pre-answer events)', () => {
             toolCallName: 'second_tool',
             extensions: { toolProgress: 'Newest pending tool' },
         });
-        flush();
+        flushReveals();
 
         const revealedTexts = revealFrames().map((a) => a.payload.activity.text);
         assert.ok(revealedTexts.includes('Evaluating your request'));
@@ -406,16 +468,16 @@ describe('streamed progress (pre-answer events)', () => {
     });
 
     it('replaces the progress line with the accumulating answer', () => {
-        const { streamEvent, streamDelta, flush, revealFrames } = createHarness();
+        const { streamEvent, streamDelta, flushReveals, revealFrames } = createHarness();
         streamEvent({
             type: 'TOOL_CALL_START',
             toolCallId: 'tc-1',
             toolCallName: 'medical_knowledge-run',
             extensions: { toolProgress: 'Searching medical information' },
         });
-        flush();
+        flushReveals();
         streamDelta('Final answer');
-        flush();
+        flushReveals();
         const frames = revealFrames();
         assert.equal(frames[frames.length - 1].payload.activity.text, 'Final answer');
     });
@@ -433,15 +495,15 @@ describe('streamed progress (pre-answer events)', () => {
     });
 
     it('does not overwrite the answer with progress events received after answer start', () => {
-        const { streamDelta, streamEvent, flush, revealFrames } = createHarness();
+        const { streamDelta, streamEvent, flushReveals, revealFrames } = createHarness();
         streamDelta('The answer');
-        flush();
+        flushReveals();
         streamEvent({
             type: 'TOOL_CALL_START',
             toolCallId: 'tc-late',
             extensions: { toolProgress: 'Late progress' },
         });
-        flush();
+        flushReveals();
         const revealedTexts = revealFrames().map((a) => a.payload.activity.text);
         assert.ok(!revealedTexts.includes('Late progress'));
         assert.equal(revealedTexts[revealedTexts.length - 1], 'The answer');
@@ -478,25 +540,68 @@ describe('error and reset', () => {
         streamDelta('A partially revealed streamed answer');
         sendUserMessage();
         const revealCountAtReset = revealFrames().length;
-        flush(200);
+        // A full drain must settle (no leaked timers) and produce no further reveals.
+        flush();
         assert.equal(revealFrames().length, revealCountAtReset);
+    });
+});
+
+describe('temporary bubble expiry', () => {
+    it('retires the temporary bubble when no final activity ever arrives', () => {
+        const { streamEvent, incoming, flush, flushReveals, advanceTime, revealFrames, forwarded } = createHarness();
+        streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
+        flushReveals();
+
+        // No final activity arrives; let the visibility window elapse and drain.
+        advanceTime(5 * 60 * 1000);
+        flush();
+
+        const reveals = revealFrames();
+        const expired = reveals[reveals.length - 1].payload.activity;
+        assert.equal(expired.text, '');
+        assert.equal(expired.channelData.hasStreamExpired, true);
+
+        // The bubble is retired: a late bot message is no longer reconciled onto it.
+        const late = incoming({ type: 'message', text: 'Late final', from: { role: 'bot' } });
+        assert.ok(forwarded.includes(late));
+        assert.notEqual(late.payload.activity.id, 'has-stream-progress-0');
+    });
+
+    it('keeps the bubble alive while progress and answer content keep arriving', () => {
+        const { streamEvent, streamDelta, flush, flushReveals, advanceTime, revealFrames } = createHarness();
+        streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
+        flushReveals();
+        // Just before the window elapses, fresh content refreshes it.
+        advanceTime(4 * 60 * 1000);
+        streamDelta('Answer arriving in time');
+        flushReveals();
+        advanceTime(4 * 60 * 1000);
+
+        const beforeDrain = revealFrames().map((a) => a.payload.activity.text);
+        assert.equal(beforeDrain[beforeDrain.length - 1], 'Answer arriving in time');
+        assert.ok(!beforeDrain.some((t) => t === ''));
+
+        // Only once content stops for a full window does the bubble finally retire.
+        flush();
+        const afterDrain = revealFrames();
+        assert.equal(afterDrain[afterDrain.length - 1].payload.activity.channelData.hasStreamExpired, true);
     });
 });
 
 describe('future compatibility (Option C boundary)', () => {
     it('swallows TOOL_CALL_CHUNK and does not render or corrupt the answer', () => {
-        const { forwarded, streamEvent, streamDelta, flush, revealFrames } = createHarness();
+        const { forwarded, streamEvent, streamDelta, flushReveals, revealFrames } = createHarness();
         const chunk = streamEvent({
             type: 'TOOL_CALL_CHUNK',
             toolCallId: 'tc-1',
             delta: 'chunk text that must not render',
         });
-        flush();
+        flushReveals();
         assert.ok(!forwarded.includes(chunk));
         assert.equal(revealFrames().length, 0);
 
         streamDelta('Real answer');
-        flush();
+        flushReveals();
         const frames = revealFrames();
         assert.equal(frames[frames.length - 1].payload.activity.text, 'Real answer');
     });

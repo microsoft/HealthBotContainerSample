@@ -11,8 +11,8 @@
  * replaced by the authoritative final bot activity.
  *
  * This module owns all streaming state and animation. index.js wires it into the
- * Web Chat store middleware. Everything here is framework-free so it can be unit
- * tested in a plain Node VM.
+ * Web Chat store middleware. Everything here is framework-free (modern JS, no bundler
+ * or DOM dependency) so it can be unit tested in a plain Node VM.
  *
  * Note: TOOL_CALL_CHUNK is intentionally NOT rendered. answerDelta() is the single
  * answer-interpretation point where that support can be added later, together with a
@@ -22,21 +22,26 @@
 (function (global) {
     'use strict';
 
-    var incomingActivityActionType = 'DIRECT_LINE/INCOMING_ACTIVITY';
-    var activityMessageType = 'message';
+    const incomingActivityActionType = 'DIRECT_LINE/INCOMING_ACTIVITY';
+    const activityMessageType = 'message';
 
-    var AGUI_EVENT = {
+    const AGUI_EVENT = {
         RUN_ERROR: 'RUN_ERROR',
         RUN_STARTED: 'RUN_STARTED',
         TEXT_MESSAGE_CONTENT: 'TEXT_MESSAGE_CONTENT',
-        TOOL_CALL_START: 'TOOL_CALL_START',
-        CUSTOM: 'CUSTOM'
+        TOOL_CALL_START: 'TOOL_CALL_START'
     };
 
-    var REVEAL_MS = 18;
-    var ANSWER_REVEAL_MS = 12;
-    var STREAM_TYPING_REFRESH_MS = 1000;
-    var MAX_STREAM_TYPING_DURATION_MS = 5 * 60 * 1000;
+    const REVEAL_MS = 18;
+    const ANSWER_REVEAL_MS = 12;
+    const STREAM_TYPING_REFRESH_MS = 1000;
+    const MAX_STREAM_TYPING_DURATION_MS = 5 * 60 * 1000;
+    // A temporary progress/answer bubble is only ever a placeholder for the
+    // authoritative final activity. If that final activity never arrives, the bubble
+    // must not linger on screen forever, so it is retired after this window of
+    // inactivity. The window is refreshed every time new progress or answer content
+    // arrives, and cleared once the final activity replaces the bubble.
+    const MAX_PROGRESS_LINE_VISIBLE_MS = 5 * 60 * 1000;
 
     // Map a supported event to safe, user-visible progress text. Never exposes a raw
     // tool name, tool arguments, custom payloads, or unknown extension values.
@@ -63,29 +68,32 @@
 
     function createController() {
         // Turn and identity state
-        var streamTurn = 0;
-        var streamProgressId = null;
-        var streamId = null;
+        let streamTurn = 0;
+        let streamProgressId = null;
+        let streamId = null;
 
         // Lifecycle state
-        var streamAwaitingFinal = false;
-        var streamAnswerStarted = false;
-        var lastProgressText = '';
+        let streamAwaitingFinal = false;
+        let streamAnswerStarted = false;
+        let lastProgressText = '';
 
         // Content and animation state
-        var answerBuffer = '';
-        var activeReveal = null;
-        var pendingProgress = null;
-        var answerTarget = '';
-        var answerShown = 0;
-        var answerLoop = null;
+        let answerBuffer = '';
+        let activeReveal = null;
+        let pendingProgress = null;
+        let answerTarget = '';
+        let answerShown = 0;
+        let answerLoop = null;
 
         // Typing state
-        var streamTypingActive = false;
-        var streamTypingLoop = null;
-        var streamTypingStartedAt = null;
-        var streamTypingFrom = null;
-        var lastBotTypingActivity = null;
+        let streamTypingActive = false;
+        let streamTypingLoop = null;
+        let streamTypingStartedAt = null;
+        let streamTypingFrom = null;
+        let lastBotTypingActivity = null;
+
+        // Bubble-expiry state
+        let progressExpiryLoop = null;
 
         function cancelAnswerReveal() {
             if (answerLoop) {
@@ -111,21 +119,23 @@
                 return;
             }
 
-            var typingActivity = lastBotTypingActivity || {};
+            const typingActivity = lastBotTypingActivity || {};
             store.dispatch({
                 type: incomingActivityActionType,
                 payload: {
-                    activity: Object.assign({}, typingActivity, {
+                    activity: {
+                        ...typingActivity,
                         id: (streamProgressId || 'has-stream-progress-0') + '-typing',
                         type: 'typing',
                         from: typingActivity.from
                             || streamTypingFrom
                             || { role: 'bot', id: 'has-stream', name: 'Bot' },
                         timestamp: new Date().toISOString(),
-                        channelData: Object.assign({}, typingActivity.channelData || {}, {
+                        channelData: {
+                            ...(typingActivity.channelData || {}),
                             hasStreamTyping: true
-                        })
-                    })
+                        }
+                    }
                 }
             });
         }
@@ -135,7 +145,7 @@
                 return;
             }
 
-            streamTypingLoop = setTimeout(function () {
+            streamTypingLoop = setTimeout(() => {
                 streamTypingLoop = null;
                 if (!streamTypingActive) {
                     return;
@@ -183,12 +193,56 @@
             streamTypingStartedAt = null;
         }
 
+        // Retire the temporary bubble once it has been visible for too long without
+        // being replaced by the authoritative final activity. Clears the placeholder
+        // text and tears down all streaming animation/typing for the turn so nothing
+        // lingers on screen; a late final activity is then handled as an ordinary
+        // bot message.
+        function expireProgressBubble(store) {
+            cancelReveal();
+            resetStreamTyping();
+            store.dispatch({
+                type: incomingActivityActionType,
+                payload: {
+                    activity: {
+                        id: streamProgressId || 'has-stream-progress-0',
+                        type: activityMessageType,
+                        text: '',
+                        from: { role: 'bot', id: 'has-stream', name: 'Bot' },
+                        timestamp: new Date().toISOString(),
+                        channelData: { hasStreamReveal: true, hasStreamExpired: true }
+                    }
+                }
+            });
+            streamAwaitingFinal = false;
+            streamAnswerStarted = false;
+            lastProgressText = '';
+            answerBuffer = '';
+        }
+
+        function clearProgressExpiry() {
+            if (progressExpiryLoop) {
+                clearTimeout(progressExpiryLoop);
+                progressExpiryLoop = null;
+            }
+        }
+
+        // Refresh the inactivity window guarding the temporary bubble. Called on every
+        // new progress/answer frame so an actively growing bubble is never retired.
+        function armProgressExpiry(store) {
+            clearProgressExpiry();
+            progressExpiryLoop = setTimeout(() => {
+                progressExpiryLoop = null;
+                expireProgressBubble(store);
+            }, MAX_PROGRESS_LINE_VISIBLE_MS);
+        }
+
         function startNextProgressReveal(store, activityId) {
             if (activeReveal || answerLoop) {
                 return;
             }
 
-            var text = pendingProgress;
+            const text = pendingProgress;
             pendingProgress = null;
             if (!text) {
                 if (answerTarget.length > answerShown) {
@@ -197,9 +251,9 @@
                 return;
             }
 
-            var state = { cancelled: false, timers: [] };
+            const state = { cancelled: false, timers: [] };
             activeReveal = state;
-            var step = function (i) {
+            const step = (i) => {
                 if (state.cancelled) return;
                 store.dispatch({
                     type: incomingActivityActionType,
@@ -215,7 +269,7 @@
                     }
                 });
                 if (i < text.length) {
-                    state.timers.push(setTimeout(function () { step(i + 1); }, REVEAL_MS));
+                    state.timers.push(setTimeout(() => step(i + 1), REVEAL_MS));
                 } else {
                     activeReveal = null;
                     startNextProgressReveal(store, activityId);
@@ -233,7 +287,7 @@
         }
 
         function showAnswer(store, activityId, text) {
-            var full = text || '';
+            const full = text || '';
             if (full.length <= answerTarget.length) {
                 return;
             }
@@ -245,9 +299,9 @@
 
         function stepAnswer(store, activityId) {
             answerLoop = null;
-            var backlog = answerTarget.length - answerShown;
+            const backlog = answerTarget.length - answerShown;
             if (backlog > 0) {
-                var chunk = Math.max(1, Math.ceil(backlog / 8));
+                const chunk = Math.max(1, Math.ceil(backlog / 8));
                 answerShown += chunk;
                 store.dispatch({
                     type: incomingActivityActionType,
@@ -263,7 +317,7 @@
                     }
                 });
                 if (answerShown < answerTarget.length) {
-                    answerLoop = setTimeout(function () { stepAnswer(store, activityId); }, ANSWER_REVEAL_MS);
+                    answerLoop = setTimeout(() => stepAnswer(store, activityId), ANSWER_REVEAL_MS);
                 }
             }
         }
@@ -271,6 +325,7 @@
         // Reset all stream state for a new outgoing turn.
         function resetForNewTurn() {
             resetStreamTyping();
+            clearProgressExpiry();
             lastBotTypingActivity = null;
             cancelReveal();
             streamTurn += 1;
@@ -301,7 +356,7 @@
                 return 'swallow';
             }
 
-            var stream = (incoming && incoming.type === activityMessageType && incoming.value)
+            const stream = (incoming && incoming.type === activityMessageType && incoming.value)
                 ? incoming.value.stream
                 : null;
             if (stream && stream.event) {
@@ -310,7 +365,7 @@
                     answerBuffer = '';
                 }
 
-                var ev = stream.event;
+                const ev = stream.event;
                 if (!streamProgressId) {
                     streamProgressId = 'has-stream-progress-0';
                 }
@@ -319,8 +374,10 @@
                     resetStreamTyping();
                     // Keep streamProgressId and stay awaiting so the bot's error message
                     // replaces the progress bubble instead of rendering beside it. Reset
-                    // on the next outgoing user activity.
+                    // on the next outgoing user activity. Guard the placeholder with the
+                    // inactivity window in case that error message never arrives.
                     streamAwaitingFinal = true;
+                    armProgressExpiry(store);
                     return 'swallow';
                 }
                 if (ev.type === AGUI_EVENT.RUN_STARTED) {
@@ -329,7 +386,7 @@
                 startStreamTyping(store, incoming.from);
                 streamAwaitingFinal = true;
 
-                var delta = answerDelta(ev);
+                const delta = answerDelta(ev);
                 if (delta) {
                     if (!streamAnswerStarted) {
                         streamAnswerStarted = true;
@@ -337,12 +394,14 @@
                     streamAwaitingFinal = true;
                     answerBuffer += delta;
                     showAnswer(store, streamProgressId, answerBuffer);
+                    armProgressExpiry(store);
                 } else if (!streamAnswerStarted) {
-                    var text = streamProgressText(ev);
+                    const text = streamProgressText(ev);
                     if (text && text !== lastProgressText) {
                         lastProgressText = text;
                         streamAwaitingFinal = true;
                         revealProgress(store, streamProgressId, text);
+                        armProgressExpiry(store);
                     }
                 }
                 return 'swallow';
@@ -352,6 +411,7 @@
                 && incoming && incoming.from && incoming.from.role === 'bot'
                 && incoming.type === activityMessageType) {
                 cancelReveal();
+                clearProgressExpiry();
                 incoming.id = streamProgressId;
                 streamAwaitingFinal = false;
                 return 'forward-final';
@@ -364,6 +424,7 @@
         // typing stops and the authoritative activity takes over cleanly.
         function stopTypingAfterFinal() {
             resetStreamTyping();
+            clearProgressExpiry();
         }
 
         return {

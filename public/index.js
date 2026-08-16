@@ -102,6 +102,17 @@ function initBotConversation() {
 
     const streaming = window.HealthBotStreaming.createController();
 
+    // Hide the retired temporary streaming bubble. When the placeholder expires without
+    // a final activity, streaming.js emits a same-id frame flagged hasStreamExpired;
+    // rendering nothing makes the stale bubble disappear instead of lingering on screen.
+    const activityMiddleware = () => (next) => (...renderArgs) => {
+        const card = renderArgs[0];
+        if (card && card.activity && card.activity.channelData && card.activity.channelData.hasStreamExpired) {
+            return false;
+        }
+        return next(...renderArgs);
+    };
+
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
         // A new outgoing user turn (typed message or invoke) resets all stream state so
         // progress/answer/typing from the previous turn can't leak into this one.
@@ -176,6 +187,7 @@ function initBotConversation() {
         directLine: botConnection,
         styleOptions: styleOptions,
         store: store,
+        activityMiddleware: activityMiddleware,
         userID: user.id,
         username: user.name,
         locale: user.locale
