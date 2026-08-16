@@ -134,7 +134,7 @@ function createHarness() {
         if (action.type === 'DIRECT_LINE/POST_ACTIVITY') {
             const outgoing = action.payload && action.payload.activity;
             if (outgoing && (outgoing.type === 'message' || outgoing.type === 'invoke')) {
-                streaming.resetForNewTurn();
+                streaming.resetForNewTurn(store);
             }
         }
         if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
@@ -543,6 +543,29 @@ describe('error and reset', () => {
         // A full drain must settle (no leaked timers) and produce no further reveals.
         flush();
         assert.equal(revealFrames().length, revealCountAtReset);
+    });
+
+    it('retires the previous bubble when a new turn starts before the final activity', () => {
+        const { streamDelta, sendUserMessage, revealFrames } = createHarness();
+        streamDelta('Partial answer from the first turn');
+        // User sends a new message before the first turn's final activity arrives.
+        sendUserMessage();
+        const cleared = revealFrames().filter((a) => a.payload.activity.channelData.hasStreamExpired);
+        assert.equal(cleared.length, 1);
+        const activity = cleared[cleared.length - 1].payload.activity;
+        assert.equal(activity.id, 'has-stream-progress-0');
+        assert.equal(activity.text, '');
+    });
+
+    it('reveals a shorter new answer after a streamId change', () => {
+        const { streamDelta, flushReveals, revealFrames } = createHarness();
+        streamDelta('AAAAAAAAAA', 'run_1');
+        flushReveals();
+        // A fresh stream replaces the answer with shorter text.
+        streamDelta('BBB', 'run_2');
+        flushReveals();
+        const texts = revealFrames().map((a) => a.payload.activity.text);
+        assert.equal(texts[texts.length - 1], 'BBB');
     });
 });
 

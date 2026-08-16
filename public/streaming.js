@@ -322,8 +322,13 @@
             }
         }
 
-        // Reset all stream state for a new outgoing turn.
-        function resetForNewTurn() {
+        // Reset all stream state for a new outgoing turn. If the previous turn's
+        // temporary bubble is still awaiting its final activity (e.g. the user sent a
+        // new message mid-stream), retire it first so it can't be orphaned on screen.
+        function resetForNewTurn(store) {
+            if (streamAwaitingFinal && store) {
+                expireProgressBubble(store);
+            }
             resetStreamTyping();
             clearProgressExpiry();
             lastBotTypingActivity = null;
@@ -363,6 +368,9 @@
                 if (stream.streamId && stream.streamId !== streamId) {
                     streamId = stream.streamId;
                     answerBuffer = '';
+                    // A fresh stream restarts answer accumulation; drop any reveal state
+                    // from the previous stream so a shorter new answer isn't swallowed.
+                    cancelAnswerReveal();
                 }
 
                 const ev = stream.event;

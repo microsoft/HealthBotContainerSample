@@ -119,7 +119,7 @@ function initBotConversation() {
         if (action.type === 'DIRECT_LINE/POST_ACTIVITY') {
             const outgoing = action.payload && action.payload.activity;
             if (outgoing && (outgoing.type === 'message' || outgoing.type === 'invoke')) {
-                streaming.resetForNewTurn();
+                streaming.resetForNewTurn(store);
             }
         }
 
