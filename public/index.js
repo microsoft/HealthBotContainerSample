@@ -100,7 +100,29 @@ function initBotConversation() {
         backgroundColor: '#F8F8F8'
     };
 
+    const streaming = window.HealthBotStreaming.createController();
+
+    // Hide the retired temporary streaming bubble. When the placeholder expires without
+    // a final activity, streaming.js emits a same-id frame flagged hasStreamExpired;
+    // rendering nothing makes the stale bubble disappear instead of lingering on screen.
+    const activityMiddleware = () => (next) => (...renderArgs) => {
+        const card = renderArgs[0];
+        if (card && card.activity && card.activity.channelData && card.activity.channelData.hasStreamExpired) {
+            return false;
+        }
+        return next(...renderArgs);
+    };
+
     const store = window.WebChat.createStore({}, function(store) { return function(next) { return function(action) {
+        // A new outgoing user turn (typed message or invoke) resets all stream state so
+        // progress/answer/typing from the previous turn can't leak into this one.
+        if (action.type === 'DIRECT_LINE/POST_ACTIVITY') {
+            const outgoing = action.payload && action.payload.activity;
+            if (outgoing && (outgoing.type === 'message' || outgoing.type === 'invoke')) {
+                streaming.resetForNewTurn(store);
+            }
+        }
+
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
             store.dispatch({
                 type: 'DIRECT_LINE/POST_ACTIVITY',
@@ -132,6 +154,15 @@ function initBotConversation() {
 
         }
         else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+            // Streaming interprets the incoming activity and tells us how to handle it.
+            const directive = streaming.handleIncoming(store, action.payload.activity);
+            if (directive === 'passthrough') {
+                return next(action);
+            }
+            if (directive === 'swallow') {
+                return;
+            }
+
             if (action.payload && action.payload.activity && action.payload.activity.type === "event" && action.payload.activity.name === "ShareLocationEvent") {
                 // share
                 getUserLocation(function (location) {
@@ -141,6 +172,14 @@ function initBotConversation() {
                     });
                 });
             }
+
+            const result = next(action);
+            if (directive === 'forward-final') {
+                // Stop synthetic typing after the authoritative final activity is
+                // forwarded so it takes over the bubble cleanly.
+                streaming.stopTypingAfterFinal();
+            }
+            return result;
         }
         return next(action);
     }}});
@@ -148,6 +187,7 @@ function initBotConversation() {
         directLine: botConnection,
         styleOptions: styleOptions,
         store: store,
+        activityMiddleware: activityMiddleware,
         userID: user.id,
         username: user.name,
         locale: user.locale
