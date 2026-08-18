@@ -1,4 +1,4 @@
-FROM node:24
+FROM node:20
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -15,8 +15,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# Build the React client (outputs to ./dist, served by server.js)
-RUN npm run build
+# The React client (./dist) is built automatically by the `postinstall` hook
+# during `npm install` above, and is served by server.js.
 
 # Delete the web.config file, only needed for IIS
 RUN rm ./Web.config
