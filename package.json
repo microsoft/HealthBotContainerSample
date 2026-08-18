@@ -9,6 +9,10 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^17.0.83",
+    "@types/react-dom": "^17.0.25",
+    "@vitejs/plugin-react": "^4.3.4",
     "botframework-webchat": "4.19.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
@@ -16,13 +20,7 @@
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.7",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/react": "^17.0.83",
-    "@types/react-dom": "^17.0.25",
-    "@vitejs/plugin-react": "^4.3.4",
+    "react-dom": "^17.0.2",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   },
