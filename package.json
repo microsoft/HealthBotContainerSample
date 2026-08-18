@@ -6,15 +6,29 @@
   "license": "MIT",
   "repository": "https://github.com/Microsoft/HealthBotContainerSample.git",
   "dependencies": {
-    "dotenv": "^8.2.0",
+    "botframework-webchat": "4.19.1",
     "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^17.0.83",
+    "@types/react-dom": "^17.0.25",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
   },
   "scripts": {
-    "prestart": "npm install",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "prestart": "npm install && npm run build",
+    "start": "node server.js",
     "test": "node --test"
-  },
-  "devDependencies": {}
+  }
 }

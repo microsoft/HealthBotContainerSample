@@ -1,10 +1,11 @@
 'use strict';
 
-// Deterministic tests for the streaming UI controller (public/streaming.js).
+// Deterministic tests for the streaming UI controller (src/streaming.ts).
 //
-// The controller owns all stream state/animation; index.js wires it into the Web Chat
-// store middleware. This harness loads streaming.js in a VM and drives it through a
-// middleware that mirrors the streaming-relevant glue in index.js:
+// The controller owns all stream state/animation; src/chat/createChatStore.ts wires it
+// into the Web Chat store middleware. This harness creates a controller with injected
+// timers + clock and drives it through a middleware that mirrors the streaming-relevant
+// glue in createChatStore.ts:
 //   - DIRECT_LINE/POST_ACTIVITY (message|invoke) -> controller.resetForNewTurn()
 //   - DIRECT_LINE/INCOMING_ACTIVITY -> controller.handleIncoming(store, activity),
 //       'passthrough' forwards, 'swallow' drops, 'forward'/'forward-final' forward
@@ -14,16 +15,13 @@
 // advances as timers are drained, which drives the typing and bubble-expiry hard caps.
 // flush() with no budget drains to quiescence and throws if any timer leaks.
 
-const { readFileSync } = require('node:fs');
-const { resolve } = require('node:path');
-const { createContext, runInContext } = require('node:vm');
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
-const streamingScript = readFileSync(
-    resolve(__dirname, '..', 'public', 'streaming.js'),
-    'utf8'
-);
+// The controller is a typed ES module (src/streaming.ts). Node's built-in TypeScript
+// support loads it directly; its timers and clock are injected (see below) so this
+// harness stays fully deterministic without a VM.
+const { createController } = require('../src/streaming.ts');
 
 function createHarness() {
     const forwarded = [];
@@ -101,33 +99,22 @@ function createHarness() {
         }
     };
 
-    const context = createContext({
-        window: {},
-        setTimeout: (fn, delay = 0) => {
-            const id = ++timerId;
-            timers.set(id, { due: now + delay, fn });
-            return id;
-        },
-        clearTimeout: (id) => {
-            timers.delete(id);
-        },
-        Date: class extends Date {
-            constructor(value) {
-                super(value === undefined ? now : value);
-            }
-            static now() {
-                return now;
-            }
-        },
-        Object,
-        Math,
-        console,
+    const fakeSetTimeout = (fn, delay = 0) => {
+        const id = ++timerId;
+        timers.set(id, { due: now + delay, fn });
+        return id;
+    };
+    const fakeClearTimeout = (id) => {
+        timers.delete(id);
+    };
+
+    const streaming = createController({
+        setTimeout: fakeSetTimeout,
+        clearTimeout: fakeClearTimeout,
+        now: () => now,
     });
 
-    runInContext(streamingScript, context);
-    const streaming = context.window.HealthBotStreaming.createController();
-
-    // Middleware mirroring the streaming glue in public/index.js.
+    // Middleware mirroring the streaming glue in src/chat/createChatStore.ts.
     let dispatch;
     const store = { dispatch: (action) => dispatch(action) };
     dispatch = (action) => {

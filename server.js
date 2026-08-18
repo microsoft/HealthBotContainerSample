@@ -1,5 +1,6 @@
 require('dotenv').config();
 const crypto = require('crypto');
+const fs = require("fs");
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
@@ -17,9 +18,11 @@ app.use(cookieParser());
 let options = {};
 // uncomment the line below if you wish to allow only specific domains to embed this page as a frame
 //options = {setHeaders: (res, path, stat) => {res.set('Content-Security-Policy', 'frame-ancestors example.com')}};
-// Indicate which directory static resources
-// (e.g. stylesheets) should be served from.
-app.use(express.static(path.join(__dirname, "public"), options));
+// Serve the built React client from `dist` (produced by `npm run build`). Fall back to
+// `public` for any static assets that are not part of the bundle.
+const distDir = path.join(__dirname, "dist");
+const staticDir = fs.existsSync(distDir) ? distDir : path.join(__dirname, "public");
+app.use(express.static(staticDir, options));
 // begin listening for requests.
 const port = process.env.PORT || 8080;
 const region = process.env.REGION || "Unknown";

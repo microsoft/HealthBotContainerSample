@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Health Bot</title>
+
     <!-- Add Azure Application Insights to your chat.
         Uncomment the following code snippet and replace
         <appInsightInstrumnetationKey> with your own
@@ -17,14 +21,9 @@
         );window[aiName]=aisdk,aisdk.queue&&0===aisdk.queue.length&&aisdk.trackPageView({});
     </script>
     -->
-    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
-    <script src="streaming.js"></script>
-    <script src="index.js"></script>
-    <link href="stylesheets/style.css" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-<div id="webchat" role="main" watermark="false"></div>
-<script>chatRequested();</script>
+    <div id="webchat" role="main" watermark="false"></div>
+    <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

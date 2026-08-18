@@ -15,6 +15,9 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Build the React client (outputs to ./dist, served by server.js)
+RUN npm run build
+
 # Delete the web.config file, only needed for IIS
 RUN rm ./Web.config
 
