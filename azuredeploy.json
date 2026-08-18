@@ -12,13 +12,13 @@
         },
         "operatingSystem": {
             "type": "string",
-            "defaultValue": "windows",
+            "defaultValue": "linux",
             "allowedValues": [
                 "windows",
                 "linux"
             ],
             "metadata": {
-                "description": "Host type: Windows or Linux. (Windows is recommended)"
+                "description": "Host type: Windows or Linux. (Linux is recommended)"
             }
         },
         "skuName": {
@@ -78,7 +78,7 @@
         "alwaysOn": true,
         "skuCode": "[parameters('skuName')]",
         "numberOfWorkers": "[parameters('numberOfInstances')]",
-        "linuxFxVersion": "NODE|lts",
+        "linuxFxVersion": "NODE|20-lts",
         "hostingPlanNameLinux": "[concat('plan-linux-', parameters('siteName'))]",
         "hostingPlanNameWin": "[concat('plan-win-', parameters('siteName'))]",
         "kind": "[if(equals(parameters('operatingSystem'), 'windows'), 'app', 'linux')]",
@@ -106,6 +106,7 @@
                 "name": "[variables('linuxSiteName')]",
                 "siteConfig": {
                     "linuxFxVersion": "[variables('linuxFxVersion')]",
+                    "appCommandLine": "node server.js",
                     "alwaysOn": "[variables('alwaysOn')]",
                     "appSettings": [
                         {
@@ -115,6 +116,10 @@
                         {
                         "name": "WEBCHAT_SECRET",
                         "value": "[parameters('webchatSecret')]"
+                        },
+                        {
+                        "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                        "value": "true"
                         }
                     ]
                 },
