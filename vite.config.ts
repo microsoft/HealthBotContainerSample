@@ -1,5 +1,14 @@
+import { webcrypto } from 'node:crypto';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+
+// Some Node.js builds (notably the Windows Node runtime used by Azure App
+// Service during deployment) do not expose the Web Crypto API on `globalThis`,
+// which Vite's config resolution relies on. Provide it from Node's crypto
+// module when it is missing so `vite build` can run in those environments.
+if (!globalThis.crypto?.getRandomValues) {
+  Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
+}
 
 // Vite build for the React Web Chat client.
 //
