@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import ReactWebChat, { createDirectLine } from 'botframework-webchat';
 import { createController } from '../streaming';
 import { createChatStore } from './createChatStore';
@@ -11,8 +11,8 @@ interface ChatProps {
   jsonWebToken: string;
 }
 
-// Web Chat is customizable without forking the source: appearance is driven entirely
-// through styleOptions. Ported verbatim from the original public/index.js.
+// Web Chat is customized without forking its source: appearance is driven entirely
+// through styleOptions.
 const styleOptions = {
   botAvatarImage:
     'https://docs.microsoft.com/en-us/azure/bot-service/v4sdk/media/logo_bot.svg?view=azure-bot-service-4.0',
@@ -53,6 +53,11 @@ export default function Chat({ tokenPayload, jsonWebToken }: ChatProps) {
 
     return { directLine: nextDirectLine, store: nextStore };
   }, [tokenPayload, jsonWebToken]);
+
+  // Direct Line holds a live polling/WebSocket connection. Close it when the
+  // component unmounts or the connection is replaced (new token) so we don't leak
+  // sockets or leave a second connection re-firing InitConversation.
+  useEffect(() => () => directLine.end(), [directLine]);
 
   return (
     <ReactWebChat

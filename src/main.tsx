@@ -3,5 +3,5 @@ import App from './App';
 import './styles/webchat.css';
 import './styles/app.css';
 
-// React 17 render API (matches the react-dom@17 peer used across the internal SPA).
+// React 17 renders through ReactDOM.render (the createRoot API was introduced in React 18).
 ReactDOM.render(<App />, document.getElementById('webchat'));

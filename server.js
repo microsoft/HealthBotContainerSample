@@ -18,11 +18,18 @@ app.use(cookieParser());
 let options = {};
 // uncomment the line below if you wish to allow only specific domains to embed this page as a frame
 //options = {setHeaders: (res, path, stat) => {res.set('Content-Security-Policy', 'frame-ancestors example.com')}};
-// Serve the built React client from `dist` (produced by `npm run build`). Fall back to
-// `public` for any static assets that are not part of the bundle.
+// Serve the built React client from `dist` (produced by `npm run build`). The old
+// hand-written assets in `public/` were replaced by the bundle, so if the build is
+// missing we fail loudly with an actionable message instead of serving a blank page.
 const distDir = path.join(__dirname, "dist");
-const staticDir = fs.existsSync(distDir) ? distDir : path.join(__dirname, "public");
-app.use(express.static(staticDir, options));
+if (fs.existsSync(path.join(distDir, "index.html"))) {
+    app.use(express.static(distDir, options));
+} else {
+    console.error("Client build not found in ./dist — run `npm run build` before starting the server.");
+    app.get("/", function(req, res) {
+        res.status(503).send("Client build not found. Run `npm run build` before starting the server.");
+    });
+}
 // begin listening for requests.
 const port = process.env.PORT || 8080;
 const region = process.env.REGION || "Unknown";

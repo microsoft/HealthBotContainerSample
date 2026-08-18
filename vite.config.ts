@@ -21,7 +21,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: true,
+    // Do not emit production source maps: server.js serves `dist/` statically, so
+    // published `.map` files would expose the original source. Flip to 'hidden' if
+    // you upload maps to an error-monitoring service out-of-band.
+    sourcemap: false,
   },
   server: {
     port: 3000,

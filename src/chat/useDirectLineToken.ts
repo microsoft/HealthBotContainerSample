@@ -21,9 +21,8 @@ export interface TokenState {
   error?: string;
 }
 
-// POST /chatBot and return the raw signed JWT. Query parameters mirror the original
-// public/index.js: locale (with `autodetect`), optional userId/userName, and an
-// optional shared location.
+// POST /chatBot and return the raw signed JWT. Supported query parameters: locale
+// (with `autodetect`), optional userId/userName, and an optional shared location.
 async function requestToken(location?: GeoLocation): Promise<string> {
   const params = new URLSearchParams(window.location.search);
   let path = '/chatBot?locale=' + encodeURIComponent(extractLocale(params.get('locale')));
@@ -52,8 +51,7 @@ function decodeTokenPayload(jsonWebToken: string): TokenPayload {
 }
 
 // Acquire the Direct Line token once on mount. When `?shareLocation` is present we
-// resolve the location first (matching the original chatRequested() behavior) so the
-// backend can attach it to the conversation.
+// resolve the user's location first so the backend can attach it to the conversation.
 export function useDirectLineToken(): TokenState {
   const [state, setState] = useState<TokenState>({ status: 'loading' });
 

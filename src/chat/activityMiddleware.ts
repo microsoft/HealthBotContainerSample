@@ -2,8 +2,8 @@
 //
 // When the placeholder expires without a final activity, streaming.ts emits a same-id
 // frame flagged `hasStreamExpired`; rendering nothing makes the stale bubble disappear
-// instead of lingering on screen. This is the React port of the activityMiddleware from
-// the original public/index.js and demonstrates customizing Web Chat without forking it.
+// instead of lingering on screen. It also shows how to customize Web Chat rendering
+// without forking its source.
 type RenderFn = (...args: unknown[]) => unknown;
 
 interface ActivityCard {

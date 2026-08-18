@@ -24,9 +24,8 @@ interface WebChatAction {
   };
 }
 
-// Build the Web Chat Redux store with the streaming glue middleware. This is the React
-// port of the store setup from the original public/index.js; the streaming controller
-// itself (src/streaming.ts) is reused verbatim.
+// Build the Web Chat Redux store with the streaming glue middleware. The streaming
+// controller itself lives in src/streaming.ts.
 export function createChatStore({
   streaming,
   user,
