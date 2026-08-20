@@ -21,6 +21,12 @@
  * typing ownership, or final replacement.
  */
 
+import { EventType } from './agui/events.ts';
+import { interpretEvent } from './agui/registry.ts';
+import type { AnyAguiEvent } from './agui/registry.ts';
+import { parseStreamEnvelope, isStreamFrame } from './agui/parseEnvelope.ts';
+import type { StreamEnvelope } from './agui/parseEnvelope.ts';
+
 export type StreamDirective = 'passthrough' | 'swallow' | 'forward' | 'forward-final';
 
 export interface WebChatStore {
@@ -41,20 +47,6 @@ export interface ControllerDeps {
   setTimeout: (handler: () => void, ms: number) => number;
   clearTimeout: (id: number) => void;
   now: () => number;
-}
-
-// Shape of an AG-UI event carried inside a stream envelope. Deliberately permissive:
-// only the fields the controller reads are typed; everything else is opaque.
-interface AguiEvent {
-  type?: string;
-  delta?: string;
-  extensions?: { toolProgress?: unknown; [key: string]: unknown };
-  [key: string]: unknown;
-}
-
-interface StreamEnvelope {
-  streamId?: string;
-  event?: AguiEvent;
 }
 
 interface ActivityFrom {
@@ -80,13 +72,6 @@ interface Activity {
 const incomingActivityActionType = 'DIRECT_LINE/INCOMING_ACTIVITY';
 const activityMessageType = 'message';
 
-export const AGUI_EVENT = {
-  RUN_ERROR: 'RUN_ERROR',
-  RUN_STARTED: 'RUN_STARTED',
-  TEXT_MESSAGE_CONTENT: 'TEXT_MESSAGE_CONTENT',
-  TOOL_CALL_START: 'TOOL_CALL_START',
-} as const;
-
 const REVEAL_MS = 18;
 const ANSWER_REVEAL_MS = 12;
 const STREAM_TYPING_REFRESH_MS = 1000;
@@ -104,27 +89,19 @@ const defaultDeps: ControllerDeps = {
   now: () => Date.now(),
 };
 
-// Map a supported event to safe, user-visible progress text. Never exposes a raw
-// tool name, tool arguments, custom payloads, or unknown extension values.
-export function streamProgressText(event: AguiEvent): string {
-  if (event.type === AGUI_EVENT.RUN_STARTED) {
-    return 'Evaluating your request';
-  }
-  const toolProgress = event.extensions && event.extensions.toolProgress;
-  if (event.type === AGUI_EVENT.TOOL_CALL_START && typeof toolProgress === 'string') {
-    return toolProgress;
-  }
-  return '';
+// Map a supported event to safe, user-visible progress text via the shared event
+// registry (src/agui/registry.ts). Never exposes a raw tool name, tool arguments,
+// custom payloads, or unknown extension values; unknown events yield ''.
+export function streamProgressText(event: AnyAguiEvent): string {
+  return interpretEvent(event).progressText;
 }
 
-// Single answer-delta interpretation point. Currently only TEXT_MESSAGE_CONTENT
-// contributes to the answer. This is the stable extension point for a future
-// TOOL_CALL_CHUNK design; keep transport/typing/replacement decoupled from it.
-export function answerDelta(event: AguiEvent): string {
-  if (event.type === AGUI_EVENT.TEXT_MESSAGE_CONTENT && event.delta) {
-    return event.delta;
-  }
-  return '';
+// Single answer-delta interpretation point, delegated to the shared event registry.
+// Extending which events contribute answer text is a one-line registry change; the
+// controller's transport/typing/replacement logic stays untouched. (TOOL_CALL_CHUNK
+// remains intentionally non-contributing here — see the module header.)
+export function answerDelta(event: AnyAguiEvent): string {
+  return interpretEvent(event).answerDelta;
 }
 
 export function createController(deps: ControllerDeps = defaultDeps): StreamController {
@@ -426,10 +403,8 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
       return 'swallow';
     }
 
-    const stream = (incoming && incoming.type === activityMessageType && incoming.value)
-      ? incoming.value.stream
-      : null;
-    if (stream && stream.event) {
+    const stream = parseStreamEnvelope(incoming);
+    if (stream) {
       if (stream.streamId && stream.streamId !== streamId) {
         streamId = stream.streamId;
         answerBuffer = '';
@@ -442,7 +417,7 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
       if (!streamProgressId) {
         streamProgressId = 'has-stream-progress-0';
       }
-      if (ev.type === AGUI_EVENT.RUN_ERROR) {
+      if (ev.type === EventType.RUN_ERROR) {
         cancelReveal();
         resetStreamTyping();
         // Keep streamProgressId and stay awaiting so the bot's error message
@@ -453,13 +428,14 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
         armProgressExpiry(store);
         return 'swallow';
       }
-      if (ev.type === AGUI_EVENT.RUN_STARTED) {
+      if (ev.type === EventType.RUN_STARTED) {
         resetStreamTyping();
       }
       startStreamTyping(store, incoming ? incoming.from : undefined);
       streamAwaitingFinal = true;
 
-      const delta = answerDelta(ev);
+      // Interpret the event once via the shared registry (progress + answer).
+      const { progressText, answerDelta: delta } = interpretEvent(ev);
       if (delta) {
         if (!streamAnswerStarted) {
           streamAnswerStarted = true;
@@ -469,14 +445,19 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
         showAnswer(store, streamProgressId, answerBuffer);
         armProgressExpiry(store);
       } else if (!streamAnswerStarted) {
-        const text = streamProgressText(ev);
-        if (text && text !== lastProgressText) {
-          lastProgressText = text;
+        if (progressText && progressText !== lastProgressText) {
+          lastProgressText = progressText;
           streamAwaitingFinal = true;
-          revealProgress(store, streamProgressId, text);
+          revealProgress(store, streamProgressId, progressText);
           armProgressExpiry(store);
         }
       }
+      return 'swallow';
+    }
+
+    // A message carrying a stream payload but no well-formed event is still a stream
+    // frame: swallow it rather than mistaking it for the authoritative final message.
+    if (isStreamFrame(incoming)) {
       return 'swallow';
     }
 
