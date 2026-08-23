@@ -26,6 +26,8 @@ import { interpretEvent } from './agui/registry.ts';
 import type { AnyAguiEvent } from './agui/registry.ts';
 import { parseStreamEnvelope, isStreamFrame } from './agui/parseEnvelope.ts';
 import type { StreamEnvelope } from './agui/parseEnvelope.ts';
+import { messageStore } from './agui/messageStore.ts';
+import type { MessageStore } from './agui/messageStore.ts';
 
 export type StreamDirective = 'passthrough' | 'swallow' | 'forward' | 'forward-final';
 
@@ -47,6 +49,9 @@ export interface ControllerDeps {
   setTimeout: (handler: () => void, ms: number) => number;
   clearTimeout: (id: number) => void;
   now: () => number;
+  // The structured view-model sink. Defaults to the app-wide singleton; injectable so
+  // unit tests can supply an isolated store (or a spy) without touching global state.
+  messageStore?: MessageStore;
 }
 
 interface ActivityFrom {
@@ -106,6 +111,10 @@ export function answerDelta(event: AnyAguiEvent): string {
 
 export function createController(deps: ControllerDeps = defaultDeps): StreamController {
   const { setTimeout, clearTimeout, now } = deps;
+  // Structured view-model sink (src/agui/messageStore.ts). The controller keeps owning
+  // orchestration + timers; it now ALSO folds each event into MessageState so the React
+  // layer can render declaratively. Defaults to the shared singleton.
+  const msgStore: MessageStore = deps.messageStore ?? messageStore;
 
   // Turn and identity state
   let streamTurn = 0;
@@ -369,6 +378,10 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
     if (streamAwaitingFinal && store) {
       expireProgressBubble(store);
     }
+    // Drop the previous bubble's structured state so a new turn starts clean.
+    if (streamProgressId) {
+      msgStore.reset(streamProgressId);
+    }
     resetStreamTyping();
     clearProgressExpiry();
     lastBotTypingActivity = null;
@@ -417,6 +430,10 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
       if (!streamProgressId) {
         streamProgressId = 'has-stream-progress-0';
       }
+      // Fold every event into the structured view-model for this bubble. This is a pure
+      // state update (no rendering); the React <Message> subscribed to this id re-renders
+      // if — and only if — the state actually changed. Orchestration continues below.
+      msgStore.applyEvent(streamProgressId, ev as AnyAguiEvent);
       if (ev.type === EventType.RUN_ERROR) {
         cancelReveal();
         resetStreamTyping();

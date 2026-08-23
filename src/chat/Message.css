@@ -1,0 +1,73 @@
+/*
+ * Structural styles for <MessageView>. Intentionally minimal and token-driven so each
+ * redesign feature can theme its variant without touching the component's structure.
+ * Uses CSS custom properties (with fallbacks) so the gallery can preview light/dark.
+ */
+
+.has-msg {
+  --has-msg-fg: var(--has-fg, #1b1a19);
+  --has-msg-muted: var(--has-muted, #605e5c);
+  --has-msg-accent: var(--has-accent, #0f6cbd);
+  --has-msg-error: var(--has-error, #a4262c);
+  --has-msg-surface: var(--has-surface, #ffffff);
+  --has-msg-border: var(--has-border, #edebe9);
+
+  color: var(--has-msg-fg);
+  font: inherit;
+  line-height: 1.45;
+}
+
+.has-msg__answer-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.has-msg__citations {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.has-msg__citation {
+  font-size: 0.8125rem;
+  padding: 2px 8px;
+  border: 1px solid var(--has-msg-border);
+  border-radius: 999px;
+  background: var(--has-msg-surface);
+}
+
+.has-msg__citation a {
+  color: var(--has-msg-accent);
+  text-decoration: none;
+}
+
+.has-msg__progress-line {
+  color: var(--has-msg-muted);
+}
+
+.has-msg__steps {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+.has-msg__step {
+  font-size: 0.875rem;
+  color: var(--has-msg-muted);
+  padding: 2px 0;
+}
+
+.has-msg__step[data-status='done'] {
+  color: var(--has-msg-fg);
+}
+
+.has-msg__error {
+  color: var(--has-msg-error);
+}
+
+.has-msg__location {
+  color: var(--has-msg-accent);
+}

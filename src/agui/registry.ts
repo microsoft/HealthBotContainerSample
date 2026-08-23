@@ -24,6 +24,7 @@
 
 import { EventType } from './events.ts';
 import type { CoreAguiEvent, CoreEventShape, UnknownEvent } from './events.ts';
+import type { MessageState, ReasoningStep } from './messageState.ts';
 
 /** Every event the controller may see: modelled events + the permissive fallback. */
 export type AnyAguiEvent = CoreAguiEvent | UnknownEvent;
@@ -125,4 +126,79 @@ export function interpretEvent(event: AnyAguiEvent): EventInterpretationResult {
     progressText: entry.progressText ? entry.progressText(event) : '',
     answerDelta: entry.answerDelta ? entry.answerDelta(event) : '',
   };
+}
+
+/*
+ * Structured reduction — the AG-UI-aligned upgrade of the flat-string path above.
+ *
+ * `interpretEvent` answers "what text does this event carry?"; `reduceEvent` answers
+ * "how does this event evolve the message view-model?". It is the single place that
+ * maps an event onto MessageState, keeping the "one place to teach the UI about an
+ * event" philosophy that registry.ts already embodies.
+ *
+ * It is PURE: (prevState, event) -> nextState, returning a new object on change and the
+ * SAME reference when nothing changed (so external-store subscribers don't re-render
+ * needlessly). It reuses interpretEvent internally so answer/progress text has exactly
+ * one source of truth. Unknown events fall through unchanged — the same forward-
+ * compatible safe default as the text path.
+ */
+
+/** Derive a stable id for a reasoning step: the tool call id, else a positional key. */
+function reasoningStepId(event: { toolCallId?: string }, index: number): string {
+  return typeof event.toolCallId === 'string' && event.toolCallId
+    ? event.toolCallId
+    : `step-${index}`;
+}
+
+/**
+ * Fold one AG-UI event into the message view-model. Returns `prev` unchanged for events
+ * that carry no structural meaning (including unknown/future events), so the external
+ * store can skip notifying subscribers.
+ */
+export function reduceEvent(prev: MessageState, event: AnyAguiEvent): MessageState {
+  const { progressText, answerDelta } = interpretEvent(event);
+
+  switch (event.type) {
+    case EventType.RUN_STARTED:
+      return {
+        ...prev,
+        variant: prev.answerText ? 'answer' : 'progress',
+        avatarState: 'thinking',
+        progressText: progressText || prev.progressText,
+      };
+
+    case EventType.RUN_ERROR:
+      return { ...prev, variant: 'error', avatarState: 'done' };
+
+    case EventType.TOOL_CALL_START: {
+      const label = progressText || prev.progressText;
+      const step: ReasoningStep = {
+        id: reasoningStepId(event as { toolCallId?: string }, prev.reasoningSteps.length),
+        label,
+        status: 'active',
+      };
+      return {
+        ...prev,
+        variant: prev.answerText ? 'answer' : 'progress',
+        avatarState: 'thinking',
+        progressText: progressText || prev.progressText,
+        reasoningSteps: [...prev.reasoningSteps, step],
+      };
+    }
+
+    case EventType.TEXT_MESSAGE_CONTENT:
+      if (!answerDelta) {
+        return prev;
+      }
+      return {
+        ...prev,
+        variant: 'answer',
+        avatarState: 'thinking',
+        answerText: prev.answerText + answerDelta,
+      };
+
+    default:
+      // Unknown / future events carry no structural meaning yet — leave state as-is.
+      return prev;
+  }
 }
