@@ -151,6 +151,18 @@ function reasoningStepId(event: { toolCallId?: string }, index: number): string 
 }
 
 /**
+ * Settle any in-progress reasoning steps to 'done'. Returns the SAME array reference when
+ * nothing is active, so callers preserve the snapshot-stability contract (no needless
+ * re-render / store notify) when there is nothing to change.
+ */
+function markStepsDone(steps: ReasoningStep[]): ReasoningStep[] {
+  if (!steps.some((step) => step.status === 'active')) {
+    return steps;
+  }
+  return steps.map((step) => (step.status === 'active' ? { ...step, status: 'done' } : step));
+}
+
+/**
  * Fold one AG-UI event into the message view-model. Returns `prev` unchanged for events
  * that carry no structural meaning (including unknown/future events), so the external
  * store can skip notifying subscribers.
@@ -159,16 +171,25 @@ export function reduceEvent(prev: MessageState, event: AnyAguiEvent): MessageSta
   const { progressText, answerDelta } = interpretEvent(event);
 
   switch (event.type) {
-    case EventType.RUN_STARTED:
+    case EventType.RUN_STARTED: {
+      const label = progressText || prev.progressText;
+      // Seed the opening line ("Evaluating your request") as the first reasoning step so
+      // it appears in the trace, not only on the live rail. Seed once (empty trace).
+      const reasoningSteps =
+        prev.reasoningSteps.length === 0 && label
+          ? [{ id: 'run-start', label, status: 'active' as const }]
+          : prev.reasoningSteps;
       return {
         ...prev,
         variant: prev.answerText ? 'answer' : 'progress',
         avatarState: 'thinking',
-        progressText: progressText || prev.progressText,
+        progressText: label,
+        reasoningSteps,
       };
+    }
 
     case EventType.RUN_ERROR:
-      return { ...prev, variant: 'error', avatarState: 'done' };
+      return { ...prev, variant: 'error', avatarState: 'done', reasoningSteps: markStepsDone(prev.reasoningSteps) };
 
     case EventType.TOOL_CALL_START: {
       const label = progressText || prev.progressText;
@@ -177,12 +198,15 @@ export function reduceEvent(prev: MessageState, event: AnyAguiEvent): MessageSta
         label,
         status: 'active',
       };
+      // A new step starting means the previous one has finished: settle prior active
+      // steps to 'done' before appending, so a completed trace (F1 history above the
+      // answer) reads as done rather than perpetually in-progress.
       return {
         ...prev,
         variant: prev.answerText ? 'answer' : 'progress',
         avatarState: 'thinking',
         progressText: progressText || prev.progressText,
-        reasoningSteps: [...prev.reasoningSteps, step],
+        reasoningSteps: [...markStepsDone(prev.reasoningSteps), step],
       };
     }
 
@@ -190,11 +214,15 @@ export function reduceEvent(prev: MessageState, event: AnyAguiEvent): MessageSta
       if (!answerDelta) {
         return prev;
       }
+      // The answer has started streaming — reasoning is over, so settle all steps to
+      // 'done'. markStepsDone returns the same array reference once nothing is active,
+      // so subsequent deltas only grow answerText (snapshot stability preserved).
       return {
         ...prev,
         variant: 'answer',
         avatarState: 'thinking',
         answerText: prev.answerText + answerDelta,
+        reasoningSteps: markStepsDone(prev.reasoningSteps),
       };
 
     default:

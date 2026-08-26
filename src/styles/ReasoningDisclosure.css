@@ -1,0 +1,110 @@
+/*
+ * Styles for <ReasoningDisclosure> (F2 rail + F1 history). Reuses the design-language
+ * tokens declared on `.has-msg` (Message.css); falls back to the same values so the
+ * component is safe to render outside a `.has-msg` subtree (e.g. above the answer bubble).
+ */
+
+.has-reason {
+  --r-muted: var(--has-msg-muted, var(--has-muted, #605e5c));
+  --r-fg: var(--has-msg-fg, var(--has-fg, #1b1a19));
+  --r-accent: var(--has-msg-accent, var(--has-accent, #0f6cbd));
+  /* Trace accent overridden to light gray (see task). */
+  --r-accent: #8a8886;
+  --r-border: var(--has-msg-border, var(--has-border, #edebe9));
+  --r-motion: var(--has-msg-motion, 240ms);
+  --r-ease: var(--has-msg-ease, cubic-bezier(0.2, 0, 0, 1));
+
+  font-size: 0.8125rem;
+  /* Mirror Web Chat's `primaryFont` (set in Chat.tsx) so the trace reads in the same
+   * typeface as the answer. The disclosure renders at transcript level (outside Web Chat's
+   * bubble), so it would otherwise inherit the page's default serif. */
+  font-family: var(--has-font, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif);
+  /* Header and steps share one accent colour so the trace reads as a single unit. */
+  color: var(--r-accent);
+}
+
+/* F1 history sits above the answer — give it a little breathing room and a left rule.
+ * The margin-left lines its text up with the answer text (inset by Web Chat's avatar
+ * column). Nudge --has-thinking-indent to match your avatar width. */
+.has-reason--history {
+  margin: 0 0 8px var(--has-thinking-indent, 44px);
+  padding-left: 10px;
+  border-left: 2px solid var(--r-border);
+}
+
+.has-reason__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--r-accent);
+  font: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.has-reason__toggle:hover {
+  opacity: 0.8;
+}
+
+/* Thin rounded chevron that rotates down when open. Inherits the muted header colour. */
+.has-reason__caret {
+  width: 0.7rem;
+  height: 0.7rem;
+  transition: transform 0.15s ease;
+}
+
+.has-reason[data-open='true'] .has-reason__caret {
+  transform: rotate(90deg);
+}
+
+.has-reason__steps {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.has-reason__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--r-accent);
+  animation: has-fade-in var(--r-motion) var(--r-ease);
+}
+
+.has-reason__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--r-accent);
+}
+
+.has-reason__step[data-latest='true'] {
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-reason__step {
+    animation: none;
+  }
+}
+
+/* Local copy so the component is self-contained (does not depend on Message.css being
+ * in the bundle). Matches the shared token-driven fade used across the redesign. */
+@keyframes has-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

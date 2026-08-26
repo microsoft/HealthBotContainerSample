@@ -43,6 +43,30 @@ describe('reduceEvent (structured registry)', () => {
         assert.deepEqual(s.reasoningSteps.map((x) => x.id), ['step-0', 'step-1']);
     });
 
+    it('settles the previous step to done when a new step starts (only the latest is active)', () => {
+        let s = createInitialMessageState();
+        s = reduceEvent(s, { type: 'TOOL_CALL_START', extensions: { toolProgress: 'A' } });
+        s = reduceEvent(s, { type: 'TOOL_CALL_START', extensions: { toolProgress: 'B' } });
+        assert.deepEqual(s.reasoningSteps.map((x) => x.status), ['done', 'active']);
+    });
+
+    it('settles all reasoning steps to done once the answer starts streaming (F1 history)', () => {
+        let s = createInitialMessageState();
+        s = reduceEvent(s, { type: 'TOOL_CALL_START', extensions: { toolProgress: 'A' } });
+        s = reduceEvent(s, { type: 'TEXT_MESSAGE_CONTENT', delta: 'Answer' });
+        assert.deepEqual(s.reasoningSteps.map((x) => x.status), ['done']);
+        assert.equal(s.variant, 'answer');
+    });
+
+    it('keeps the reasoningSteps array reference stable once nothing is active', () => {
+        let s = createInitialMessageState();
+        s = reduceEvent(s, { type: 'TOOL_CALL_START', extensions: { toolProgress: 'A' } });
+        s = reduceEvent(s, { type: 'TEXT_MESSAGE_CONTENT', delta: 'Hel' }); // settles step to done
+        const settled = s.reasoningSteps;
+        s = reduceEvent(s, { type: 'TEXT_MESSAGE_CONTENT', delta: 'lo' }); // no active steps left
+        assert.equal(s.reasoningSteps, settled); // same reference — snapshot stability
+    });
+
     it('TEXT_MESSAGE_CONTENT accumulates answer text and flips to the answer variant', () => {
         let s = createInitialMessageState();
         s = reduceEvent(s, { type: 'TEXT_MESSAGE_CONTENT', delta: 'Hel' });

@@ -22,6 +22,7 @@ const assert = require('node:assert/strict');
 // support loads it directly; its timers and clock are injected (see below) so this
 // harness stays fully deterministic without a VM.
 const { createController } = require('../src/streaming.ts');
+const { createMessageStore } = require('../src/agui/messageStore.ts');
 
 function createHarness() {
     const forwarded = [];
@@ -108,10 +109,12 @@ function createHarness() {
         timers.delete(id);
     };
 
+    const msgStore = createMessageStore();
     const streaming = createController({
         setTimeout: fakeSetTimeout,
         clearTimeout: fakeClearTimeout,
         now: () => now,
+        messageStore: msgStore,
     });
 
     // Middleware mirroring the streaming glue in src/chat/createChatStore.ts.
@@ -169,6 +172,12 @@ function createHarness() {
         forwarded.filter((a) => a.payload.activity.channelData && a.payload.activity.channelData.hasStreamTyping);
     const revealFrames = () =>
         forwarded.filter((a) => a.payload.activity.channelData && a.payload.activity.channelData.hasStreamReveal);
+    // Reasoning steps are the structured source of truth for progress (the live rail and
+    // the "Thinking Process" disclosure both read them). Progress is no longer animated
+    // into the bubble text — the bubble is created once (empty) and the React layer renders
+    // the steps straight from this store.
+    const stepLabels = (id = 'has-stream-progress-0') =>
+        (msgStore.getSnapshot(id)?.reasoningSteps ?? []).map((s) => s.label);
 
     return {
         forwarded,
@@ -183,6 +192,8 @@ function createHarness() {
         },
         typingFrames,
         revealFrames,
+        stepLabels,
+        msgStore,
     };
 }
 
@@ -366,8 +377,8 @@ describe('streamed progress (pre-answer events)', () => {
         assert.equal(revealFrames().length, 0);
     });
 
-    it('renders the tool progress intent', () => {
-        const { streamEvent, flushReveals, revealFrames } = createHarness();
+    it('captures the tool progress intent as a reasoning step', () => {
+        const { streamEvent, flushReveals, revealFrames, stepLabels } = createHarness();
         streamEvent({
             type: 'TOOL_CALL_START',
             toolCallId: 'tc-1',
@@ -375,21 +386,21 @@ describe('streamed progress (pre-answer events)', () => {
             extensions: { toolProgress: 'Drafting a prior authorization note' },
         });
         flushReveals();
-        const frames = revealFrames();
-        assert.ok(frames.length > 0);
-        assert.equal(frames[frames.length - 1].payload.activity.text, 'Drafting a prior authorization note');
+        // A progress bubble is created (so the structured card can mount) but carries no
+        // text of its own; the intent lives in the reasoning steps.
+        assert.ok(revealFrames().length > 0);
+        assert.deepEqual(stepLabels(), ['Drafting a prior authorization note']);
     });
 
-    it('renders run start as evaluating the request', () => {
-        const { streamEvent, flushReveals, revealFrames } = createHarness();
+    it('captures run start as an "Evaluating your request" step', () => {
+        const { streamEvent, flushReveals, stepLabels } = createHarness();
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
         flushReveals();
-        const frames = revealFrames();
-        assert.equal(frames[frames.length - 1].payload.activity.text, 'Evaluating your request');
+        assert.deepEqual(stepLabels(), ['Evaluating your request']);
     });
 
-    it('finishes each progress message before revealing the next stream', () => {
-        const { streamEvent, streamDelta, flushReveals, revealFrames } = createHarness();
+    it('does not gate the answer behind progress (answer streams immediately)', () => {
+        const { streamEvent, streamDelta, flushReveals, revealFrames, stepLabels } = createHarness();
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
         streamEvent({
             type: 'TOOL_CALL_START',
@@ -397,30 +408,20 @@ describe('streamed progress (pre-answer events)', () => {
             toolCallName: 'medical_knowledge-run',
             extensions: { toolProgress: 'Searching medical information' },
         });
+        // The answer arrives while the agent is still "thinking". Reasoning and answer are
+        // SEPARATE tracks: the answer streams straight into the bubble text and is never
+        // paced behind the steps (which remain in the disclosure).
         streamDelta('Final answer');
         flushReveals();
 
         const revealedTexts = revealFrames().map((a) => a.payload.activity.text);
-        // Find the first animation frame that is a non-empty, still-incomplete prefix
-        // of the eventual full line. This asserts ordering without hard-coding the
-        // reveal chunk math (a fixed 'S' / 'Fi' frame silently passes as -1 if the
-        // chunking ever changes).
-        const firstPrefixIndex = (texts, full) =>
-            texts.findIndex((t) => t.length > 0 && t.length < full.length && full.startsWith(t));
-        const runStartEnd = revealedTexts.indexOf('Evaluating your request');
-        const toolStart = firstPrefixIndex(revealedTexts, 'Searching medical information');
-        const toolEnd = revealedTexts.indexOf('Searching medical information');
-        const answerStart = firstPrefixIndex(revealedTexts, 'Final answer');
-
-        assert.ok(runStartEnd > -1);
-        assert.ok(toolStart > runStartEnd);
-        assert.ok(toolEnd > toolStart);
-        assert.ok(answerStart > toolEnd);
         assert.equal(revealedTexts[revealedTexts.length - 1], 'Final answer');
+        // The full reasoning trace is preserved as structured steps, in arrival order.
+        assert.deepEqual(stepLabels(), ['Evaluating your request', 'Searching medical information']);
     });
 
-    it('keeps only the newest pending progress message', () => {
-        const { streamEvent, flushReveals, revealFrames } = createHarness();
+    it('captures every progress line as a reasoning step (parallel, none lost)', () => {
+        const { streamEvent, flush, stepLabels } = createHarness();
         streamEvent({ type: 'RUN_STARTED', runId: 'run_1' });
         streamEvent({
             type: 'TOOL_CALL_START',
@@ -434,12 +435,14 @@ describe('streamed progress (pre-answer events)', () => {
             toolCallName: 'second_tool',
             extensions: { toolProgress: 'Newest pending tool' },
         });
-        flushReveals();
-
-        const revealedTexts = revealFrames().map((a) => a.payload.activity.text);
-        assert.ok(revealedTexts.includes('Evaluating your request'));
-        assert.ok(revealedTexts.includes('Newest pending tool'));
-        assert.ok(!revealedTexts.includes('First pending tool'));
+        flush();
+        // Steps that arrive together are all retained in arrival order — the live rail
+        // shows them in parallel, and none is overwritten.
+        assert.deepEqual(stepLabels(), [
+            'Evaluating your request',
+            'First pending tool',
+            'Newest pending tool',
+        ]);
     });
 
     it('suppresses duplicate external typing once stream refresh begins', () => {
@@ -589,7 +592,11 @@ describe('temporary bubble expiry', () => {
 
         const beforeDrain = revealFrames().map((a) => a.payload.activity.text);
         assert.equal(beforeDrain[beforeDrain.length - 1], 'Answer arriving in time');
-        assert.ok(!beforeDrain.some((t) => t === ''));
+        // Fresh content kept refreshing the visibility window, so the bubble has not expired.
+        const expiredBeforeDrain = revealFrames().some(
+            (a) => a.payload.activity.channelData.hasStreamExpired,
+        );
+        assert.ok(!expiredBeforeDrain);
 
         // Only once content stops for a full window does the bubble finally retire.
         flush();

@@ -7,3 +7,4 @@ dist/
 # Dev-only component gallery (local workshop, not part of the app)
 gallery.html
 src/gallery/
+src/styles/gallery.css

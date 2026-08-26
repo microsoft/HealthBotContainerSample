@@ -27,6 +27,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:server": "node server.js",
     "gallery": "GALLERY=1 vite --open /gallery.html",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",

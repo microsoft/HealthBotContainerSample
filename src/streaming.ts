@@ -77,7 +77,6 @@ interface Activity {
 const incomingActivityActionType = 'DIRECT_LINE/INCOMING_ACTIVITY';
 const activityMessageType = 'message';
 
-const REVEAL_MS = 18;
 const ANSWER_REVEAL_MS = 12;
 const STREAM_TYPING_REFRESH_MS = 1000;
 const MAX_STREAM_TYPING_DURATION_MS = 5 * 60 * 1000;
@@ -128,8 +127,10 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
 
   // Content and animation state
   let answerBuffer = '';
-  let activeReveal: { cancelled: boolean; timers: number[] } | null = null;
-  let pendingProgress: string | null = null;
+  // The progress bubble is created once per turn so activityMiddleware can mount the
+  // structured <ProgressCard>. Its live reasoning steps come from messageStore (the React
+  // layer subscribes), so streaming.ts no longer animates progress text itself.
+  let progressBubbleShown = false;
   let answerTarget = '';
   let answerShown = 0;
   let answerLoop: number | null = null;
@@ -153,13 +154,9 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
     answerShown = 0;
   }
 
+  // Cancel only the answer stream. The progress rail is driven declaratively from
+  // messageStore (no timers here), so there is nothing else to tear down.
   function cancelReveal() {
-    if (activeReveal) {
-      activeReveal.cancelled = true;
-      activeReveal.timers.forEach(clearTimeout);
-      activeReveal = null;
-    }
-    pendingProgress = null;
     cancelAnswerReveal();
   }
 
@@ -286,53 +283,28 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
     }, MAX_PROGRESS_LINE_VISIBLE_MS);
   }
 
-  function startNextProgressReveal(store: WebChatStore, activityId: string) {
-    if (activeReveal || answerLoop) {
+  // Create the temporary progress bubble once per turn. It carries no visible text of its
+  // own — activityMiddleware mounts <ProgressCard>, which renders the live reasoning steps
+  // straight from messageStore. Subsequent events re-render it via that subscription, so
+  // there is nothing to animate here.
+  function showProgressBubble(store: WebChatStore) {
+    if (progressBubbleShown) {
       return;
     }
-
-    const text = pendingProgress;
-    pendingProgress = null;
-    if (!text) {
-      if (answerTarget.length > answerShown) {
-        stepAnswer(store, activityId);
-      }
-      return;
-    }
-
-    const state: { cancelled: boolean; timers: number[] } = { cancelled: false, timers: [] };
-    activeReveal = state;
-    const step = (i: number) => {
-      if (state.cancelled) return;
-      store.dispatch({
-        type: incomingActivityActionType,
-        payload: {
-          activity: {
-            id: activityId,
-            type: activityMessageType,
-            text: text.slice(0, i),
-            from: { role: 'bot', id: 'has-stream', name: 'Bot' },
-            timestamp: new Date(now()).toISOString(),
-            channelData: { hasStreamReveal: true },
-          },
+    progressBubbleShown = true;
+    store.dispatch({
+      type: incomingActivityActionType,
+      payload: {
+        activity: {
+          id: streamProgressId || 'has-stream-progress-0',
+          type: activityMessageType,
+          text: '',
+          from: { role: 'bot', id: 'has-stream', name: 'Bot' },
+          timestamp: new Date(now()).toISOString(),
+          channelData: { hasStreamReveal: true },
         },
-      });
-      if (i < text.length) {
-        state.timers.push(setTimeout(() => step(i + 1), REVEAL_MS));
-      } else {
-        activeReveal = null;
-        startNextProgressReveal(store, activityId);
-      }
-    };
-    step(1);
-  }
-
-  function revealProgress(store: WebChatStore, activityId: string, target: string) {
-    if (!target) {
-      return;
-    }
-    pendingProgress = target;
-    startNextProgressReveal(store, activityId);
+      },
+    });
   }
 
   function showAnswer(store: WebChatStore, activityId: string, text: string) {
@@ -341,7 +313,10 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
       return;
     }
     answerTarget = full;
-    if (!activeReveal && !pendingProgress && !answerLoop) {
+    // The answer is a SEPARATE track from the thinking rail and must never wait for it.
+    // Start streaming the answer immediately; the full reasoning trace stays in the
+    // "Thinking Process" disclosure, so nothing is lost.
+    if (!answerLoop) {
       stepAnswer(store, activityId);
     }
   }
@@ -378,10 +353,12 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
     if (streamAwaitingFinal && store) {
       expireProgressBubble(store);
     }
-    // Drop the previous bubble's structured state so a new turn starts clean.
-    if (streamProgressId) {
-      msgStore.reset(streamProgressId);
-    }
+    // F1 (clarify Q3): each answer keeps its own reasoning trace for the session, so we
+    // deliberately DO NOT drop the previous bubble's structured state here. The store is
+    // keyed per-turn (unique streamProgressId), so the next turn starts clean on its own
+    // fresh id while past turns' traces remain readable by the F1 history disclosure
+    // rendered above each answer (see activityMiddleware). Retention is per-session and
+    // in-memory only; it is cleared when the page reloads / a new conversation starts.
     resetStreamTyping();
     clearProgressExpiry();
     lastBotTypingActivity = null;
@@ -393,6 +370,7 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
     streamAnswerStarted = false;
     lastProgressText = '';
     answerBuffer = '';
+    progressBubbleShown = false;
   }
 
   // Interpret one incoming Direct Line activity and tell the middleware what to do:
@@ -465,7 +443,7 @@ export function createController(deps: ControllerDeps = defaultDeps): StreamCont
         if (progressText && progressText !== lastProgressText) {
           lastProgressText = progressText;
           streamAwaitingFinal = true;
-          revealProgress(store, streamProgressId, progressText);
+          showProgressBubble(store);
           armProgressExpiry(store);
         }
       }

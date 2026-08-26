@@ -1,0 +1,187 @@
+/*
+ * Styles for <MessageView>.
+ *
+ * The first block on `.has-msg` is the shared DESIGN LANGUAGE (clarify Q2=D): a small,
+ * documented set of design tokens — colour, surface, radius, spacing, and motion — that
+ * every redesign feature reuses instead of hard-coding values. They read from the app
+ * theme (`--has-*`) with sensible light-mode fallbacks, so the gallery can preview any
+ * theme (light/dark) just by overriding the outer `--has-*` variables.
+ *
+ * Structure stays minimal and token-driven so each feature themes its own variant
+ * without touching the component markup.
+ */
+
+.has-msg {
+  /* Palette (inherits app theme; light fallbacks) */
+  --has-msg-fg: var(--has-fg, #1b1a19);
+  --has-msg-muted: var(--has-muted, #605e5c);
+  --has-msg-accent: var(--has-accent, #0f6cbd);
+  --has-msg-accent-soft: var(--has-accent-soft, rgba(15, 108, 189, 0.1));
+  --has-msg-error: var(--has-error, #a4262c);
+  --has-msg-surface: var(--has-surface, #ffffff);
+  --has-msg-border: var(--has-border, #edebe9);
+
+  /* Shape & rhythm */
+  --has-msg-radius-pill: 999px;
+  --has-msg-radius-card: 10px;
+  --has-msg-gap: 8px;
+
+  /* Motion (single source of truth; honoured unless reduced-motion) */
+  --has-msg-motion-fast: 140ms;
+  --has-msg-motion: 240ms;
+  --has-msg-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color: var(--has-msg-fg);
+  font: inherit;
+  line-height: 1.45;
+}
+
+/* ---------------------------------------------------------------- answer */
+
+.has-msg__answer-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.has-msg__citations {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.has-msg__citation {
+  font-size: 0.8125rem;
+  padding: 2px 8px;
+  border: 1px solid var(--has-msg-border);
+  border-radius: var(--has-msg-radius-pill);
+  background: var(--has-msg-surface);
+}
+
+.has-msg__citation a {
+  color: var(--has-msg-accent);
+  text-decoration: none;
+}
+
+/* ------------------------------------------------- progress (A1 chip) */
+
+.has-msg__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--has-msg-gap);
+  /* Line the thinking block up with the answer text (inset by Web Chat's avatar column).
+   * Nudge --has-thinking-indent to match your avatar width. */
+  margin-left: var(--has-thinking-indent, 44px);
+}
+
+/* The live thinking bubble: one soft container holding every in-flight step. It grows as
+ * steps arrive and shrinks as each ages out (see .has-msg__live-step[data-leaving]). */
+.has-msg__live {
+  align-self: flex-start;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 4px;
+  border-radius: var(--has-msg-radius-card);
+  background: transparent;
+  overflow: hidden;
+}
+
+.has-msg__live-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  color: #8a8886;
+  font-family: var(--has-font, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif);
+  font-size: 0.8125rem;
+  animation: has-fade-in var(--has-msg-motion) var(--has-msg-ease);
+}
+
+.has-msg__live-step[data-leaving='true'] {
+  animation: has-shrink-out var(--has-msg-motion) var(--has-msg-ease) forwards;
+}
+
+/* Three gently-jumping dots — the thinking cue (staggered soft bounce, not a spinner). */
+.has-msg__dots {
+  flex: none;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 12px;
+}
+
+.has-msg__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #8a8886;
+  animation: has-dot-jump 1.2s var(--has-msg-ease) infinite;
+}
+
+.has-msg__dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.has-msg__dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* ----------------------------------------------------- error / location */
+
+.has-msg__error {
+  color: var(--has-msg-error);
+}
+
+.has-msg__location {
+  color: var(--has-msg-accent);
+}
+
+/* --------------------------------------------------------------- motion */
+
+@keyframes has-dot-jump {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.65;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@keyframes has-shrink-out {
+  from {
+    opacity: 1;
+    max-height: 48px;
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes has-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-msg__live-step,
+  .has-msg__dot {
+    animation: none;
+  }
+}

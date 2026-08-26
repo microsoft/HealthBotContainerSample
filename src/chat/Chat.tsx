@@ -22,7 +22,23 @@ const styleOptions = {
   botAvatarInitials: 'Bot',
   userAvatarInitials: 'You',
   backgroundColor: '#F8F8F8',
+  // Single source of truth for the chat typeface. The reasoning trace mirrors this exact
+  // value (see --has-font in ReasoningDisclosure.css) so it reads in the same font as the
+  // answer instead of the page default.
+  primaryFont: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+  // Frameless bot bubbles: the redesigned answer reads as page text, not a boxed card.
+  // Only the bot side is flattened; the `bubbleFromUser*` defaults keep the user's
+  // right-side bubble intact.
+  bubbleBackground: 'transparent',
+  bubbleBorderColor: 'transparent',
+  bubbleBorderWidth: 0,
+  bubbleBorderRadius: 0,
 };
+
+// Suppress Web Chat's built-in typing indicator (the grey pill of dots it renders for
+// the bot's `typing` activities). The redesigned A1 "thinking" chip is our single, richer
+// progress signal, so returning `false` here removes the duplicate default one.
+const typingIndicatorMiddleware = () => () => () => false;
 
 export default function Chat({ tokenPayload, jsonWebToken }: ChatProps) {
   // Direct Line connection and the Redux store are created once per conversation.
@@ -65,6 +81,7 @@ export default function Chat({ tokenPayload, jsonWebToken }: ChatProps) {
       store={store}
       styleOptions={styleOptions}
       activityMiddleware={activityMiddleware as never}
+      typingIndicatorMiddleware={typingIndicatorMiddleware as never}
       userID={tokenPayload.userId}
       username={tokenPayload.userName}
       locale={tokenPayload.locale}
