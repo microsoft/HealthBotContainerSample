@@ -8,6 +8,8 @@ A simple web page that allows users to communicate with the [Azure Health Bot](h
 
 1.Deploy the website:
 
+**Choose `linux` as the Operating System** on the deployment form. Linux is the default and the only supported option for this sample. Do not switch it to Windows.
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Fmaster%2Fazuredeploy.json)
 
 2.Set the following environment variables:
@@ -22,7 +24,7 @@ The Health Bot service uses [language models](https://docs.microsoft.com/HealthB
 
 Alternatively, you can programmaticaly invoke a scenario before the end user provides any input.
 
-To implement this behavior, uncomment the following code from the `function initBotConversation()` in the `/public/index.js` file:
+To implement this behavior, uncomment the following code from the `InitConversation` invoke in the `src/streaming/middleware/connectionMiddleware.ts` file:
 ```javascript
 triggeredScenario: {
     trigger: "{scenario_id}",
