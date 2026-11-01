@@ -1,0 +1,5 @@
+.has-msg__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--has-msg-gap);
+}

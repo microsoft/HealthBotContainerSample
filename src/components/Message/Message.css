@@ -1,0 +1,24 @@
+.has-msg {
+  /* Palette (Fluent theme tokens; light fallbacks) */
+  --has-msg-fg: var(--webchat-colorNeutralForeground1, #242424);
+  --has-msg-muted: var(--webchat-colorNeutralForeground3, #616161);
+  --has-msg-accent: var(--webchat-colorBrandForegroundLink, #01678c);
+  --has-msg-accent-soft: var(--has-accent-soft, rgba(1, 103, 140, 0.1));
+  --has-msg-error: var(--has-error, #a4262c);
+  --has-msg-surface: var(--webchat-colorNeutralBackground1, #ffffff);
+  --has-msg-border: var(--webchat-colorNeutralStroke2, #e0e0e0);
+
+  /* Shape & rhythm */
+  --has-msg-radius-pill: 999px;
+  --has-msg-radius-card: 10px;
+  --has-msg-gap: 8px;
+
+  /* Motion (single source of truth; honoured unless reduced-motion) */
+  --has-msg-motion-fast: 140ms;
+  --has-msg-motion: 240ms;
+  --has-msg-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color: var(--has-msg-fg);
+  font: inherit;
+  line-height: 1.45;
+}
