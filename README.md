@@ -62,5 +62,16 @@ To enable streaming, turn the feature on in the Management Portal: go to `Config
 
 ![Streaming answers toggle in Configuration > Healthcare Orchestrator](/streaming-answers.png)
 
+You can also request streaming for a single request, without changing the bot configuration. Add `stream: true` to the `value` of the message activity you send to the bot:
+```json
+{
+    "type": "message",
+    "from": { "id": "<userId>" },
+    "text": "What is the first-line treatment for hypertension?",
+    "value": { "stream": true }
+}
+```
+When `stream` is `true`, the answer streams even if the **Streaming answers** toggle is off. Any other value (or no value) follows the toggle. This flag is part of the request payload only; it does not change how the chat UI looks.
+
 ## Agent webchat
 If the agent webchat sample is also required, [switch to the live agent handoff branch](https://github.com/Microsoft/HealthBotContainerSample/tree/live_agent_handoff)
