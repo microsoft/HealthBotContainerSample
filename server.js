@@ -5,7 +5,7 @@ const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const fetch = require('node-fetch');
-const cookieParser = require('cookie-parser');
+const { rejectCrossSite, createLimiter, readCookie } = require('./serverSecurity');
 const WEBCHAT_SECRET = process.env.WEBCHAT_SECRET;
 const DIRECTLINE_ENDPOINT_URI = process.env.DIRECTLINE_ENDPOINT_URI;
 const AUTH_JWT_SECRET = process.env.AUTH_JWT_SECRET;
@@ -13,7 +13,11 @@ const directLineTokenEp = `https://${DIRECTLINE_ENDPOINT_URI || "directline.botf
 
 // Initialize the web app instance,
 const app = express();
-app.use(cookieParser());
+// App Service terminates TLS in front of the app; trust one proxy hop so rate limiting sees the real client IP.
+app.set('trust proxy', 1);
+const limiter = createLimiter();
+// Health probes poll often, so they get their own, higher budget.
+const healthLimiter = createLimiter({ limit: 600 });
 
 let options = {};
 // uncomment the line below if you wish to allow only specific domains to embed this page as a frame
@@ -67,7 +71,7 @@ function unhealthy(res) {
     healthResponse(res, 503, "Unhealthy");
 }
 
-app.get('/health', async function(req, res){
+app.get('/health', healthLimiter, async function(req, res){
     if (!appConfig.isHealthy) {
         try {
             const fetchResponse = await fetch(directLineTokenEp, appConfig.options);
@@ -84,7 +88,7 @@ app.get('/health', async function(req, res){
     }
 });
 
-app.post('/chatBot',  async function(req, res) {
+app.post('/chatBot', limiter, rejectCrossSite, async function(req, res) {
     if (!isUserAuthenticated()) {
         res.status(403).send();
         return;
@@ -92,7 +96,7 @@ app.post('/chatBot',  async function(req, res) {
     try {
         const fetchResponse = await fetch(directLineTokenEp, appConfig.options);
         const parsedBody = await fetchResponse.json();
-        var userid = req.query.userId || req.cookies.userid;
+        var userid = req.query.userId || readCookie(req, 'userid');
         if (!userid) {
             userid = crypto.randomBytes(4).toString('hex');
             res.cookie("userid", userid, { sameSite: "none", secure: true, httpOnly: true, expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) });
