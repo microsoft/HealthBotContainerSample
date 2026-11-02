@@ -51,8 +51,6 @@ In some cases it is required to set the endpoint URI so that it points to a spec
 
 Pass your preferred geographic endpoint URI by setting the environment variable: `DIRECTLINE_ENDPOINT_URI` in your deployment. If no variable is found it will default to `directline.botframework.com`
 
-The chat hides Web Chat's typing dots because a streaming bot shows its own progress. If your bot does not stream, set `STREAMING_ANSWERS=false` to keep the dots.
-
 **Note:** If you are deploying the code sample using the "Deploy to Azure" option, you should add the above secrets to the application settings for your App Service.
 
 ## Streaming responses
