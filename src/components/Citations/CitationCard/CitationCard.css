@@ -1,0 +1,135 @@
+.has-cite-card {
+  --cc-fg: var(--webchat-colorNeutralForeground1, #242424);
+  --cc-muted: var(--webchat-colorNeutralForeground3, #616161);
+  --cc-link: var(--webchat-colorBrandForegroundLink, #01678c);
+  --cc-surface: var(--webchat-colorNeutralBackground1, #ffffff);
+  --cc-hover: var(--webchat-colorNeutralBackground1Hover, #f5f5f5);
+  --cc-stroke: var(--webchat-colorNeutralStroke2, #e0e0e0);
+
+  position: fixed;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 300px;
+  max-width: calc(100vw - 16px);
+  padding: 10px 12px 12px;
+  border: 1px solid var(--cc-stroke);
+  border-radius: var(--webchat-borderRadiusXLarge, 8px);
+  background: var(--cc-surface);
+  box-shadow: var(--webchat-shadow16, 0 8px 16px rgba(0, 0, 0, 0.14));
+  color: var(--cc-fg);
+  font-family: var(
+    --webchat-fontFamilyBase,
+    "Segoe UI",
+    "Helvetica Neue",
+    Arial,
+    sans-serif
+  );
+  font-size: var(--webchat-fontSizeBase300, 14px);
+  line-height: var(--webchat-lineHeightBase300, 20px);
+  text-align: start;
+}
+
+.has-cite-card__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cc-muted);
+  font-size: var(--webchat-fontSizeBase200, 12px);
+  line-height: var(--webchat-lineHeightBase200, 16px);
+}
+
+.has-cite-card__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.has-cite-card__source::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.has-cite-card:hover {
+  background: var(--cc-hover);
+}
+
+.has-cite-card:hover .has-cite-card__host {
+  color: var(--cc-link);
+  text-decoration: underline;
+}
+
+.has-cite-card__host {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sits above the stretched link; only the arrows take clicks, the rest falls through to it. */
+.has-cite-card__nav {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.has-cite-card__nav button {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--webchat-borderRadiusMedium, 4px);
+  background: transparent;
+  color: var(--cc-fg);
+  cursor: pointer;
+}
+
+.has-cite-card__nav button:hover:not(:disabled) {
+  background: var(--webchat-colorNeutralBackground1Pressed, #e0e0e0);
+}
+
+.has-cite-card__nav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.has-cite-card__count {
+  min-width: 28px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.has-cite-card__snippet {
+  position: relative;
+  z-index: 1;
+  margin-top: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-inline-end: 8px;
+  color: var(--cc-muted);
+  font-size: var(--webchat-fontSizeBase200, 12px);
+  line-height: var(--webchat-lineHeightBase200, 16px);
+}
+
+.has-cite-card__title {
+  display: -webkit-box;
+  margin-top: 6px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--cc-fg);
+  font-weight: 600;
+}

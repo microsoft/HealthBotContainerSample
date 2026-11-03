@@ -1,0 +1,9 @@
+/* Layout-neutral wrapper so the answer renders exactly as Web Chat laid it out. */
+.has-cite__scope {
+  display: contents;
+}
+
+/* The pill replaces the run's "[N]" links; they stay in the DOM so re-renders are detected. */
+.has-cite__scope a.has-cite__hidden {
+  display: none !important;
+}

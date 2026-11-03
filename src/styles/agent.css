@@ -1,0 +1,79 @@
+/* Agent webchat page: header, sample login form and the command sidebar. */
+.agent-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'Segoe UI', 'Segoe UI Web (West European)', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.agent-app h1 {
+  margin: 0;
+  padding: 0 12px;
+  line-height: 32px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #605e5c;
+}
+
+.agent-app__body {
+  flex: 1;
+  min-height: 0;
+}
+
+.agent-login {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+}
+
+.agent-login h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.agent-login input {
+  width: 300px;
+  padding: 4px 8px;
+  margin-bottom: 8px;
+}
+
+.agent-buttons button,
+.agent-login button {
+  min-width: 130px;
+  height: 40px;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  background-color: #605e5c;
+  cursor: pointer;
+}
+
+.agent-buttons button:hover,
+.agent-login button:hover {
+  background-color: #484644;
+}
+
+.hb-chat-layout {
+  display: flex;
+  height: 100%;
+}
+
+.hb-chat-layout__sidebar {
+  flex: none;
+  padding: 10px;
+  border-right: 2px groove #c8c6c4;
+}
+
+.hb-chat-layout__chat {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
