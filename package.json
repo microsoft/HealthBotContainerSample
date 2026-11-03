@@ -6,16 +6,16 @@
   "license": "MIT",
   "repository": "https://github.com/Microsoft/HealthBotContainerSample.git",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.19.0"
   },
   "dependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "^17.0.83",
     "@types/react-dom": "^17.0.25",
     "@types/use-sync-external-store": "^0.0.6",
-    "@vitejs/plugin-react": "^4.3.4",
-    "botframework-webchat": "4.19.1",
-    "botframework-webchat-fluent-theme": "4.19.1",
+    "@vitejs/plugin-react": "^4.7.0",
+    "botframework-webchat": "4.19.2",
+    "botframework-webchat-fluent-theme": "4.19.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-rate-limit": "^7.5.1",
@@ -27,7 +27,7 @@
     "react-dom": "^17.0.2",
     "typescript": "^5.6.3",
     "use-sync-external-store": "^1.2.2",
-    "vite": "^5.4.11"
+    "vite": "^7.3.7"
   },
   "scripts": {
     "dev": "vite",
@@ -43,7 +43,14 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.5.2",
-    "happy-dom": "^20.0.2",
-    "vitest": "^3.2.7"
+    "happy-dom": "^21.0.4",
+    "vitest": "^4.1.12"
+  },
+  "overrides": {
+    "sanitize-html": "2.18.1",
+    "valibot": "1.5.0",
+    "katex": "0.19.1",
+    "uuid": "11.1.1",
+    "microsoft-cognitiveservices-speech-sdk": "1.50.0"
   }
 }
