@@ -1,0 +1,71 @@
+.has-tp {
+  --tp-muted: var(
+    --has-msg-muted,
+    var(--webchat-colorNeutralForeground3, #616161)
+  );
+  --tp-fg: var(--has-msg-fg, var(--webchat-colorNeutralForeground1, #242424));
+  --tp-accent: var(
+    --has-msg-accent,
+    var(--webchat-colorBrandForegroundLink, #01678c)
+  );
+  --tp-done: #0e7a4b;
+  --tp-line: var(--has-msg-border, var(--webchat-colorNeutralStroke2, #e0e0e0));
+  --tp-motion: var(--has-msg-motion, 240ms);
+  --tp-ease: var(--has-msg-ease, cubic-bezier(0.2, 0, 0, 1));
+
+  margin: 0 26px 2px 58px;
+  font-family: var(--webchat-fontFamilyBase, "Segoe UI", sans-serif);
+}
+
+.has-tp__summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--tp-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.has-tp__summary:hover {
+  opacity: 0.8;
+}
+
+/* Thin rounded chevron that rotates from ▸ to ▾ when the trace is open. */
+.has-tp__ochev {
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+  border-right: 1.5px solid var(--tp-muted);
+  border-bottom: 1.5px solid var(--tp-muted);
+  transform: rotate(-45deg);
+  transition: transform 0.2s var(--tp-ease);
+}
+
+.has-tp[data-open="true"] .has-tp__ochev {
+  transform: rotate(45deg);
+}
+
+.has-tp__steps {
+  list-style: none;
+  margin: 6px 5px 0 0;
+  padding: 0 2px 0 0;
+  border-right: 1.5px solid var(--tp-line);
+}
+
+.has-tp__steps--live {
+  margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-tp__ochev {
+    animation: none;
+    transition: none;
+  }
+}

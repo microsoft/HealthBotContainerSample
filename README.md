@@ -8,6 +8,8 @@ A simple web page that allows users to communicate with the [Azure Health Bot](h
 
 1.Deploy the website:
 
+The sample deploys to Linux App Service. Linux is the only operating system the deployment form offers.
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FHealthBotContainerSample%2Flive_agent_handoff%2Fazuredeploy.json)
 
 2.Set the following environment variables:
@@ -22,7 +24,7 @@ The Health Bot service uses [language models](https://docs.microsoft.com/HealthB
 
 Alternatively, you can programmaticaly invoke a scenario before the end user provides any input.
 
-To implement this behavior, uncomment the following code from the `function initBotConversation()` in the `/public/index.js` file:
+To implement this behavior, uncomment the following code from the `InitConversation` invoke in the `src/streaming/middleware/connectionMiddleware.ts` file:
 ```javascript
 triggeredScenario: {
     trigger: "{scenario_id}",
@@ -51,19 +53,37 @@ Pass your preferred geographic endpoint URI by setting the environment variable:
 
 **Note:** If you are deploying the code sample using the "Deploy to Azure" option, you should add the above secrets to the application settings for your App Service.
 
+## Streaming responses
+This sample supports streaming bot responses, so answers appear progressively as they are generated instead of all at once. Streaming is driven by the bot — it activates automatically when the **streaming feature flag is enabled** for your Health Bot instance. When the flag is off, the sample falls back to the standard single-response behavior with no changes required.
+
+To enable streaming, turn the feature on in the Management Portal: go to `Configuration` > `Healthcare Orchestrator` and set the **Streaming answers** toggle to `Enabled`. The toggle appears only when streaming is available for your bot. If you don't see it, contact your Health Bot administrator.
+
+![Streaming answers toggle in Configuration > Healthcare Orchestrator](/streaming-answers.png)
+
+You can also request streaming for a single request, without changing the bot configuration. Add `stream: true` to the `value` of the message activity you send to the bot:
+```json
+{
+    "type": "message",
+    "from": { "id": "<userId>" },
+    "text": "What is the first-line treatment for hypertension?",
+    "value": { "stream": true }
+}
+```
+When `stream` is `true`, the answer streams even if the **Streaming answers** toggle is off. Any other value (or no value) follows the toggle. This flag is part of the request payload only; it does not change how the chat UI looks.
+
 ## Live agent handoff sample
 
-The live agent handoff sample is wrapper around the standard webchat that is generally used by end users. This sample is intended for testing the handoff scenario that is built-in to your Health Bot instance.
+The live agent handoff sample is a wrapper around the standard webchat that is generally used by end users. This sample is intended for testing the handoff scenario that is built-in to your Health Bot instance.
 
-To access the sample you should follow the deployment instructions and request the `/agent.html` path from your browser. This will load a dummy login page that illustrates the agent experience (you can provide any values to access the agent portal). Within the agent portal you can issue agent commands to interact with end users that are talking with your bot.
+To access the sample, follow the deployment instructions and request the `/agent.html` path from your browser. This loads a dummy login page that illustrates the agent experience (you can provide any values to access the agent portal). Within the agent portal you can issue agent commands to interact with end users that are talking with your bot.
 
-The wrapper adds to the server.js file an agent flagging function: `function isAgentAuthenticated(req)` which will serve the agent webchat if a `true` value is returned. You should implement custom logic in this function that returns a `true` value once your agent has been authenticated.
+The agent page requests its token with `agent=true`. The wrapper adds an agent flagging function to `server.js`: `function isAgentAuthenticated(req)`. When it returns `true`, the signed JWT carries an `isAgent` claim and the bot treats the conversation as an agent conversation. You should implement custom logic in this function that returns `true` only once your agent has been authenticated.
 
 **IMPORTANT:**
 The sample login page is for testing and demonstration purposes only. You MUST authenticate agent access in a production deployment of the agent webchat. The agent webchat provides access to sensitive end user information.
 
 ## Customizing the webchat
 
-You can send programmed messages to the agent webchat by invoking the `function talk(message)`. In the sample we have added example buttons with issue some of the built-in agent commands.
+The agent page is a second entry of the same React client (`agent.html` and `src/agent/`). The sidebar buttons live in `src/agent/AgentCommands.tsx`; each one sends a programmed message to the chat, and you can add your own entries to the `COMMANDS` list. In the sample we have added buttons that issue some of the built-in agent commands.
 
 [Learn more about agent webchat functionality](https://docs.microsoft.com/en-us/HealthBot/handoff)

@@ -1,0 +1,17 @@
+/* App shell styles: connecting/error states shown before Web Chat mounts. */
+.hb-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: 'Segoe UI', 'Segoe UI Web (West European)', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  color: #605e5c;
+}
+
+.hb-status--error {
+  color: #a4262c;
+}

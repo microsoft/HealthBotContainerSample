@@ -1,0 +1,48 @@
+/* Doubled class outranks Web Chat's markdown link styling without !important on every rule. */
+.has-cite-pill.has-cite-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 200px;
+  height: 20px;
+  margin-inline-start: 4px;
+  padding: 0 8px 0 4px;
+  border-radius: 999px;
+  background: var(--webchat-colorNeutralBackground3, #f5f5f5);
+  color: var(--webchat-colorNeutralForeground2, #424242);
+  font-family: var(
+    --webchat-fontFamilyBase,
+    "Segoe UI",
+    "Helvetica Neue",
+    Arial,
+    sans-serif
+  );
+  font-size: var(--webchat-fontSizeBase200, 12px);
+  font-weight: normal;
+  line-height: 20px;
+  text-decoration: none;
+  vertical-align: text-bottom;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.has-cite-pill.has-cite-pill:hover,
+.has-cite-pill.has-cite-pill[aria-expanded="true"] {
+  background: var(--webchat-colorNeutralBackground5, #ebebeb);
+  text-decoration: none;
+}
+
+.has-cite-pill.has-cite-pill:focus-visible {
+  outline: 2px solid var(--webchat-colorStrokeFocus2, #000000);
+  outline-offset: 1px;
+}
+
+.has-cite-pill__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.has-cite-pill__more {
+  flex-shrink: 0;
+  color: var(--webchat-colorNeutralForeground3, #616161);
+}
